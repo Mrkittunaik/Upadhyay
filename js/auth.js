@@ -1,4 +1,4 @@
-  // ---------- Demo jobs/profiles tabs ----------
+// ---------- Demo jobs/profiles tabs ----------
   function switchDemo(which, btn){
     document.getElementById('demoJobs').style.display = which==='jobs' ? 'grid' : 'none';
     document.getElementById('demoProfiles').style.display = which==='profiles' ? 'grid' : 'none';
@@ -319,7 +319,7 @@
   }
 
   function computeCompleteness(){
-    const fields = [currentUser.subject, currentUser.qualification, currentUser.category, currentUser.experience, currentUser.location];
+    const fields = [currentUser.subject, currentUser.qualification, currentUser.category, currentUser.experience, currentUser.location, currentUser.email];
     const filled = fields.filter(v=>v && v.trim()).length;
     return Math.round((filled/fields.length)*100) || 15;
   }
@@ -336,6 +336,7 @@
       ? `${currentUser.qualification}${currentUser.subject ? ' · '+currentUser.subject : ''}`
       : 'Add your degree and specialisation';
     document.getElementById('fpLocation').textContent = currentUser.location || 'Add location';
+    document.getElementById('fpEmail').textContent = currentUser.email || 'Add email';
     document.getElementById('fpCategory').value = currentUser.category || '';
     document.getElementById('fpQualification').value = currentUser.qualification || '';
     document.getElementById('fpExperience').textContent = currentUser.experience || 'Not set';
