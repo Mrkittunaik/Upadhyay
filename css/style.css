@@ -520,6 +520,8 @@
   .fp-editable:hover{background:var(--canvas);}
   .fp-editable:focus{outline:none; border-color:var(--green); background:#fff; box-shadow:0 0 0 3px #EAF7F0;}
   select.fp-editable{cursor:pointer; appearance:auto;}
+  .fp-editable.fp-invalid{border-color:#D64545; background:#FDEDED;}
+  .fp-field-error{color:#D64545; font-size:12px; margin:2px 0 0; font-weight:600;}
   .fp-links-edit .modal-field{margin-bottom:10px;}
   .fp-avatar-wrap{position:relative; flex-shrink:0;}
   .fp-avatar-upload{position:absolute; bottom:0; right:0; width:26px; height:26px; border-radius:50%; background:var(--green); border:2px solid #fff; display:flex; align-items:center; justify-content:center; color:#fff; cursor:pointer;}
