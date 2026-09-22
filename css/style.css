@@ -46,7 +46,7 @@
 
   /* ---------- Top nav ---------- */
   .nav{
-    position:sticky; top:0; z-index:40;
+    position:fixed; top:0; left:0; right:0; z-index:40;
     background:rgba(255,255,255,0.92);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--line);
@@ -57,6 +57,7 @@
     max-width:1180px; margin:0 auto; padding:14px 24px;
     display:flex; align-items:center; justify-content:space-between; gap:24px;
   }
+  .nav-spacer{ width:100%; }
   .brand{display:flex; align-items:center; gap:9px; font-weight:700; font-size:19px; color:var(--blue-900);}
   .brand-mark{
     width:30px; height:30px; border-radius:8px;
