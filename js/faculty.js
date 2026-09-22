@@ -1,4 +1,4 @@
-  // ---------- Browse jobs page ----------
+// ---------- Browse jobs page ----------
   const bjJobs = [
     { title:'Assistant Professor — CSE', org:'KL University · Vijayawada', cat:'Higher Education', tags:['PhD required','Full-time'], posted:2, applicants:34, color:'var(--blue-700)', initials:'KL', minExp:2 },
     { title:'PGT Physics', org:'Delhi Public School · Hyderabad', cat:'Schools', tags:['PG required','CBSE'], posted:5, applicants:61, color:'var(--green)', initials:'DP', minExp:0 },
@@ -186,9 +186,10 @@
   }
   // Called once by faculty-dashboard.html (panel='search') and employer-dashboard.html (panel='post').
   function openDash(name, panel){
-    document.getElementById('dashName').textContent = name;
-    document.getElementById('dashAvatar').textContent = name.slice(0,2).toUpperCase();
-    document.getElementById('dashSub').textContent = panel==='post'
+    const _dn2 = document.getElementById('dashName'); if(_dn2) _dn2.textContent = name;
+    const _da = document.getElementById('dashAvatar'); if(_da) _da.textContent = name.slice(0,2).toUpperCase();
+    const _ds = document.getElementById('dashSub');
+    if(_ds) _ds.textContent = panel==='post'
       ? (currentCompany.saved ? 'Your poster panel — post jobs, review and invite candidates' : 'Create your institution account to get started')
       : 'Manage your profile and browse jobs';
     const _ps = document.getElementById('panelSearch'); if(_ps) _ps.style.display = panel==='search' ? 'block' : 'none';
@@ -279,5 +280,3 @@
     pushNotif('Profile saved — you can now browse and apply to jobs.');
     goTo('jobs');
   }
-
-
