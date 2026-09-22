@@ -851,17 +851,11 @@
   position:static; inset:auto; display:block; z-index:auto;
   min-height:calc(100vh - 64px); overflow:visible;
 }
-/* The overlay used its own top bar (brand + "Back to site"). On real pages the
-   shared site nav already provides that, so the duplicate bar is hidden by
-   default. Dashboards opt back in with .keep-topbar because that bar holds the
-   account menu (institution profile, upload logo, log out). */
+/* The overlay used its own top bar (brand + "Back to site" + bell/avatar).
+   The shared site nav already provides brand, notifications and the account
+   menu, so this bar is always hidden now on real pages — no dashboard opts
+   back into it. */
 .dash-overlay.page-mode > .dash-top{ display:none; }
-.dash-overlay.page-mode.keep-topbar > .dash-top{
-  display:flex; top:64px; z-index:30; padding:10px 24px; justify-content:flex-end;
-}
-/* the brand + "Back to site" are redundant under the site nav */
-.dash-overlay.page-mode.keep-topbar > .dash-top > .brand,
-.dash-overlay.page-mode.keep-topbar > .dash-top > .btn{ display:none; }
 
 /* Admin was a full-screen overlay ("adminOverlay.open{display:flex}"); on its
    own page it should just render, no .open class needed. */
