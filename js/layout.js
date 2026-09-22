@@ -81,7 +81,11 @@ function mountNav(active){
 function syncNavSpacer(){
   const nav = document.querySelector('.nav');
   const spacer = document.getElementById('navSpacer');
-  if(nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
+  if(nav && spacer){
+    const h = nav.offsetHeight;
+    spacer.style.height = h + 'px';
+    document.documentElement.style.setProperty('--nav-h', h + 'px');
+  }
 }
 
 /* ---- Footer + toast + mini profile + notifications ----------------------- */
