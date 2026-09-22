@@ -65,7 +65,18 @@ function mountNav(active){
   <div class="nav-spacer" id="navSpacer"></div>`;
   updateNavForLogin();
   syncNavSpacer();
+  // Nav height can change after fonts/avatar images load or content reflows —
+  // resync a few times shortly after mount, then keep watching for changes.
   window.addEventListener('resize', syncNavSpacer);
+  window.addEventListener('load', syncNavSpacer);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(syncNavSpacer);
+  setTimeout(syncNavSpacer, 50);
+  setTimeout(syncNavSpacer, 300);
+  setTimeout(syncNavSpacer, 1000);
+  const navEl = document.querySelector('.nav');
+  if(navEl && window.ResizeObserver){
+    new ResizeObserver(syncNavSpacer).observe(navEl);
+  }
 }
 function syncNavSpacer(){
   const nav = document.querySelector('.nav');
