@@ -96,19 +96,56 @@
   }
 
   // Inline-edit handlers for the View Profile page (image-5 style: edit in place, no separate form)
-  function showFpSaveToast(){
+  function showFpSaveToast(message, isError){
     const t = document.getElementById('fpSaveToast');
     if(!t) return;
+    t.textContent = message ? ('⚠ ' + message) : '✓ Saved';
+    t.style.background = isError ? '#D64545' : 'var(--blue-900)';
     t.style.opacity = '1';
     t.style.transform = 'translateX(-50%) translateY(0)';
     clearTimeout(window._fpToastTimer);
     window._fpToastTimer = setTimeout(()=>{
       t.style.opacity = '0';
       t.style.transform = 'translateX(-50%) translateY(-8px)';
-    }, 1400);
+    }, isError ? 2200 : 1400);
   }
+  // Validates one editable field. Returns an error string, or '' if valid.
+  function fpValidateField(key, value){
+    const v = (value || '').trim();
+    if(key === 'name'){
+      if(!v) return 'Name cannot be empty.';
+      if(v.length < 2) return 'Name is too short.';
+      if(v.length > 80) return 'Name is too long.';
+    }
+    if(key === 'email'){
+      if(!v) return 'Email cannot be empty.';
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if(!emailPattern.test(v)) return 'Enter a valid email address.';
+    }
+    return '';
+  }
+
   function fpSaveField(key, value){
-    currentUser[key] = (value || '').trim();
+    const trimmed = (value || '').trim();
+    const errorEl = document.getElementById('fp' + key.charAt(0).toUpperCase() + key.slice(1) + 'Error');
+    const fieldEl = document.getElementById('fp' + key.charAt(0).toUpperCase() + key.slice(1));
+    const error = fpValidateField(key, trimmed);
+
+    if(error){
+      // Reject the edit: show the error, restore the last saved value, don't persist.
+      if(errorEl){ errorEl.textContent = error; errorEl.style.display = 'block'; }
+      if(fieldEl){
+        fieldEl.classList.add('fp-invalid');
+        fieldEl.textContent = currentUser[key] || (key === 'name' ? 'Your name' : key === 'email' ? 'Add email' : '');
+      }
+      showFpSaveToast(error, true);
+      return;
+    }
+
+    if(errorEl) errorEl.style.display = 'none';
+    if(fieldEl) fieldEl.classList.remove('fp-invalid');
+
+    currentUser[key] = trimmed;
 
     // keep header/derived text in sync without a full re-render
     document.getElementById('fpDegree').textContent = currentUser.qualification
