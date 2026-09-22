@@ -61,8 +61,16 @@ function mountNav(active){
         </button>
       </div>
     </div>
-  </nav>`;
+  </nav>
+  <div class="nav-spacer" id="navSpacer"></div>`;
   updateNavForLogin();
+  syncNavSpacer();
+  window.addEventListener('resize', syncNavSpacer);
+}
+function syncNavSpacer(){
+  const nav = document.querySelector('.nav');
+  const spacer = document.getElementById('navSpacer');
+  if(nav && spacer) spacer.style.height = nav.offsetHeight + 'px';
 }
 
 /* ---- Footer + toast + mini profile + notifications ----------------------- */
