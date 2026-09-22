@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employer Dashboard — Upadyay</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="page">
+  <div id="siteNav"></div>
+
+  <div class="dash-overlay page-mode keep-topbar" id="dashOverlay">
+    <div class="dash-top">
+      <div class="brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeDash()">Back to site</button>
+      <div class="dash-top-account" id="dashTopAccount" style="display:flex; align-items:center; gap:12px; margin-left:12px; position:relative;">
+        <button class="nav-bell" id="dashBellBtn" onclick="toggleDashNotifs()" style="position:relative; width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); cursor:pointer;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C9.5 3 7.5 5 7.5 7.5V11L5.5 15H18.5L16.5 11V7.5C16.5 5 14.5 3 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 18C9.5 19.4 10.6 20.5 12 20.5C13.4 20.5 14.5 19.4 14.5 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="nav-bell-dot" id="dashBellDot" style="position:absolute; top:5px; right:6px; width:7px; height:7px; border-radius:50%; background:#E0432B; border:1.5px solid #fff; display:none;"></span>
+        </button>
+        <div id="dashNotifMenu" class="dash-dropdown dash-dropdown-notif" style="display:none;">
+          <div style="padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; font-size:13.5px;">Notifications</div>
+          <div id="dashNotifList" style="max-height:220px; overflow:auto;"></div>
+        </div>
+        <button class="nav-avatar-btn" id="dashTopAvatarBtn" onclick="toggleDashAccountMenu()" style="width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid var(--blue-100); padding:0; background:var(--blue-50); cursor:pointer; position:relative;">
+          <img id="dashTopAvatarImg" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+          <span id="dashTopAvatarInit" style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:var(--blue-700); font-size:13px;"></span>
+        </button>
+        <div id="dashAccountMenu" class="dash-dropdown dash-dropdown-account" style="display:none;">
+          <div style="padding:12px 14px; border-bottom:1px solid var(--line);">
+            <div id="dashMenuName" style="font-weight:700; font-size:14px; color:var(--ink);">—</div>
+            <div id="dashMenuMeta" style="font-size:12.5px; color:var(--ink-faint);">—</div>
+          </div>
+          <button onclick="closeDashAccountMenu(); switchEmployerTab('company');" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:var(--ink); cursor:pointer;">Institution profile</button>
+          <button onclick="document.getElementById('logoFile').click()" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:var(--ink); cursor:pointer;">Upload logo</button>
+          <button onclick="closeDashAccountMenu(); logoutUser();" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:#B3261E; cursor:pointer; border-top:1px solid var(--line);">Log out</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash-inner-wide" id="dashInnerWide">
+      <div class="dash-head">
+        <div class="dash-avatar" id="dashAvatar">U</div>
+        <div>
+          <h2 id="dashName">Your profile</h2>
+          <p id="dashSub">Manage your Upadyay account</p>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panelPost">
+        <div class="dash-tabs" id="employerTabsBar" style="display:none;">
+          <button class="dash-subtab active" id="subtabCompany" onclick="switchEmployerTab('company')">Company profile</button>
+          <button class="dash-subtab" id="subtabPost" onclick="switchEmployerTab('post')">Post a job</button>
+          <button class="dash-subtab" id="subtabCandidates" onclick="switchEmployerTab('candidates')">Browse candidates</button>
+        </div>
+        <p class="sub" id="employerSetupNote" style="margin:0 0 18px;">Create your institution account with these basic details. Once saved, you'll get your full poster panel — jobs, candidates, invites and messages.</p>
+
+        <div id="dashCompanyTab">
+          <h3>Institution details</h3>
+          <div class="dash-form-row">
+            <div class="logo-upload" id="logoUpload" onclick="document.getElementById('logoFile').click()">
+              <img id="logoPreview" style="display:none;">
+              <span id="logoPlaceholder">+ Logo</span>
+              <input type="file" id="logoFile" accept="image/*" style="display:none;" onchange="previewLogo(event)">
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:10px;">
+              <input type="text" id="coName" placeholder="Institution / company name — e.g. KL University" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+              <select id="coType" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+                <option value="">Institution type</option>
+                <option>School</option>
+                <option>Junior college</option>
+                <option>University / Higher education</option>
+              </select>
+            </div>
+          </div>
+          <div class="dash-form-row">
+            <input type="text" id="coCity" placeholder="City / location" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+            <input type="text" id="coWebsite" placeholder="Website — e.g. kluniversity.in" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+          </div>
+          <textarea id="coDesc" placeholder="Short description of the institution" style="width:100%; border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit; min-height:70px; margin-bottom:14px; resize:vertical;"></textarea>
+
+          <h3 style="margin-top:8px;">Your role at the institution</h3>
+          <div class="dash-form-row">
+            <input type="text" id="coContactName" placeholder="Your name — e.g. Radha Krishna" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+            <input type="text" id="coDesignation" placeholder="Your designation — e.g. HR Head" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+          </div>
+          <div class="dash-form-row">
+            <input type="text" id="coEmail" placeholder="Work email" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+            <input type="text" id="coPhone" placeholder="Contact number" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveCompany()">Save company profile</button>
+          <span id="coSavedNote" style="display:none; margin-left:12px; font-size:12.5px; font-weight:600; color:var(--green);">✓ Institution profile saved</span>
+        </div>
+
+        <div id="dashPostTab" style="display:none;">
+          <div id="jobPostForm">
+            <h3>Add a job</h3>
+            <div class="dash-form-row">
+              <input type="text" id="jbTitle" placeholder="Job title — e.g. Assistant Professor, CSE" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+              <select id="jbCategory" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+                <option value="">Category</option>
+                <option>Schools</option>
+                <option>Intermediate</option>
+                <option>Higher Education</option>
+              </select>
+            </div>
+            <div class="dash-form-row">
+              <select id="jbQualification" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+                <option value="">Qualification needed</option>
+                <option>UG</option>
+                <option>PG</option>
+                <option>PhD</option>
+              </select>
+              <input type="text" id="jbLocation" placeholder="Location" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="addJob(event)">+ Post job — free</button>
+
+            <div id="jobList" style="margin-top:18px;"></div>
+          </div>
+
+          <div id="applicantsView" style="display:none;">
+            <button class="btn btn-ghost btn-sm" onclick="closeApplicantsView()" style="margin-bottom:14px;">← Back to jobs</button>
+            <h3 id="apJobTitle" style="margin-bottom:2px;"></h3>
+            <p class="sub" id="apJobMeta" style="margin-top:0; margin-bottom:0;"></p>
+          </div>
+        </div>
+
+        <div id="dashCandidatesTab" style="display:none;">
+          <h3>Browse candidates</h3>
+          <div class="dash-form-row">
+            <input type="text" id="candSearch" placeholder="Subject, role or keyword" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+            <select id="candCategory" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+              <option value="">All categories</option>
+              <option>Schools</option>
+              <option>Intermediate</option>
+              <option>Higher Education</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="renderCandidates()">Search candidates</button>
+        </div>
+
+        <div class="dash-fullbleed" id="candidateListWrap" style="display:none; padding:0;">
+          <div class="candidates-section-head"><h3>Recommended candidates</h3><span class="count" id="candidateCount"></span></div>
+          <div class="demo-grid dash-fullbleed-grid" id="candidateList"></div>
+          <div id="candidateShowMoreWrap" style="display:none; justify-content:center; margin-top:22px;">
+            <button class="btn btn-light" id="candidateShowMoreBtn" onclick="showMoreCandidates()">Show more</button>
+          </div>
+        </div>
+        <div class="dash-fullbleed" id="apListWrap" style="display:none; padding:0;">
+          <div class="candidates-section-head"><h3>Applicants</h3><span class="count" id="apCount"></span></div>
+          <div class="demo-grid dash-fullbleed-grid" id="apList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Candidate slide-in profile -->
+  <div class="slide-scrim" id="slideScrim" onclick="closeProfile()">
+  <div class="slide-panel" id="slidePanel" onclick="event.stopPropagation()">
+    <div class="slide-head">
+      <button class="slide-close" onclick="closeProfile()">✕</button>
+    </div>
+    <div class="slide-body">
+      <div class="slide-avatar" id="spAvatar"></div>
+      <h2 class="slide-name" id="spName"></h2>
+      <p class="slide-role" id="spRole"></p>
+      <div class="jc-tags" id="spTags"></div>
+
+      <div class="slide-section">
+        <h4>Snapshot</h4>
+        <div class="slide-stats" id="spStats"></div>
+      </div>
+
+      <div class="slide-section">
+        <h4>Experience</h4>
+        <div id="spExperience"></div>
+      </div>
+
+      <div class="slide-section">
+        <h4>Certifications &amp; documents</h4>
+        <div class="slide-links" id="spLinks"></div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;" onclick="openAuth('post')">Contact / shortlist candidate</button>
+    </div>
+  </div>
+  </div>
+
+  <div id="siteChrome"></div>
+
+<script src="../js/store.js"></script>
+<script src="../js/employer.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/faculty.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/layout.js"></script>
+<script>mountNav(); mountChrome(); if(requireLogin('company')) openDash(currentCompany.name || 'Institution', 'post');</script>
+</body>
+</html>

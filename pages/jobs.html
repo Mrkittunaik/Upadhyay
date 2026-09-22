@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Jobs — Upadyay</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="page">
+  <div id="siteNav"></div>
+
+  <div class="dash-overlay page-mode" id="browseJobsOverlay">
+    <div class="dash-top">
+      <div class="brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
+      <div class="nav-drop" style="margin-left:28px;" onmouseenter="openNavDrop()" onmouseleave="closeNavDrop()">
+        <a href="javascript:void(0)" onclick="openNavDrop()" style="font-size:14.5px; color:var(--ink-soft); font-weight:500;">Browse jobs by type ▾</a>
+        <div class="nav-drop-menu" id="navDropMenuBj">
+          <div class="nav-drop-col">
+            <span class="nav-drop-label">Schools</span>
+            <a href="javascript:void(0)" onclick="quickBrowse('Schools')">PGT / TGT / PRT teacher jobs</a>
+            <a href="javascript:void(0)" onclick="quickBrowse('Schools')">CBSE &amp; ICSE school jobs</a>
+            <a href="javascript:void(0)" onclick="quickBrowse('Schools')">Principal &amp; coordinator jobs</a>
+          </div>
+          <div class="nav-drop-col">
+            <span class="nav-drop-label">Junior Colleges</span>
+            <a href="javascript:void(0)" onclick="quickBrowse('Intermediate')">Junior lecturer jobs</a>
+            <a href="javascript:void(0)" onclick="quickBrowse('Intermediate')">MPC / BiPC / CEC faculty</a>
+          </div>
+          <div class="nav-drop-col">
+            <span class="nav-drop-label">Universities &amp; Colleges</span>
+            <a href="javascript:void(0)" onclick="quickBrowse('Higher Education')">Assistant Professor jobs</a>
+            <a href="javascript:void(0)" onclick="quickBrowse('Higher Education')">Associate / full professor jobs</a>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="nav-bell" onclick="openNotifPanel()">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <span class="nav-bell-dot" style="display:none;" id="bjBellDot"></span>
+        </button>
+        <button class="nav-avatar-btn" onclick="openMiniProfile()">
+          <img id="bjTopAvatarImg" src="">
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="closeBrowseJobs()">Back to site</button>
+      </div>
+    </div>
+    <div class="bj-inner">
+      <div class="bj-searchbar">
+        <div class="bj-field">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0; color:var(--ink-faint);"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="text" id="bjKeyword" placeholder="Subject, role or keyword" oninput="renderBrowseJobs()">
+        </div>
+        <div class="bj-field">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0; color:var(--ink-faint);"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <input type="text" id="bjLocation" placeholder="Location" oninput="renderBrowseJobs()">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="renderBrowseJobs()">Search jobs</button>
+      </div>
+
+      <div class="bj-layout">
+        <div class="bj-filters">
+          <div class="bj-filters-head">
+            <h4><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20M7 12H17M10 18H14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> Filters</h4>
+            <button class="bj-clear-link" onclick="clearBrowseFilters()">Clear all</button>
+          </div>
+
+          <div class="bj-filter-group">
+            <h5>Category</h5>
+            <label class="bj-filter-opt"><input type="checkbox" class="bj-cat-check" value="Schools" onchange="renderBrowseJobs()"> Schools</label>
+            <label class="bj-filter-opt"><input type="checkbox" class="bj-cat-check" value="Intermediate" onchange="renderBrowseJobs()"> Intermediate</label>
+            <label class="bj-filter-opt"><input type="checkbox" class="bj-cat-check" value="Higher Education" onchange="renderBrowseJobs()"> Higher Education</label>
+          </div>
+
+          <div class="bj-filter-group">
+            <h5>Experience</h5>
+            <input type="range" id="bjExpRange" min="0" max="20" value="20" style="width:100%; accent-color:var(--green);" oninput="document.getElementById('bjExpVal').textContent=this.value; renderBrowseJobs()">
+            <div class="bj-range-row"><span>0 yrs</span><span id="bjExpVal">20</span><span>20+ yrs</span></div>
+          </div>
+
+          <div class="bj-filter-group">
+            <h5>Date posted</h5>
+            <label class="bj-filter-opt"><input type="radio" name="bjDate" value="all" checked onchange="renderBrowseJobs()"> All</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDate" value="1" onchange="renderBrowseJobs()"> Last 24 hours</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDate" value="3" onchange="renderBrowseJobs()"> Last 3 days</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDate" value="7" onchange="renderBrowseJobs()"> Last 7 days</label>
+          </div>
+
+          <div class="bj-filter-group">
+            <h5>Distance</h5>
+            <label class="bj-filter-opt"><input type="radio" name="bjDist" value="all" checked onchange="renderBrowseJobs()"> All</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDist" value="5" onchange="renderBrowseJobs()"> Within 5 km</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDist" value="10" onchange="renderBrowseJobs()"> Within 10 km</label>
+            <label class="bj-filter-opt"><input type="radio" name="bjDist" value="20" onchange="renderBrowseJobs()"> Within 20 km</label>
+          </div>
+        </div>
+
+        <div class="bj-results">
+          <div class="bj-results-head">
+            <h3 id="bjResultsTitle">Jobs for you</h3>
+            <span id="bjResultsCount">— results</span>
+          </div>
+          <div class="bj-job-list" id="bjJobList"></div>
+        </div>
+
+        <div class="bj-side">
+          <div class="ap2-card ap2-summary">
+            <img class="fp-avatar" id="bjAvatar" src="" style="width:64px; height:64px;">
+            <div class="ap2-summary-info">
+              <h2 id="bjName" style="font-size:17px;">Your name</h2>
+              <p id="bjRole">Add your degree</p>
+            </div>
+          </div>
+          <button class="btn btn-light" style="width:100%; justify-content:center;" onclick="closeBrowseJobs(); openFullProfile();">Update profile</button>
+          <div class="ap2-card">
+            <div class="ap2-card-head">
+              <div><h3 style="font-size:14.5px;">Your preferences</h3><p>Matched roles are based on these.</p></div>
+            </div>
+            <div class="bj-pref-tags" id="bjPrefTags"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="siteChrome"></div>
+
+<script src="../js/store.js"></script>
+<script src="../js/employer.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/faculty.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/layout.js"></script>
+<script>mountNav('jobs'); mountChrome(); initBrowseJobsPage();</script>
+</body>
+</html>

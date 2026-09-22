@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — Upadyay</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="page">
+  <div id="siteNav"></div>
+
+  <div class="dash-overlay page-mode keep-topbar" id="dashOverlay">
+    <div class="dash-top">
+      <div class="brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeDash()">Back to site</button>
+      <div class="dash-top-account" id="dashTopAccount" style="display:flex; align-items:center; gap:12px; margin-left:12px; position:relative;">
+        <button class="nav-bell" id="dashBellBtn" onclick="toggleDashNotifs()" style="position:relative; width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); cursor:pointer;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3C9.5 3 7.5 5 7.5 7.5V11L5.5 15H18.5L16.5 11V7.5C16.5 5 14.5 3 12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 18C9.5 19.4 10.6 20.5 12 20.5C13.4 20.5 14.5 19.4 14.5 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="nav-bell-dot" id="dashBellDot" style="position:absolute; top:5px; right:6px; width:7px; height:7px; border-radius:50%; background:#E0432B; border:1.5px solid #fff; display:none;"></span>
+        </button>
+        <div id="dashNotifMenu" class="dash-dropdown dash-dropdown-notif" style="display:none;">
+          <div style="padding:12px 14px; border-bottom:1px solid var(--line); font-weight:700; font-size:13.5px;">Notifications</div>
+          <div id="dashNotifList" style="max-height:220px; overflow:auto;"></div>
+        </div>
+        <button class="nav-avatar-btn" id="dashTopAvatarBtn" onclick="toggleDashAccountMenu()" style="width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid var(--blue-100); padding:0; background:var(--blue-50); cursor:pointer; position:relative;">
+          <img id="dashTopAvatarImg" src="" style="width:100%; height:100%; object-fit:cover; display:none;">
+          <span id="dashTopAvatarInit" style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; font-weight:700; color:var(--blue-700); font-size:13px;"></span>
+        </button>
+        <div id="dashAccountMenu" class="dash-dropdown dash-dropdown-account" style="display:none;">
+          <div style="padding:12px 14px; border-bottom:1px solid var(--line);">
+            <div id="dashMenuName" style="font-weight:700; font-size:14px; color:var(--ink);">—</div>
+            <div id="dashMenuMeta" style="font-size:12.5px; color:var(--ink-faint);">—</div>
+          </div>
+          <button onclick="closeDashAccountMenu(); switchEmployerTab('company');" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:var(--ink); cursor:pointer;">Institution profile</button>
+          <button onclick="document.getElementById('logoFile').click()" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:var(--ink); cursor:pointer;">Upload logo</button>
+          <button onclick="closeDashAccountMenu(); logoutUser();" style="display:block; width:100%; text-align:left; padding:10px 14px; background:none; border:none; font-size:13.5px; color:#B3261E; cursor:pointer; border-top:1px solid var(--line);">Log out</button>
+        </div>
+      </div>
+    </div>
+    <div class="dash-inner-wide" id="dashInnerWide">
+      <div class="dash-head">
+        <div class="dash-avatar" id="dashAvatar">U</div>
+        <div>
+          <h2 id="dashName">Your profile</h2>
+          <p id="dashSub">Manage your Upadyay account</p>
+        </div>
+      </div>
+
+      <div class="dash-panel" id="panelSearch">
+        <div id="dashProfileTab" style="display:block;">
+          <div class="pf-layout">
+            <aside class="pf-side">
+              <img class="pf-side-img" src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=700&q=80" alt="">
+              <div class="pf-side-body">
+                <h4>Build a profile recruiters trust</h4>
+                <p>Complete profiles get up to 3× more recruiter views. Add your qualification, experience and documents so the right institutions can find you.</p>
+                <div class="pf-progress-track"><div class="pf-progress-fill" id="pfSideProgressFill" style="width:15%;"></div></div>
+                <p class="pf-progress-label"><span id="pfSideProgressLabel">15% complete</span></p>
+                <div class="pf-side-steps">
+                  <div class="pf-side-step done"><span class="dot">✓</span><span>Create your account</span></div>
+                  <div class="pf-side-step" id="pfStepBasics"><span class="dot">2</span><span>Add your basic profile details</span></div>
+                  <div class="pf-side-step" id="pfStepDocs"><span class="dot">3</span><span>Attach resume &amp; certificates</span></div>
+                  <div class="pf-side-step"><span class="dot">4</span><span>Start browsing &amp; applying to jobs</span></div>
+                </div>
+              </div>
+            </aside>
+
+            <div>
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.5 12 16.5 10 16.5 7.5C16.5 5 14.5 3 12 3C9.5 3 7.5 5 7.5 7.5C7.5 10 9.5 12 12 12Z" stroke="currentColor" stroke-width="1.6"/><path d="M4 20.5C4 16.9 7.6 14 12 14C16.4 14 20 16.9 20 20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </div>
+                  <h3>Your profile</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Full name</label><input type="text" id="pfName" class="pf-input" placeholder="e.g. Priya Menon" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Subject / specialisation</label><input type="text" id="pfSubject" class="pf-input" placeholder="e.g. Physics, Data Science" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Highest qualification</label>
+                    <select id="pfQualification" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select qualification</option>
+                      <option>UG</option><option>PG</option><option>PhD</option>
+                    </select>
+                  </div>
+                  <div class="pf-field"><label>Category</label>
+                    <select id="pfCategory" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select category</option>
+                      <option>Schools</option><option>Intermediate</option><option>Higher Education</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>College / university</label><input type="text" id="pfCollege" class="pf-input" placeholder="e.g. IIIT Nagpur" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Years of experience</label><input type="text" id="pfExperience" class="pf-input" placeholder="e.g. 3" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Location</label><input type="text" id="pfLocation" class="pf-input" placeholder="e.g. Hyderabad, Telangana" oninput="pfOnInputProgress()"></div>
+                <div class="dash-form-row" style="margin-top:16px;">
+                  <div class="pf-field"><label>Email</label><input type="email" id="pfEmail" class="pf-input" placeholder="you@example.com" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Mobile number</label><input type="tel" id="pfPhone" class="pf-input" placeholder="10-digit mobile number" maxlength="10" oninput="pfOnInputProgress()"></div>
+                </div>
+                <p class="pf-contact-note" id="pfContactNote" style="display:none; font-size:12.5px; color:var(--blue-700); background:var(--blue-50); border-radius:5px; padding:8px 12px; margin:10px 0 0;"></p>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3H14L19 8V19C19 20.1 18.1 21 17 21H8C6.9 21 6 20.1 6 19V5C6 3.9 6.9 3 8 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3V8H19" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </div>
+                  <h3>Certifications &amp; documents</h3>
+                </div>
+                <p class="pf-section-sub">Add links to your resume, degree certificates, and publications.</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Resume / CV link</label><input type="text" id="pfResume" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Highest degree certificate link</label><input type="text" id="pfDegreeCert" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row" style="margin-bottom:0;">
+                  <div class="pf-field"><label>Publications / Google Scholar link</label><input type="text" id="pfPublications" class="pf-input" placeholder="https://..."></div>
+                  <div class="pf-field"><label>Patent / additional document link</label><input type="text" id="pfPatent" class="pf-input" placeholder="https://..."></div>
+                </div>
+              </div>
+
+              <div class="pf-actions">
+                <button class="btn btn-primary btn-sm" id="pfSaveBtn" onclick="saveProfile()">Save profile &amp; browse jobs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="siteChrome"></div>
+
+<script src="../js/store.js"></script>
+<script src="../js/employer.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/faculty.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/layout.js"></script>
+<script>mountNav(); mountChrome(); if(requireLogin('seeker')) openDash(currentUser.name || 'User', 'search');</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — Upadyay</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="page">
+  <div id="siteNav"></div>
+
+  <div class="dash-overlay page-mode" id="fullProfileOverlay">
+    <div class="dash-top">
+      <div class="brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="fpAutosaveNote" style="font-size:12px; color:var(--ink-faint); margin-right:4px;">✓ Changes save automatically</span>
+        <button class="btn btn-primary btn-sm" onclick="closeFullProfile(); openBrowseJobs();">Save &amp; browse jobs</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeFullProfile()">Done</button>
+      </div>
+    </div>
+    <div id="fpSaveToast" style="position:fixed; top:78px; left:50%; transform:translateX(-50%) translateY(-8px); background:var(--blue-900); color:#fff; font-size:13px; font-weight:600; padding:9px 16px; border-radius:5px; box-shadow:var(--shadow-md); z-index:120; opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease;">✓ Saved</div>
+    <div class="dash-inner" style="max-width:640px;">
+      <div class="ap2-card ap2-summary">
+        <div class="fp-avatar-wrap">
+          <img class="fp-avatar" id="fpAvatar" src="" style="width:76px; height:76px;">
+          <label class="fp-avatar-upload" title="Change photo">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H7L9 4H15L17 7H20C20.6 7 21 7.4 21 8V19C21 19.6 20.6 20 20 20H4C3.4 20 3 19.6 3 19V8C3 7.4 3.4 7 4 7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" stroke="currentColor" stroke-width="1.6"/></svg>
+            <input type="file" accept="image/*" style="display:none;" onchange="fpUploadAvatar(event)">
+          </label>
+        </div>
+        <div class="ap2-summary-info">
+          <h2 id="fpName" class="fp-editable" contenteditable="true" onblur="fpSaveField('name', this.textContent)">Your name</h2>
+          <p id="fpDegree">Add your degree and specialisation</p>
+          <p class="ap2-summary-loc">📍 <span id="fpLocation" class="fp-editable" style="display:inline-block; margin:0;" contenteditable="true" onblur="fpSaveField('location', this.textContent)">Add location</span></p>
+        </div>
+        <div class="fp-complete">
+          <span class="num tabular" id="fpPct">40%</span>
+          <label>Profile complete</label>
+        </div>
+      </div>
+
+      <div class="ap2-card">
+        <div class="ap2-card-head">
+          <div>
+            <h3>Edit your preferences</h3>
+            <p>Your personalised job feed is shown based on these preferences.</p>
+          </div>
+        </div>
+        <div class="ap2-pref-grid">
+          <div class="ap2-pref-field">
+            <label>Category</label>
+            <select id="fpCategory" class="fp-editable ap2-pref-input" onchange="fpSaveField('category', this.value)">
+              <option value="">Not set</option>
+              <option>Schools</option><option>Intermediate</option><option>Higher Education</option>
+            </select>
+          </div>
+          <div class="ap2-pref-field">
+            <label>Qualification</label>
+            <select id="fpQualification" class="fp-editable ap2-pref-input" onchange="fpSaveField('qualification', this.value)">
+              <option value="">Not set</option>
+              <option>UG</option><option>PG</option><option>PhD</option>
+            </select>
+          </div>
+          <div class="ap2-pref-field">
+            <label>Subject / specialisation</label>
+            <p id="fpSubject" class="fp-editable ap2-pref-input" contenteditable="true" onblur="fpSaveField('subject', this.textContent)">Not set</p>
+          </div>
+          <div class="ap2-pref-field">
+            <label>Years of experience</label>
+            <p id="fpExperience" class="fp-editable ap2-pref-input" contenteditable="true" onblur="fpSaveField('experience', this.textContent)">Not set</p>
+          </div>
+          <div class="ap2-pref-field" style="grid-column:1 / -1;">
+            <label>College / university</label>
+            <p id="fpEduLine" class="fp-editable ap2-pref-input" contenteditable="true" onblur="fpSaveField('college', this.textContent)">Not set</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ap2-card">
+        <div class="ap2-card-head">
+          <div>
+            <h3>Certifications &amp; documents</h3>
+            <p>Add links to your resume, degree certificates, and publications.</p>
+          </div>
+        </div>
+        <div class="ap2-pref-grid">
+          <div class="ap2-pref-field"><label>Resume / CV link</label><input type="text" id="fpResume" class="fp-editable ap2-pref-input ap2-pref-link" placeholder="Not added" oninput="fpSaveLinkField('resume', this.value)"></div>
+          <div class="ap2-pref-field"><label>Highest degree certificate link</label><input type="text" id="fpDegreeCertLink" class="fp-editable ap2-pref-input ap2-pref-link" placeholder="Not added" oninput="fpSaveLinkField('degreeCert', this.value)"></div>
+          <div class="ap2-pref-field"><label>Publications / Google Scholar link</label><input type="text" id="fpPublicationsLink" class="fp-editable ap2-pref-input ap2-pref-link" placeholder="Not added" oninput="fpSaveLinkField('publications', this.value)"></div>
+          <div class="ap2-pref-field"><label>Patent / additional document link</label><input type="text" id="fpPatentLink" class="fp-editable ap2-pref-input ap2-pref-link" placeholder="Not added" oninput="fpSaveLinkField('patent', this.value)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="siteChrome"></div>
+
+<script src="../js/store.js"></script>
+<script src="../js/employer.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/faculty.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/layout.js"></script>
+<script>mountNav(); mountChrome(); initFullProfilePage();</script>
+</body>
+</html>
