@@ -28,125 +28,72 @@
   </div>
 
   <div class="auth-page" id="authOverlay">
-    <button class="ap-close" onclick="closeAuth()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="auth-card" id="authCard">
+      <button class="ap-close" onclick="closeAuth()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
 
-    <div class="ap-left">
-      <div class="ap-brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
+      <div class="ac-brand"><div class="brand-mark" style="width:26px;height:26px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>Upadyay</div>
 
-      <div class="ap-left-mid">
-        <div class="ap-illustration" aria-hidden="true">
-          <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="200" cy="268" rx="140" ry="14" fill="#0E2246"/>
-            <rect x="70" y="60" width="260" height="170" rx="14" fill="#16305E" stroke="#3B5C9E" stroke-width="2"/>
-            <rect x="70" y="60" width="260" height="30" rx="14" fill="#1C3A70"/>
-            <circle cx="86" cy="75" r="4" fill="#5B7FC9"/>
-            <circle cx="100" cy="75" r="4" fill="#5B7FC9"/>
-            <circle cx="114" cy="75" r="4" fill="#5B7FC9"/>
-            <rect x="140" y="110" width="120" height="10" rx="5" fill="#3B82F6"/>
-            <rect x="140" y="132" width="90" height="8" rx="4" fill="#3B5C9E"/>
-            <rect x="120" y="160" width="160" height="26" rx="6" fill="#0E2246" stroke="#3B82F6" stroke-width="1.5"/>
-            <rect x="120" y="196" width="160" height="26" rx="6" fill="#3B82F6"/>
-            <text x="200" y="213" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#0B1D3A">SIGN IN</text>
-            <circle cx="330" cy="120" r="34" fill="#1C3A70"/>
-            <circle cx="330" cy="108" r="12" fill="#AEBEDD"/>
-            <path d="M312 138C312 126 320 118 330 118C340 118 348 126 348 138" fill="#AEBEDD"/>
-            <g>
-              <circle cx="60" cy="130" r="22" fill="#1C3A70"/>
-              <circle cx="60" cy="122" r="8" fill="#5FD79E"/>
-              <path d="M47 144C47 135 53 129 60 129C67 129 73 135 73 144" fill="#5FD79E"/>
-            </g>
-            <rect x="250" y="40" width="34" height="34" rx="8" fill="#3B82F6" opacity="0.85"/>
-            <path d="M262 57L265 61L272 51" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="100" cy="45" r="10" fill="#5FD79E" opacity="0.85"/>
-          </svg>
+      <span class="ap-page-tag" id="apPageTag">Faculty account</span>
+      <div id="backToLoginLink" style="display:none; margin-bottom:14px;"></div>
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="sub" id="authSub">Log in to continue</p>
+
+      <form onsubmit="return submitAuth(event)">
+        <div class="modal-field" id="fieldName" style="display:none;">
+          <label>Full name</label>
+          <input type="text" id="authNameInput" placeholder="Your name">
         </div>
-        <h1 id="apLeftHeading">India's dedicated faculty recruitment platform</h1>
-        <p id="apLeftSub">Built only for teaching roles — schools, junior colleges and universities hiring verified faculty, with no middlemen.</p>
-        <div class="ap-feature-list" id="apFeatureList">
-          <div class="ap-feature">
-            <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-            <div><div class="ft">One profile, every opportunity</div><div class="fs">Build your faculty profile once and apply across schools, colleges and universities.</div></div>
+        <div class="modal-field" id="fieldCompanyName" style="display:none;">
+          <label>Institution / Company name</label>
+          <input type="text" id="authCompanyNameInput" placeholder="e.g. Radha Krishna Junior College">
+        </div>
+        <div class="modal-field" id="fieldContactPerson" style="display:none;">
+          <label>Contact person</label>
+          <input type="text" id="authContactPersonInput" placeholder="Your name">
+        </div>
+
+        <div class="modal-tabs modal-tabs-icon" id="authMethodTabs" style="margin-bottom:16px;">
+          <button type="button" class="modal-tab active" id="methodEmail" onclick="setAuthMethod('email')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L12 13L21 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+            <span>Email</span>
+          </button>
+          <button type="button" class="modal-tab" id="methodPhone" onclick="setAuthMethod('phone')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="2.5" width="10" height="19" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M11 18H13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Phone</span>
+          </button>
+        </div>
+
+        <div id="authEmailFields">
+          <div class="modal-field">
+            <label>Email</label>
+            <input type="email" id="authEmailInput" placeholder="you@example.com">
           </div>
-          <div class="ap-feature">
-            <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg></span>
-            <div><div class="ft">Verified institutions only</div><div class="fs">Every employer on Upadyay is a genuine school, junior college or university.</div></div>
-          </div>
-          <div class="ap-feature">
-            <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20M4 12H20M4 18H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-            <div><div class="ft">Category-first search</div><div class="fs">Filter by Schools, Intermediate or Higher Education to find the right fit fast.</div></div>
+          <div class="modal-field">
+            <label>Password</label>
+            <input type="password" id="authPasswordInput" placeholder="••••••••">
           </div>
         </div>
-      </div>
 
-      <div class="ap-stats-row">
-        <div><span class="s-num tabular">18,400+</span><span class="s-lab">Registered faculty</span></div>
-        <div><span class="s-num tabular">1,200+</span><span class="s-lab">Institutions hiring</span></div>
-        <div><span class="s-num tabular">2 yrs</span><span class="s-lab">Free for employers</span></div>
-      </div>
-    </div>
-
-    <div class="ap-right">
-      <div class="ap-form-wrap">
-        <span class="ap-page-tag" id="apPageTag">Faculty account</span>
-        <div id="backToLoginLink" style="display:none; margin-bottom:14px;"></div>
-        <h2 id="authTitle">Welcome back</h2>
-        <p class="sub" id="authSub">Log in to continue</p>
-
-        <form onsubmit="return submitAuth(event)">
-          <div class="modal-field" id="fieldName" style="display:none;">
-            <label>Full name</label>
-            <input type="text" id="authNameInput" placeholder="Your name">
-          </div>
-          <div class="modal-field" id="fieldCompanyName" style="display:none;">
-            <label>Institution / Company name</label>
-            <input type="text" id="authCompanyNameInput" placeholder="e.g. Radha Krishna Junior College">
-          </div>
-          <div class="modal-field" id="fieldContactPerson" style="display:none;">
-            <label>Contact person</label>
-            <input type="text" id="authContactPersonInput" placeholder="Your name">
-          </div>
-
-          <div class="modal-tabs modal-tabs-icon" id="authMethodTabs" style="margin-bottom:16px;">
-            <button type="button" class="modal-tab active" id="methodEmail" onclick="setAuthMethod('email')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L12 13L21 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
-              <span>Email</span>
-            </button>
-            <button type="button" class="modal-tab" id="methodPhone" onclick="setAuthMethod('phone')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="2.5" width="10" height="19" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M11 18H13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-              <span>Phone</span>
-            </button>
-          </div>
-
-          <div id="authEmailFields">
-            <div class="modal-field">
-              <label>Email</label>
-              <input type="email" id="authEmailInput" placeholder="you@example.com">
-            </div>
-            <div class="modal-field">
-              <label>Password</label>
-              <input type="password" id="authPasswordInput" placeholder="••••••••">
+        <div id="authPhoneFields" style="display:none;">
+          <div class="modal-field">
+            <label>Mobile number</label>
+            <div style="display:flex; gap:8px;">
+              <input type="tel" id="authPhoneInput" placeholder="10-digit mobile number" maxlength="10" style="flex:1;">
+              <button type="button" class="btn btn-light btn-sm" id="authSendOtpBtn" onclick="sendAuthOtp()" style="white-space:nowrap;">Send OTP</button>
             </div>
           </div>
-
-          <div id="authPhoneFields" style="display:none;">
-            <div class="modal-field">
-              <label>Mobile number</label>
-              <div style="display:flex; gap:8px;">
-                <input type="tel" id="authPhoneInput" placeholder="10-digit mobile number" maxlength="10" style="flex:1;">
-                <button type="button" class="btn btn-light btn-sm" id="authSendOtpBtn" onclick="sendAuthOtp()" style="white-space:nowrap;">Send OTP</button>
-              </div>
-            </div>
-            <div class="modal-field" id="authOtpField" style="display:none;">
-              <label>Enter OTP</label>
-              <input type="text" id="authOtpInput" placeholder="6-digit OTP" maxlength="6" inputmode="numeric">
-              <span style="font-size:12px; color:var(--ink-faint);">Demo mode — enter any 6-digit code to continue.</span>
-            </div>
+          <div class="modal-field" id="authOtpField" style="display:none;">
+            <label>Enter OTP</label>
+            <input type="text" id="authOtpInput" placeholder="6-digit OTP" maxlength="6" inputmode="numeric">
+            <span style="font-size:12px; color:var(--ink-faint);">Demo mode — enter any 6-digit code to continue.</span>
           </div>
+        </div>
 
-          <p id="authError" style="display:none; font-size:12.5px; color:#B3261E; margin:-6px 0 10px;"></p>
-          <button type="submit" class="btn btn-primary" id="authSubmitBtn">Log in</button>
-        </form>
-      </div>
+        <p id="authError" style="display:none; font-size:12.5px; color:#B3261E; margin:-6px 0 10px;"></p>
+        <button type="submit" class="btn btn-primary" id="authSubmitBtn">Log in</button>
+      </form>
+
+      <p class="ac-switch-role" id="acSwitchRole">Not a faculty member? <a href="javascript:void(0)" onclick="openRolePopup(authMode)">Switch account type</a></p>
     </div>
   </div>
 
