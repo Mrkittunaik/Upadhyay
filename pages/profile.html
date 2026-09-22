@@ -30,8 +30,11 @@
         </div>
         <div class="ap2-summary-info">
           <h2 id="fpName" class="fp-editable" contenteditable="true" onblur="fpSaveField('name', this.textContent)">Your name</h2>
+          <p id="fpNameError" class="fp-field-error" style="display:none;"></p>
           <p id="fpDegree">Add your degree and specialisation</p>
           <p class="ap2-summary-loc">📍 <span id="fpLocation" class="fp-editable" style="display:inline-block; margin:0;" contenteditable="true" onblur="fpSaveField('location', this.textContent)">Add location</span></p>
+          <p class="ap2-summary-loc">✉️ <span id="fpEmail" class="fp-editable" style="display:inline-block; margin:0;" contenteditable="true" onblur="fpSaveField('email', this.textContent)">Add email</span></p>
+          <p id="fpEmailError" class="fp-field-error" style="display:none;"></p>
         </div>
         <div class="fp-complete">
           <span class="num tabular" id="fpPct">40%</span>
