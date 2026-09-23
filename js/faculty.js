@@ -380,6 +380,21 @@
   }
 
   // Demo OTP-style verify — matches the pattern used elsewhere in the app (no real backend).
+  // Swaps the leading icon in the "Registration type" dropdown to match the selected role.
+  const PF_REG_TYPE_ICONS = {
+    'Faculty / Professor': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    'Teacher': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5C4 18.1 5.1 17 6.5 17H20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6.5 3H20V21H6.5C5.1 21 4 19.9 4 18.5V5.5C4 4.1 5.1 3 6.5 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+    'Researcher': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.6"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+    'Academic Administrator': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V10" stroke="currentColor" stroke-width="1.6"/></svg>',
+    'Industry Professional': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 21V16H15V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+    'Other': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 8V12L15 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+  };
+  const PF_REG_TYPE_DEFAULT_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function pfUpdateRegTypeIcon(value){
+    const ico = document.getElementById('pfRegTypeIco');
+    if(ico) ico.innerHTML = PF_REG_TYPE_ICONS[value] || PF_REG_TYPE_DEFAULT_ICON;
+  }
+
   function pfVerifyField(kind){
     if(kind === 'mobile'){
       currentUser.mobileVerified = true;
@@ -453,6 +468,7 @@
       // 3. Account details
       setVal('pfReferralCode', U.referralCode);
       setVal('pfRegistrationType', U.registrationType);
+      pfUpdateRegTypeIcon(U.registrationType);
 
       // 4. Educational qualifications
       setVal('pfQualification', U.qualification);
