@@ -153,11 +153,16 @@
                 <div class="dash-form-row">
                   <div class="pf-field"><label>Referral code / referred by</label><input type="text" id="pfReferralCode" class="pf-input" placeholder="Optional" oninput="pfOnInputProgress()"></div>
                   <div class="pf-field"><label>Registration type</label>
-                    <select id="pfRegistrationType" class="pf-input" onchange="pfOnInputProgress()">
-                      <option value="">Select type</option>
-                      <option>Faculty / Professor</option><option>Teacher</option><option>Researcher</option>
-                      <option>Academic Administrator</option><option>Industry Professional</option><option>Other</option>
-                    </select>
+                    <div class="pf-select-wrap">
+                      <span class="pf-select-ico" id="pfRegTypeIco">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      </span>
+                      <select id="pfRegistrationType" class="pf-input pf-select-styled" onchange="pfOnInputProgress(); pfUpdateRegTypeIcon(this.value);">
+                        <option value="">Select type</option>
+                        <option>Faculty / Professor</option><option>Teacher</option><option>Researcher</option>
+                        <option>Academic Administrator</option><option>Industry Professional</option><option>Other</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
