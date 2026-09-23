@@ -396,6 +396,8 @@
   .pf-section.open .pf-section-head{border-bottom-color:var(--line);}
   .pf-section-head .pf-ico{width:38px; height:38px; border-radius:10px; background:var(--blue-50); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--blue-700);}
   .pf-section-head h3{margin:0; font-size:16px; font-weight:700; flex:1;}
+  .pf-section-add-btn{border:1px solid var(--blue-700); color:var(--blue-700); background:#fff; font-size:12.5px; font-weight:600; padding:6px 14px; border-radius:20px; cursor:pointer; flex-shrink:0;}
+  .pf-section.complete .pf-section-add-btn{border-color:var(--line); color:var(--ink-soft);}
   .pf-section-check{width:24px; height:24px; border-radius:50%; background:#e7e9ee; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; transition:background .2s ease;}
   .pf-section.complete .pf-section-check{background:#1D8A5E;}
   .pf-section-chevron{width:20px; height:20px; flex-shrink:0; color:var(--ink-faint); transition:transform .2s ease; display:flex; align-items:center; justify-content:center;}
