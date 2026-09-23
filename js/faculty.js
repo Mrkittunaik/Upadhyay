@@ -691,19 +691,24 @@
       sec.appendChild(body);
       sec.dataset.sectionIndex = idx;
 
-      // Tick badge + chevron in the header.
+      // "+ Add" / "Edit" pill + chevron in the header.
+      const actionBtn = document.createElement('button');
+      actionBtn.type = 'button';
+      actionBtn.className = 'pf-section-add-btn';
+      actionBtn.textContent = '+ Add';
+      actionBtn.addEventListener('click', (e)=>{ e.stopPropagation(); pfToggleSection(idx); });
       const check = document.createElement('span');
       check.className = 'pf-section-check';
       check.textContent = '✓';
       const chevron = document.createElement('span');
       chevron.className = 'pf-section-chevron';
       chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      head.appendChild(actionBtn);
       head.appendChild(check);
       head.appendChild(chevron);
       head.addEventListener('click', ()=> pfToggleSection(idx));
 
-      // Open the first section by default, keep the rest collapsed.
-      if(idx === 0) sec.classList.add('open');
+      // Every section starts closed.
       pfRefreshSectionCheck(sec);
     });
   }
@@ -728,6 +733,8 @@
       return (el.value || '').trim();
     });
     sec.classList.toggle('complete', filled);
+    const btn = sec.querySelector('.pf-section-add-btn');
+    if(btn) btn.textContent = filled ? 'Edit' : '+ Add';
   }
 
   function pfSaveAndCloseSection(idx){
@@ -736,8 +743,6 @@
     saveProfile({ silent: true });
     pfRefreshSectionCheck(sec);
     sec.classList.remove('open');
-    const nextSec = pfSectionEl(idx + 1);
-    if(nextSec) nextSec.classList.add('open');
   }
 
   function saveProfile(opts){
