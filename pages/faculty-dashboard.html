@@ -44,6 +44,7 @@
             <aside class="pf-side">
               <img class="pf-side-img" src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=700&q=80" alt="">
               <div class="pf-side-body">
+                <p style="font-size:11px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:rgba(255,255,255,0.65); margin:0 0 4px;" id="pfCandidateIdLabel"></p>
                 <h4>Build a profile recruiters trust</h4>
                 <p>Complete profiles get up to 3× more recruiter views. Add your qualification, experience and documents so the right institutions can find you.</p>
                 <div class="pf-progress-track"><div class="pf-progress-fill" id="pfSideProgressFill" style="width:15%;"></div></div>
@@ -63,36 +64,442 @@
                   <div class="pf-ico">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.5 12 16.5 10 16.5 7.5C16.5 5 14.5 3 12 3C9.5 3 7.5 5 7.5 7.5C7.5 10 9.5 12 12 12Z" stroke="currentColor" stroke-width="1.6"/><path d="M4 20.5C4 16.9 7.6 14 12 14C16.4 14 20 16.9 20 20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
                   </div>
-                  <h3>Your profile</h3>
+                  <h3>1. Basic personal details</h3>
                 </div>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>Full name</label><input type="text" id="pfName" class="pf-input" placeholder="e.g. Priya Menon" oninput="pfOnInputProgress()"></div>
-                  <div class="pf-field"><label>Subject / specialisation</label><input type="text" id="pfSubject" class="pf-input" placeholder="e.g. Physics, Data Science" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Full name *</label><input type="text" id="pfName" class="pf-input" placeholder="e.g. Priya Menon" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Gender</label>
+                    <select id="pfGender" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select gender</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option>
+                    </select>
+                  </div>
                 </div>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>Highest qualification</label>
+                  <div class="pf-field"><label>Date of birth</label><input type="date" id="pfDob" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Age</label><input type="number" id="pfAge" class="pf-input" placeholder="e.g. 32" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Nationality *</label><input type="text" id="pfNationality" class="pf-input" placeholder="e.g. Indian" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Current location / city *</label><input type="text" id="pfLocation" class="pf-input" placeholder="e.g. Hyderabad" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>State *</label><input type="text" id="pfState" class="pf-input" placeholder="e.g. Telangana" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Country *</label><input type="text" id="pfCountry" class="pf-input" placeholder="e.g. India" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Preferred work location</label>
+                    <select id="pfPreferredWorkLocation" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option><option>India</option><option>International</option><option>Both</option>
+                    </select>
+                  </div>
+                  <div class="pf-field"><label>Willing to relocate?</label>
+                    <select id="pfWillingToRelocate" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option><option>Yes</option><option>No</option><option>Depends on Opportunity</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6.5L12 13L21 6.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+                  </div>
+                  <h3>2. Contact details</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Mobile number *</label><input type="tel" id="pfPhone" class="pf-input" placeholder="10-digit mobile number" maxlength="10" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Alternate mobile number</label><input type="tel" id="pfAltPhone" class="pf-input" placeholder="10-digit mobile number" maxlength="10" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Email ID *</label><input type="email" id="pfEmail" class="pf-input" placeholder="you@example.com" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Alternate email ID</label><input type="email" id="pfAltEmail" class="pf-input" placeholder="you@example.com" oninput="pfOnInputProgress()"></div>
+                </div>
+                <p class="pf-contact-note" id="pfContactNote" style="display:none; font-size:12.5px; color:var(--blue-700); background:var(--blue-50); border-radius:5px; padding:8px 12px; margin:0 0 16px;"></p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>WhatsApp number</label><input type="tel" id="pfWhatsapp" class="pf-input" placeholder="10-digit number" maxlength="10" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>LinkedIn profile</label><input type="text" id="pfLinkedin" class="pf-input" placeholder="https://linkedin.com/in/..." oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Google Scholar profile</label><input type="text" id="pfGoogleScholar" class="pf-input" placeholder="https://scholar.google.com/..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>ORCID ID</label><input type="text" id="pfOrcid" class="pf-input" placeholder="0000-0000-0000-0000" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Personal / professional website</label><input type="text" id="pfWebsite" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                <div class="dash-form-row" style="margin-top:16px;">
+                  <div class="pf-field">
+                    <label>Mobile OTP verification *</label>
+                    <div style="display:flex; gap:8px;">
+                      <button type="button" class="btn btn-light btn-sm" id="pfMobileVerifyBtn" onclick="pfVerifyField('mobile')" style="white-space:nowrap;">Verify mobile</button>
+                      <span id="pfMobileVerifiedTag" style="display:none; font-size:12px; font-weight:700; color:#1D8A5E; align-self:center;">✓ Verified</span>
+                    </div>
+                  </div>
+                  <div class="pf-field">
+                    <label>Email verification *</label>
+                    <div style="display:flex; gap:8px;">
+                      <button type="button" class="btn btn-light btn-sm" id="pfEmailVerifyBtn" onclick="pfVerifyField('email')" style="white-space:nowrap;">Verify email</button>
+                      <span id="pfEmailVerifiedTag" style="display:none; font-size:12px; font-weight:700; color:#1D8A5E; align-self:center;">✓ Verified</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7C8 4.8 9.8 3 12 3C14.2 3 16 4.8 16 7V10" stroke="currentColor" stroke-width="1.6"/></svg>
+                  </div>
+                  <h3>3. Account details</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Referral code / referred by</label><input type="text" id="pfReferralCode" class="pf-input" placeholder="Optional" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Registration type</label>
+                    <select id="pfRegistrationType" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select type</option>
+                      <option>Faculty / Professor</option><option>Teacher</option><option>Researcher</option>
+                      <option>Academic Administrator</option><option>Industry Professional</option><option>Other</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <h3>4. Educational qualifications</h3>
+                </div>
+                <p class="pf-subsection-label">Highest qualification</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Qualification *</label>
                     <select id="pfQualification" class="pf-input" onchange="pfOnInputProgress()">
                       <option value="">Select qualification</option>
-                      <option>UG</option><option>PG</option><option>PhD</option>
+                      <option>Ph.D.</option><option>M.Phil.</option><option>M.Tech / M.E.</option><option>MBA</option>
+                      <option>M.Sc.</option><option>B.Tech / B.E.</option><option>M.Com</option><option>B.Ed.</option><option>M.Ed.</option>
+                      <option>UG</option><option>PG</option><option>Other</option>
                     </select>
                   </div>
-                  <div class="pf-field"><label>Category</label>
-                    <select id="pfCategory" class="pf-input" onchange="pfOnInputProgress()">
-                      <option value="">Select category</option>
-                      <option>Schools</option><option>Intermediate</option><option>Higher Education</option>
+                  <div class="pf-field"><label>Specialization / branch *</label><input type="text" id="pfSubject" class="pf-input" placeholder="e.g. Physics, Data Science" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>University / institution *</label><input type="text" id="pfCollege" class="pf-input" placeholder="e.g. IIIT Nagpur" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Country</label><input type="text" id="pfHighestQualCountry" class="pf-input" placeholder="e.g. India" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Year of passing *</label><input type="number" id="pfHighestQualYear" class="pf-input" placeholder="e.g. 2019" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Percentage / CGPA</label><input type="text" id="pfHighestQualPct" class="pf-input" placeholder="e.g. 8.4 CGPA" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Certificate / degree upload link</label><input type="text" id="pfHighestQualCertLink" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Additional qualifications</p>
+                <div class="pf-repeat-list" id="pfAddQualList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddQualification()">+ Add qualification</button>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 21V16H15V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </div>
+                  <h3>5. Professional experience</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Total academic experience</label><input type="text" id="pfAcademicExperience" class="pf-input" placeholder="e.g. 5 years" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Total industry experience</label><input type="text" id="pfIndustryExperience" class="pf-input" placeholder="e.g. 2 years" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Total research experience</label><input type="text" id="pfResearchExperience" class="pf-input" placeholder="e.g. 3 years" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Total administrative experience</label><input type="text" id="pfAdminExperienceYears" class="pf-input" placeholder="e.g. 1 year" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Years of experience (overall, shown on your card)</label><input type="text" id="pfExperience" class="pf-input" placeholder="e.g. 3" oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Employment history</p>
+                <div class="pf-repeat-list" id="pfEmploymentList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddEmployment()">+ Add experience</button>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.5 12 16.5 10 16.5 7.5C16.5 5 14.5 3 12 3C9.5 3 7.5 5 7.5 7.5C7.5 10 9.5 12 12 12Z" stroke="currentColor" stroke-width="1.6"/><path d="M4 20.5C4 16.9 7.6 14 12 14C16.4 14 20 16.9 20 20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </div>
+                  <h3>6. Current employment</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Currently working? *</label>
+                    <select id="pfCurrentlyWorking" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option><option>Yes</option><option>No</option>
+                    </select>
+                  </div>
+                  <div class="pf-field"><label>Current organization *</label><input type="text" id="pfCurrentOrg" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Current designation *</label><input type="text" id="pfCurrentDesignation" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Department</label><input type="text" id="pfCurrentDept" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Joining date</label><input type="date" id="pfJoiningDate" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Current location</label><input type="text" id="pfCurrentLocation" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Present salary / CTC</label><input type="text" id="pfPresentCtc" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Notice period</label><input type="text" id="pfNoticePeriod" class="pf-input" placeholder="e.g. 30 days" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Expected salary / CTC</label><input type="text" id="pfExpectedCtc" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Available from</label><input type="date" id="pfAvailableFrom" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Looking for change?</label>
+                  <select id="pfLookingForChange" class="pf-input" onchange="pfOnInputProgress()">
+                    <option value="">Select</option><option>Immediately</option><option>Within 15 Days</option>
+                    <option>Within 30 Days</option><option>Within 60 Days</option><option>Within 90 Days</option><option>Not Currently Looking</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20M4 12H20M4 18H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                  </div>
+                  <h3>7. Teaching & academic details</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Teaching experience</label><input type="text" id="pfTeachingExperience" class="pf-input" placeholder="e.g. 4 years" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Subjects / courses taught</label><input type="text" id="pfSubjectsTaught" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>UG subjects</label><input type="text" id="pfUgSubjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>PG subjects</label><input type="text" id="pfPgSubjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Preferred teaching subjects</label><input type="text" id="pfPreferredTeachingSubjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Preferred departments</label><input type="text" id="pfPreferredDepartments" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Preferred designations</label>
+                  <select id="pfPreferredDesignations" class="pf-input" onchange="pfOnInputProgress()">
+                    <option value="">Select</option>
+                    <option>Assistant Professor</option><option>Associate Professor</option><option>Professor</option>
+                    <option>HOD</option><option>Dean</option><option>Principal</option><option>Director</option>
+                    <option>Academic Coordinator</option><option>Lecturer</option><option>Teacher</option><option>Researcher</option><option>Other</option>
+                  </select>
+                </div>
+                <div class="pf-field" style="margin-top:16px;"><label>Category (used to match you with relevant jobs)</label>
+                  <select id="pfCategory" class="pf-input" onchange="pfOnInputProgress()">
+                    <option value="">Select category</option>
+                    <option>Schools</option><option>Intermediate</option><option>Higher Education</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.5 12 16.5 10 16.5 7.5C16.5 5 14.5 3 12 3C9.5 3 7.5 5 7.5 7.5C7.5 10 9.5 12 12 12Z" stroke="currentColor" stroke-width="1.6"/></svg>
+                  </div>
+                  <h3>8. Research profile</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Research area *</label><input type="text" id="pfResearchArea" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Area of specialization *</label><input type="text" id="pfSpecialization" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Research methodology / expertise</label><input type="text" id="pfResearchMethodology" class="pf-input" oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Publications</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Total journal publications</label><input type="number" id="pfJournalPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Scopus publications</label><input type="number" id="pfScopusPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>SCI publications</label><input type="number" id="pfSciPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>ESCI publications</label><input type="number" id="pfEsciPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Web of Science publications</label><input type="number" id="pfWosPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>UGC / peer-reviewed journals</label><input type="number" id="pfUgcPublications" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>International journals</label><input type="number" id="pfInternationalJournals" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>National journals</label><input type="number" id="pfNationalJournals" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+
+                <p class="pf-subsection-label">Conferences</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>International conferences presented</label><input type="number" id="pfInternationalConferences" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>National conferences presented</label><input type="number" id="pfNationalConferences" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Seminars / workshops</label><input type="number" id="pfSeminarsWorkshops" class="pf-input" oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Patents</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Total patents</label><input type="number" id="pfTotalPatents" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Published patents</label><input type="number" id="pfPublishedPatents" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Granted patents</label><input type="number" id="pfGrantedPatents" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>National patents</label><input type="number" id="pfNationalPatents" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>International patents</label><input type="number" id="pfInternationalPatents" class="pf-input" oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Research projects</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Number of projects</label><input type="number" id="pfNumProjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Ongoing projects</label><input type="number" id="pfOngoingProjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Completed projects</label><input type="number" id="pfCompletedProjects" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Funding agency</label><input type="text" id="pfFundingAgency" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="pf-field"><label>Total project value</label><input type="text" id="pfProjectValue" class="pf-input" placeholder="e.g. ₹25,00,000" oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Books</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Books authored</label><input type="number" id="pfBooksAuthored" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Book chapters</label><input type="number" id="pfBookChapters" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Edited books</label><input type="number" id="pfEditedBooks" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Publisher details</label><input type="text" id="pfPublisherDetails" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg>
+                  </div>
+                  <h3>9. Professional memberships & certifications</h3>
+                </div>
+                <p class="pf-subsection-label">Professional memberships</p>
+                <div class="pf-repeat-list" id="pfMembershipsList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('professionalMemberships','pfMembershipsList','Membership')">+ Add membership</button>
+
+                <p class="pf-subsection-label">Certifications</p>
+                <div class="pf-repeat-list" id="pfCertificationsList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('certifications','pfCertificationsList','Certification')">+ Add certification</button>
+
+                <p class="pf-subsection-label">FDPs attended</p>
+                <div class="pf-repeat-list" id="pfFdpsAttendedList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('fdpsAttended','pfFdpsAttendedList','FDP attended')">+ Add FDP attended</button>
+
+                <p class="pf-subsection-label">FDPs conducted</p>
+                <div class="pf-repeat-list" id="pfFdpsConductedList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('fdpsConducted','pfFdpsConductedList','FDP conducted')">+ Add FDP conducted</button>
+
+                <p class="pf-subsection-label">Workshops attended</p>
+                <div class="pf-repeat-list" id="pfWorkshopsAttendedList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('workshopsAttended','pfWorkshopsAttendedList','Workshop attended')">+ Add workshop attended</button>
+
+                <p class="pf-subsection-label">Workshops conducted</p>
+                <div class="pf-repeat-list" id="pfWorkshopsConductedList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('workshopsConducted','pfWorkshopsConductedList','Workshop conducted')">+ Add workshop conducted</button>
+
+                <p class="pf-subsection-label">MOOCs / online certifications (NPTEL / SWAYAM / Coursera / Other)</p>
+                <div class="pf-repeat-list" id="pfMoocsList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddSimpleEntry('moocs','pfMoocsList','MOOC / online certification')">+ Add MOOC / certification</button>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 3L4 14H12L11 21L20 10H12L13 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </div>
+                  <h3>10. Skills</h3>
+                </div>
+                <p class="pf-subsection-label">Technical skills</p>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Programming languages</label><input type="text" id="pfProgrammingLanguages" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Software / tools</label><input type="text" id="pfSoftwareTools" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>AI / ML</label><input type="text" id="pfAiMlSkills" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Data science</label><input type="text" id="pfDataScienceSkills" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Cloud</label><input type="text" id="pfCloudSkills" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Robotics</label><input type="text" id="pfRoboticsSkills" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Simulation tools</label><input type="text" id="pfSimulationTools" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Other technical skills</label><input type="text" id="pfOtherTechnicalSkills" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+
+                <p class="pf-subsection-label">Academic / professional skills</p>
+                <div class="pf-check-grid" id="pfAcademicSkillsGrid">
+                  <label class="pf-check-item"><input type="checkbox" value="Teaching">Teaching</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Research">Research</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Academic Administration">Academic Administration</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Curriculum Development">Curriculum Development</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Accreditation / NAAC">Accreditation / NAAC</label>
+                  <label class="pf-check-item"><input type="checkbox" value="NBA">NBA</label>
+                  <label class="pf-check-item"><input type="checkbox" value="AICTE">AICTE</label>
+                  <label class="pf-check-item"><input type="checkbox" value="IQAC">IQAC</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Outcome Based Education">Outcome Based Education</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Industry Collaboration">Industry Collaboration</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Placement / Training">Placement / Training</label>
+                  <label class="pf-check-item"><input type="checkbox" value="Entrepreneurship / Innovation">Entrepreneurship / Innovation</label>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 8H9.01M15 8H15.01M9 12H9.01M15 12H15.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  </div>
+                  <h3>11. Administrative experience</h3>
+                </div>
+                <p class="pf-section-sub">HOD, Dean, Principal, Director, IQAC, NAAC, NBA, Accreditation, Examination or other administrative roles you've held.</p>
+                <div class="pf-repeat-list" id="pfAdminRolesList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddAdminRole()">+ Add administrative role</button>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V21M17 7C17 5 15 3.5 12 3.5C9 3.5 7 5 7 7C7 9 9 10 12 10.5C15 11 17 12 17 14C17 16 15 17.5 12 17.5C9 17.5 7 16 7 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                  </div>
+                  <h3>12. Salary & job preferences</h3>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Present salary / CTC</label><input type="text" id="pfSalaryPresentCtc" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Expected salary / CTC</label><input type="text" id="pfSalaryExpectedCtc" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Minimum acceptable salary</label><input type="text" id="pfMinAcceptableSalary" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Preferred designation</label><input type="text" id="pfPreferredDesignation" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Preferred organization type</label>
+                    <select id="pfPreferredOrgType" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option>
+                      <option>University</option><option>Engineering College</option><option>Degree College</option>
+                      <option>School</option><option>Research Institute</option><option>Corporate</option>
+                      <option>Industry</option><option>International Institution</option>
+                    </select>
+                  </div>
+                  <div class="pf-field"><label>Preferred location</label><input type="text" id="pfPreferredLocation" class="pf-input" oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
+                  <div class="pf-field"><label>Preferred country</label><input type="text" id="pfPreferredCountry" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Employment type</label>
+                    <select id="pfPreferredEmploymentType" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option><option>Full Time</option><option>Part Time</option><option>Visiting</option><option>Contract</option><option>Consultant</option>
                     </select>
                   </div>
                 </div>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>College / university</label><input type="text" id="pfCollege" class="pf-input" placeholder="e.g. IIIT Nagpur" oninput="pfOnInputProgress()"></div>
-                  <div class="pf-field"><label>Years of experience</label><input type="text" id="pfExperience" class="pf-input" placeholder="e.g. 3" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Notice period</label><input type="text" id="pfSalaryNoticePeriod" class="pf-input" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Willing to relocate?</label>
+                    <select id="pfSalaryWillingToRelocate" class="pf-input" onchange="pfOnInputProgress()">
+                      <option value="">Select</option><option>Yes</option><option>No</option><option>Depends on Opportunity</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="pf-field"><label>Location</label><input type="text" id="pfLocation" class="pf-input" placeholder="e.g. Hyderabad, Telangana" oninput="pfOnInputProgress()"></div>
-                <div class="dash-form-row" style="margin-top:16px;">
-                  <div class="pf-field"><label>Email</label><input type="email" id="pfEmail" class="pf-input" placeholder="you@example.com" oninput="pfOnInputProgress()"></div>
-                  <div class="pf-field"><label>Mobile number</label><input type="tel" id="pfPhone" class="pf-input" placeholder="10-digit mobile number" maxlength="10" oninput="pfOnInputProgress()"></div>
+                <div class="pf-field"><label>Willing to travel?</label>
+                  <select id="pfWillingToTravel" class="pf-input" onchange="pfOnInputProgress()">
+                    <option value="">Select</option><option>Yes</option><option>No</option>
+                  </select>
                 </div>
-                <p class="pf-contact-note" id="pfContactNote" style="display:none; font-size:12.5px; color:var(--blue-700); background:var(--blue-50); border-radius:5px; padding:8px 12px; margin:10px 0 0;"></p>
               </div>
 
               <div class="pf-section">
@@ -100,17 +507,56 @@
                   <div class="pf-ico">
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 3H14L19 8V19C19 20.1 18.1 21 17 21H8C6.9 21 6 20.1 6 19V5C6 3.9 6.9 3 8 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3V8H19" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
                   </div>
-                  <h3>Certifications &amp; documents</h3>
+                  <h3>13. Resume & documents</h3>
                 </div>
                 <p class="pf-section-sub">Add links to your resume, degree certificates, and publications.</p>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>Resume / CV link</label><input type="text" id="pfResume" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Updated resume / CV link *</label><input type="text" id="pfResume" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Passport size photo link *</label><input type="text" id="pfPassportPhoto" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                </div>
+                <div class="dash-form-row">
                   <div class="pf-field"><label>Highest degree certificate link</label><input type="text" id="pfDegreeCert" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Publications / Google Scholar link</label><input type="text" id="pfPublications" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
                 </div>
-                <div class="dash-form-row" style="margin-bottom:0;">
-                  <div class="pf-field"><label>Publications / Google Scholar link</label><input type="text" id="pfPublications" class="pf-input" placeholder="https://..."></div>
-                  <div class="pf-field"><label>Patent / additional document link</label><input type="text" id="pfPatent" class="pf-input" placeholder="https://..."></div>
+                <div class="pf-field"><label>Patent / additional document link</label><input type="text" id="pfPatent" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+
+                <p class="pf-subsection-label">Other supporting documents</p>
+                <div class="pf-repeat-list" id="pfOtherDocsList"></div>
+                <button type="button" class="pf-add-btn" onclick="pfAddOtherDocument()">+ Add document</button>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/></svg>
+                  </div>
+                  <h3>14. Profile visibility & recruitment preferences</h3>
                 </div>
+                <div class="pf-field"><label>Who can view my profile?</label>
+                  <select id="pfProfileVisibility" class="pf-input" onchange="pfOnInputProgress()">
+                    <option value="">Select</option>
+                    <option>Upaadhyay Recruitment Team</option>
+                    <option>Verified Recruiters & Institutions</option>
+                    <option>All Registered Recruiters</option>
+                  </select>
+                </div>
+                <p class="pf-subsection-label">Receive job notifications via</p>
+                <div class="pf-check-grid">
+                  <label class="pf-check-item"><input type="checkbox" id="pfNotifyEmail">Email</label>
+                  <label class="pf-check-item"><input type="checkbox" id="pfNotifyWhatsapp">WhatsApp</label>
+                  <label class="pf-check-item"><input type="checkbox" id="pfNotifySms">SMS</label>
+                </div>
+              </div>
+
+              <div class="pf-section">
+                <div class="pf-section-head">
+                  <div class="pf-ico">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg>
+                  </div>
+                  <h3>15. Declaration & consent</h3>
+                </div>
+                <p class="pf-section-sub" style="margin-bottom:6px;">I confirm that the information provided by me is true and accurate to the best of my knowledge. I understand that Upaadhyay.com may use my profile information for matching me with relevant employment opportunities. I agree to the Terms &amp; Conditions and Privacy Policy, and I consent to being contacted regarding suitable recruitment opportunities.</p>
+                <label class="pf-checkbox-row"><input type="checkbox" id="pfDeclarationAccepted">I agree to the above declaration and consent *</label>
               </div>
 
               <div class="pf-actions">
