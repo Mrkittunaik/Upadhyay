@@ -591,6 +591,7 @@
       setChecked('pfDeclarationAccepted', U.declarationAccepted);
 
       pfOnInputProgress();
+      pfInitAccordion();
     }
     if(panel==='post'){
       document.getElementById('employerTabsBar').style.display = currentCompany.saved ? 'flex' : 'none';
@@ -655,9 +656,90 @@
     const stepDocs = document.getElementById('pfStepDocs');
     if(stepBasics){ stepBasics.classList.toggle('done', basicsFilled >= 4); if(basicsFilled>=4) stepBasics.querySelector('.dot').textContent = '✓'; }
     if(stepDocs){ stepDocs.classList.toggle('done', docsFilled >= 1); if(docsFilled>=1) stepDocs.querySelector('.dot').textContent = '✓'; }
+    document.querySelectorAll('#dashProfileTab .pf-section[data-section-index]').forEach(pfRefreshSectionCheck);
   }
 
-  function saveProfile(){
+  // Turns each numbered "1. Basic personal details" etc. block inside the
+  // profile tab into a collapsible section with a tick that fills in once
+  // the section has at least one field filled, plus a "Save & Close" button.
+  function pfInitAccordion(){
+    const sections = document.querySelectorAll('#dashProfileTab .pf-section');
+    if(!sections.length) return;
+    sections.forEach((sec, idx)=>{
+      if(sec.dataset.accordionReady){ pfRefreshSectionCheck(sec); return; }
+      sec.dataset.accordionReady = '1';
+      const head = sec.querySelector('.pf-section-head');
+      if(!head) return;
+
+      // Move every element after the head into a body wrapper we can collapse.
+      const body = document.createElement('div');
+      body.className = 'pf-section-body';
+      let next = head.nextElementSibling;
+      while(next){
+        const toMove = next;
+        next = next.nextElementSibling;
+        body.appendChild(toMove);
+      }
+
+      // Save & Close bar at the bottom of the section.
+      const saveBar = document.createElement('div');
+      saveBar.className = 'pf-section-savebar';
+      saveBar.innerHTML = `<button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); pfCollapseSection(${idx})">Close</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); pfSaveAndCloseSection(${idx})">Save &amp; close</button>`;
+      body.appendChild(saveBar);
+      sec.appendChild(body);
+      sec.dataset.sectionIndex = idx;
+
+      // Tick badge + chevron in the header.
+      const check = document.createElement('span');
+      check.className = 'pf-section-check';
+      check.textContent = '✓';
+      const chevron = document.createElement('span');
+      chevron.className = 'pf-section-chevron';
+      chevron.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      head.appendChild(check);
+      head.appendChild(chevron);
+      head.addEventListener('click', ()=> pfToggleSection(idx));
+
+      // Open the first section by default, keep the rest collapsed.
+      if(idx === 0) sec.classList.add('open');
+      pfRefreshSectionCheck(sec);
+    });
+  }
+
+  function pfSectionEl(idx){
+    return document.querySelector(`#dashProfileTab .pf-section[data-section-index="${idx}"]`);
+  }
+
+  function pfToggleSection(idx){
+    const sec = pfSectionEl(idx);
+    if(sec) sec.classList.toggle('open');
+  }
+
+  function pfCollapseSection(idx){
+    const sec = pfSectionEl(idx);
+    if(sec) sec.classList.remove('open');
+  }
+
+  function pfRefreshSectionCheck(sec){
+    const filled = Array.from(sec.querySelectorAll('input, select, textarea')).some(el=>{
+      if(el.type === 'checkbox' || el.type === 'radio') return el.checked;
+      return (el.value || '').trim();
+    });
+    sec.classList.toggle('complete', filled);
+  }
+
+  function pfSaveAndCloseSection(idx){
+    const sec = pfSectionEl(idx);
+    if(!sec) return;
+    saveProfile({ silent: true });
+    pfRefreshSectionCheck(sec);
+    sec.classList.remove('open');
+    const nextSec = pfSectionEl(idx + 1);
+    if(nextSec) nextSec.classList.add('open');
+  }
+
+  function saveProfile(opts){
     const U = currentUser;
     const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
     const checked = id => { const el = document.getElementById(id); return el ? el.checked : false; };
@@ -803,6 +885,10 @@
 
     ensureCandidateId();
     saveState();
+    if(opts && opts.silent){
+      pfOnInputProgress();
+      return;
+    }
     pushNotif('Profile saved — you can now browse and apply to jobs.');
     goTo('jobs');
   }
