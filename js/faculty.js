@@ -431,6 +431,7 @@
       // 1. Basic personal details
       setVal('pfName', U.name || name);
       setVal('pfGender', U.gender);
+      setVal('pfProfilePhoto', U.profilePhoto);
       setVal('pfDob', U.dob);
       setVal('pfAge', U.age);
       setVal('pfNationality', U.nationality);
@@ -747,6 +748,7 @@
     // 1. Basic personal details
     U.name = val('pfName') || U.name || 'User';
     U.gender = val('pfGender');
+    U.profilePhoto = val('pfProfilePhoto');
     U.dob = val('pfDob');
     U.age = val('pfAge');
     U.nationality = val('pfNationality');
