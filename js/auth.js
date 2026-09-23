@@ -15,6 +15,7 @@
   // isLoggedIn, currentRole, currentUser now live in store.js (persisted across pages)
 
   let popupMode = 'register';
+  let popupForcedChoice = false;
 
   // Old behaviour opened a modal. Now these navigate to the real login / register pages.
   function openAuth(panel){
@@ -27,54 +28,36 @@
 
   // Called once by login.html / register.html on load.
   //   mode = 'login' | 'register'   (fixed by which page it is)
-  //   role comes from ?role=seeker|company
+  //   role comes from ?role=seeker|company — if absent, ask via popup first.
   function initAuthPage(mode){
     if(isLoggedIn){ goTo(dashboardPageForRole()); return; }   // already signed in
-    const role = getParam('role') === 'company' ? 'company' : 'seeker';
+    const roleParam = getParam('role');
+    if(roleParam !== 'company' && roleParam !== 'seeker'){
+      // No role chosen yet — show the picker first, form stays hidden.
+      document.getElementById('authCard').style.display = 'none';
+      openRolePopup(mode, /*forcedChoice*/ true);
+      return;
+    }
+    startAuthPage(mode, roleParam);
+  }
+
+  function startAuthPage(mode, role){
     selectedRole = role;
     intendedPanel = role==='company' ? 'post' : 'search';
     authMethod = 'email';
     authOtpSent = false;
+    document.getElementById('authCard').style.display = 'block';
     updateAuthLeftPanel(intendedPanel);
     setAuthMethod('email');
     setAuthTab(mode);
-    document.getElementById('authOverlay').classList.add('open');
   }
 
   function updateAuthLeftPanel(panel){
     const isCompany = panel === 'post';
-    document.getElementById('apPageTag').textContent = isCompany ? 'Employer account' : 'Faculty account';
-    document.getElementById('apLeftHeading').textContent = isCompany
-      ? 'Hire verified faculty for your institution'
-      : "India's dedicated faculty recruitment platform";
-    document.getElementById('apLeftSub').textContent = isCompany
-      ? 'Post roles and reach qualified teachers across schools, junior colleges and universities — free while you get started.'
-      : 'Built only for teaching roles — schools, junior colleges and universities hiring verified faculty, with no middlemen.';
-    document.getElementById('apFeatureList').innerHTML = isCompany ? `
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 21V16H15V21" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span>
-        <div><div class="ft">Post roles in minutes</div><div class="fs">Create an institution profile once, then post as many teaching roles as you need.</div></div>
-      </div>
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <div><div class="ft">Verified faculty profiles</div><div class="fs">Every candidate profile includes qualification, subject and experience up front.</div></div>
-      </div>
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg></span>
-        <div><div class="ft">Free for 2 years</div><div class="fs">No platform fee for institutions while Upadyay grows across India.</div></div>
-      </div>` : `
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <div><div class="ft">One profile, every opportunity</div><div class="fs">Build your faculty profile once and apply across schools, colleges and universities.</div></div>
-      </div>
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12L11 14L15 9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/></svg></span>
-        <div><div class="ft">Verified institutions only</div><div class="fs">Every employer on Upadyay is a genuine school, junior college or university.</div></div>
-      </div>
-      <div class="ap-feature">
-        <span class="fi"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20M4 12H20M4 18H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-        <div><div class="ft">Category-first search</div><div class="fs">Filter by Schools, Intermediate or Higher Education to find the right fit fast.</div></div>
-      </div>`;
+    const tagEl = document.getElementById('apPageTag');
+    if(tagEl) tagEl.textContent = isCompany ? 'Employer account' : 'Faculty account';
+    const switchEl = document.getElementById('acSwitchRole');
+    if(switchEl) switchEl.firstChild.textContent = isCompany ? 'Not an institution? ' : 'Not a faculty member? ';
   }
 
   function setAuthMethod(method){
@@ -122,8 +105,9 @@
     document.getElementById('authError').style.display = 'none';
   }
 
-  function openRolePopup(mode){
+  function openRolePopup(mode, forcedChoice){
     popupMode = mode || 'register';
+    popupForcedChoice = !!forcedChoice;
     const isLogin = popupMode === 'login';
     document.getElementById('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
     document.getElementById('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
@@ -132,11 +116,20 @@
     document.getElementById('rolePopupOverlay').classList.add('open');
   }
   function closeRolePopup(){
+    if(popupForcedChoice) { goTo('home'); return; } // no role picked yet — nothing to show, bail to home
     document.getElementById('rolePopupOverlay').classList.remove('open');
   }
   function pickRoleFromPopup(role){
     closeRolePopup();
-    goTo(popupMode === 'login' ? 'login' : 'register', { role });
+    if(popupForcedChoice){
+      // We're already on login.html/register.html — just reveal the form, no navigation needed.
+      const url = new URL(window.location.href);
+      url.searchParams.set('role', role);
+      history.replaceState(null, '', url);
+      startAuthPage(popupMode, role);
+    } else {
+      goTo(popupMode === 'login' ? 'login' : 'register', { role });
+    }
   }
 
   function submitAuth(e){
@@ -319,13 +312,13 @@
   }
 
   function computeCompleteness(){
-    const fields = [currentUser.subject, currentUser.qualification, currentUser.category, currentUser.experience, currentUser.location, currentUser.email];
+    const fields = [currentUser.subject, currentUser.qualification, currentUser.category, currentUser.experience, currentUser.location];
     const filled = fields.filter(v=>v && v.trim()).length;
     return Math.round((filled/fields.length)*100) || 15;
   }
 
-  // The full profile is its own page now (profile.html).
-  function openFullProfile(){ goTo('profile'); }
+  // The full profile lives on the dashboard's own profile tab now (faculty or employer, per role).
+  function openFullProfile(){ goTo(dashboardPageForRole()); }
   function closeFullProfile(){ goTo(dashboardPageForRole()); }
 
   // Called once by profile.html on load: fills the page from saved state.
@@ -336,7 +329,6 @@
       ? `${currentUser.qualification}${currentUser.subject ? ' · '+currentUser.subject : ''}`
       : 'Add your degree and specialisation';
     document.getElementById('fpLocation').textContent = currentUser.location || 'Add location';
-    document.getElementById('fpEmail').textContent = currentUser.email || 'Add email';
     document.getElementById('fpCategory').value = currentUser.category || '';
     document.getElementById('fpQualification').value = currentUser.qualification || '';
     document.getElementById('fpExperience').textContent = currentUser.experience || 'Not set';
