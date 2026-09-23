@@ -120,7 +120,7 @@
     document.getElementById('rolePopupOverlay').classList.remove('open');
   }
   function pickRoleFromPopup(role){
-    closeRolePopup();
+    document.getElementById('rolePopupOverlay').classList.remove('open');
     if(popupForcedChoice){
       // We're already on login.html/register.html — just reveal the form, no navigation needed.
       const url = new URL(window.location.href);
