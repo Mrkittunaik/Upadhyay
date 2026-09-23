@@ -96,6 +96,8 @@
     document.getElementById('fieldName').style.display = (mode==='register' && !isCompany) ? 'flex' : 'none';
     document.getElementById('fieldCompanyName').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
     document.getElementById('fieldContactPerson').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
+    const confirmPwField = document.getElementById('fieldConfirmPassword');
+    if(confirmPwField) confirmPwField.style.display = (mode==='register') ? 'flex' : 'none';
     document.querySelector('#authOverlay form').style.display = 'block';
     document.getElementById('authTitle').textContent = mode==='register'
       ? (isCompany ? 'Create your institution account' : 'Create your faculty account')
@@ -164,6 +166,15 @@
         errEl.textContent = 'Enter your email and password.';
         errEl.style.display = 'block';
         return false;
+      }
+      if(wasRegister){
+        const confirmPwInput = document.getElementById('authConfirmPasswordInput');
+        const confirmPw = confirmPwInput ? confirmPwInput.value : '';
+        if(pass !== confirmPw){
+          errEl.textContent = 'Passwords do not match.';
+          errEl.style.display = 'block';
+          return false;
+        }
       }
       if(!name) name = (wasRegister && nameInput.value.trim()) ? nameInput.value.trim() : (emailVal.split('@')[0] || 'User');
     } else {
