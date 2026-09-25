@@ -88,10 +88,20 @@
 
   function setAuthTab(mode){
     authMode = mode;
-    document.getElementById('backToLoginLink').style.display = 'block';
-    document.getElementById('backToLoginLink').innerHTML = mode==='register'
-      ? '<a href="javascript:void(0)" onclick="goTo(\'login\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700); display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Already have an account? Log in</a>'
-      : '<a href="javascript:void(0)" onclick="goTo(\'register\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700);">New here? Create an account</a>';
+    const backLinkEl = document.getElementById('backToLoginLink');
+    const switchLinkEl = document.getElementById('authSwitchModeLink');
+    if(mode==='register'){
+      backLinkEl.style.display = 'block';
+      backLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'login\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700); display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Already have an account? Log in</a>';
+      if(switchLinkEl){ switchLinkEl.style.display = 'none'; switchLinkEl.innerHTML = ''; }
+    } else {
+      backLinkEl.style.display = 'none';
+      backLinkEl.innerHTML = '';
+      if(switchLinkEl){
+        switchLinkEl.style.display = 'block';
+        switchLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'register\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700);">New here? Create an account</a>';
+      }
+    }
     const isCompany = selectedRole === 'company';
     document.getElementById('fieldName').style.display = (mode==='register' && !isCompany) ? 'flex' : 'none';
     document.getElementById('fieldCompanyName').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
