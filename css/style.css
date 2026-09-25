@@ -911,3 +911,137 @@ body.page{ background:var(--canvas); }
 
 /* Auth pages stay full-screen; make sure body doesn't scroll behind them */
 body.page-auth{ overflow:hidden; }
+
+/* ==========================================================================
+   UI REFRESH — additive design-system polish (badges, tags, cards, filters,
+   empty states). Nothing above is modified; existing classes keep working.
+   ========================================================================== */
+
+/* ---- Reusable status badges (Draft/Published/Pending/Accepted/Declined/
+   Active/Closed/Faculty/Non-Teaching/Company) — build on .badge-live ---- */
+.badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11px; font-weight:700; letter-spacing:.01em;
+  padding:4px 10px; border-radius:20px; white-space:nowrap; line-height:1.5;
+}
+.badge::before{ content:""; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+.badge-draft{      background:#FDF3E7; color:#B7791F; }
+.badge-published{  background:#E9F8EF; color:var(--green); }
+.badge-pending{    background:#FFF4E5; color:#C2760C; }
+.badge-accepted{   background:#E9F8EF; color:var(--green); }
+.badge-declined{   background:#FDEDEC; color:#C0392B; }
+.badge-active{     background:var(--blue-50); color:var(--blue-700); }
+.badge-closed{     background:#F1F2F4; color:var(--ink-faint); }
+.badge-faculty{    background:var(--blue-50); color:var(--blue-700); }
+.badge-staff{      background:#F1EBFB; color:#6C3FC5; }
+.badge-company{    background:#0B1D3A0F; color:var(--blue-900); }
+.badge-nodot::before{ display:none; }
+
+/* ---- Tag pills — refine existing .hp-tag, add a compact/selectable variant ---- */
+.hp-tag{ transition:background .15s ease, color .15s ease; }
+.tag-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:600; color:var(--blue-700); background:var(--blue-50);
+  padding:5px 12px; border-radius:20px; border:1px solid transparent; white-space:nowrap;
+  transition:background .15s ease, border-color .15s ease, transform .1s ease;
+}
+.tag-pill.selectable{ cursor:pointer; }
+.tag-pill.selectable:hover{ border-color:var(--blue-500); }
+.tag-pill.selected{ background:var(--blue-700); color:#fff; }
+.tag-pill .tag-x{ opacity:.7; font-weight:700; margin-left:1px; }
+.tag-pill .tag-x:hover{ opacity:1; }
+
+/* ---- Card depth/motion polish — layered on top of .job-card, .profile-card,
+   .admin-jobcard so every card in the app gets consistent hover feel ---- */
+.job-card, .admin-jobcard, .profile-card{
+  border-radius:16px;
+  transition:box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.job-card:hover, .admin-jobcard:hover{ border-color:var(--blue-100); }
+
+/* ---- Filter toolbar / sidebar (Find Talent, Jobs search) ---- */
+.filter-bar{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px;
+  background:#fff; border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px; box-shadow:var(--shadow-sm); margin-bottom:18px;
+}
+.filter-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12.5px; font-weight:600; color:var(--ink-soft);
+  background:var(--canvas); border:1px solid var(--line); border-radius:20px;
+  padding:6px 12px; cursor:pointer; transition:all .15s ease;
+}
+.filter-chip:hover{ border-color:var(--blue-500); color:var(--blue-700); }
+.filter-chip.active{ background:var(--blue-700); border-color:var(--blue-700); color:#fff; }
+.filter-summary{
+  display:flex; align-items:center; gap:10px; font-size:12.5px; color:var(--ink-faint);
+  padding:0 2px;
+}
+.filter-summary .clear-all{ color:var(--blue-700); font-weight:700; cursor:pointer; }
+.filter-summary .clear-all:hover{ text-decoration:underline; }
+.filter-drawer-btn{
+  display:none; align-items:center; gap:8px;
+  background:#fff; border:1px solid var(--line); border-radius:20px;
+  padding:9px 16px; font-size:13.5px; font-weight:700; color:var(--ink);
+  box-shadow:var(--shadow-sm);
+}
+@media (max-width:760px){
+  .filter-bar{ display:none; }
+  .filter-drawer-btn{ display:inline-flex; }
+}
+.filter-drawer-overlay{
+  display:none; position:fixed; inset:0; z-index:200;
+  background:rgba(11,29,58,0.45);
+}
+.filter-drawer-overlay.open{ display:block; }
+.filter-drawer{
+  position:fixed; left:0; right:0; bottom:0; z-index:201;
+  background:#fff; border-radius:18px 18px 0 0; padding:20px 20px 26px;
+  max-height:80vh; overflow-y:auto;
+  transform:translateY(100%); transition:transform .25s ease;
+  box-shadow:0 -12px 40px rgba(16,36,84,0.18);
+}
+.filter-drawer-overlay.open .filter-drawer{ transform:translateY(0); }
+.filter-drawer-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.filter-drawer-head h3{ margin:0; font-size:16px; }
+
+/* ---- Empty states (candidates, jobs, invitations, saved profiles) ----
+   Shares the look of the existing .bj-empty (used on the jobs page). ---- */
+.empty-state, .bj-empty{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:56px 24px;
+  background:#fff; border:1px dashed var(--line); border-radius:16px;
+  color:var(--ink-faint); font-size:13.5px;
+}
+.empty-state-icon{
+  width:52px; height:52px; border-radius:50%; background:var(--blue-50); color:var(--blue-700);
+  display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+}
+.empty-state h4{ margin:0 0 6px; font-size:15px; color:var(--ink); }
+.empty-state p{ margin:0 0 18px; font-size:13.5px; max-width:34ch; }
+
+/* ---- Profile status banner (Draft / Published + Publish CTA) ---- */
+.profile-status-banner{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  background:#fff; border:1px solid var(--line); border-radius:16px;
+  padding:16px 20px; margin-bottom:18px; box-shadow:var(--shadow-sm);
+}
+.profile-status-banner.is-draft{ border-color:#F3D9A8; background:#FFFBF3; }
+.profile-status-banner.is-published{ border-color:#BFE8D2; background:#F3FBF6; }
+.profile-status-banner .psb-text{ display:flex; flex-direction:column; gap:2px; }
+.profile-status-banner .psb-text strong{ font-size:14.5px; color:var(--ink); }
+.profile-status-banner .psb-text span{ font-size:12.5px; color:var(--ink-faint); }
+
+/* ---- Section reveal / status transitions — subtle, respects reduced motion ---- */
+.section-fade{ animation:sectionFade .35s ease both; }
+@keyframes sectionFade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+@media (prefers-reduced-motion: reduce){
+  .section-fade, .reveal, .reveal-stagger > *{ animation:none !important; transition:none !important; opacity:1 !important; transform:none !important; }
+}
+
+/* ---- Responsive hardening: prevent overflow on narrow screens ---- */
+@media (max-width:480px){
+  .jc-tags, .hp-tags{ gap:5px; }
+  .job-card, .admin-jobcard{ padding:14px; }
+  .filter-bar{ padding:10px 12px; }
+}
