@@ -1,342 +1,354 @@
-  // ---------- Admin dashboard (demo) ----------
-  function institutionTypeLabel(t){
-    return t==='school' ? 'School' : t==='college' ? 'Junior College' : 'University';
-  }
-  function institutionInitials(name){
-    return (name||'IN').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  }
-  function allInstitutionJobs(){
-    // flattened list: [{...job, instId, instName}]
-    const out = [];
-    Object.keys(institutionsData).forEach(id=>{
-      const inst = institutionsData[id];
-      (inst.jobs||[]).forEach(j=> out.push(Object.assign({}, j, { instId:id, instName:inst.name })));
-    });
-    return out;
-  }
-  // Old behaviour opened an overlay. Now admin is its own page.
-  function openAdmin(){ goTo('admin'); }
-  function closeAdmin(){ goTo('home'); }
-
-  // Called once by admin.html on load. Optional ?tab=faculty|institutions|jobs
-  function initAdminPage(){
-    document.getElementById('adminFooterYear').textContent = new Date().getFullYear();
-    const tab = getParam('tab');
-    switchAdminTab(['overview','faculty','institutions','jobs'].includes(tab) ? tab : 'overview');
+// ---------- Demo jobs/profiles tabs ----------
+  function switchDemo(which, btn){
+    document.getElementById('demoJobs').style.display = which==='jobs' ? 'grid' : 'none';
+    document.getElementById('demoProfiles').style.display = which==='profiles' ? 'grid' : 'none';
+    document.querySelectorAll('.demo-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
   }
 
-  function switchAdminTab(tab){
-    const panels = ['overview','faculty','institutions','institutionProfile','jobs'];
-    panels.forEach(t=>{
-      const el = document.getElementById('adminPanel'+t.charAt(0).toUpperCase()+t.slice(1));
-      if(el) el.style.display = t===tab ? (t==='overview'?'block':'block') : 'none';
-    });
-    ['overview','faculty','institutions','jobs'].forEach(t=>{
-      const nav = document.getElementById('adminNav'+t.charAt(0).toUpperCase()+t.slice(1));
-      if(nav) nav.classList.toggle('active', t===tab);
-    });
-    const titles = { overview:'Overview', faculty:'Faculty', institutions:'Institutions', institutionProfile:'Institution profile', jobs:'Job Applications' };
-    document.getElementById('adminTopTitle').textContent = titles[tab] || 'Overview';
-    document.getElementById('adminBackBtn').style.display = tab==='institutionProfile' ? 'flex' : 'none';
-    if(tab==='overview') renderAdminOverview();
-    if(tab==='faculty') renderAdminFaculty();
-    if(tab==='institutions') renderAdminInstitutions();
-    if(tab==='jobs') renderAdminJobs();
+  // ---------- Auth modal ----------
+  let authMode = 'login';
+  let authMethod = 'email';
+  let authOtpSent = false;
+  let intendedPanel = 'search';
+  let selectedRole = null;
+  // isLoggedIn, currentRole, currentUser now live in store.js (persisted across pages)
+
+  let popupMode = 'register';
+  let popupForcedChoice = false;
+
+  // Old behaviour opened a modal. Now these navigate to the real login / register pages.
+  function openAuth(panel){
+    goTo('login', { role: panel==='post' ? 'company' : 'seeker' });
   }
-
-  function totalDemoApplicants(){
-    return allInstitutionJobs().reduce((sum,j)=> sum + (j.applicants||0), 0) + totalApplicantsCount();
+  function openAuthRegister(panel){
+    goTo('register', { role: panel==='post' ? 'company' : 'seeker' });
   }
-  function totalApplicantsCount(){
-    return Object.values(jobsData).reduce((sum,j)=> sum + (j.applicantIds ? j.applicantIds.length : 0), 0);
-  }
+  function closeAuth(){ goTo('home'); }
 
-  function renderAdminOverview(){
-    const facultyIds = Object.keys(facultyProfiles);
-    const instIds = Object.keys(institutionsData);
-    const demoJobs = allInstitutionJobs();
-    const liveDemoJobs = demoJobs.filter(j=>j.status==='live');
-    const totalJobsCount = demoJobs.length + Object.keys(jobsData).length;
-
-    document.getElementById('adminStatJobs').textContent = totalJobsCount;
-    document.getElementById('adminStatFaculty').textContent = facultyIds.length;
-    document.getElementById('adminStatInstitutions').textContent = instIds.length;
-    document.getElementById('adminStatApplications').textContent = totalDemoApplicants();
-
-    document.getElementById('adminMiniLive').textContent = liveDemoJobs.length;
-    const cityCounts = {};
-    facultyIds.forEach(id=>{ const c = facultyProfiles[id].tags[2]; cityCounts[c] = (cityCounts[c]||0)+1; });
-    const topCity = Object.keys(cityCounts).sort((a,b)=>cityCounts[b]-cityCounts[a])[0];
-    document.getElementById('adminMiniLocation').textContent = topCity || '—';
-    const avgApplicants = demoJobs.length ? Math.round(demoJobs.reduce((s,j)=>s+j.applicants,0)/demoJobs.length) : 0;
-    document.getElementById('adminMiniAvg').textContent = avgApplicants;
-    const phdCount = facultyIds.filter(id=>facultyProfiles[id].tags[0]==='PhD').length;
-    document.getElementById('adminMiniPhd').innerHTML = phdCount + ' <small>/ '+facultyIds.length+'</small>';
-
-    document.getElementById('adminOverviewInstitutionsBody').innerHTML = instIds.slice(0,5).map(id=>{
-      const inst = institutionsData[id];
-      return `<tr class="clickable" onclick="openInstitutionProfile('${id}')">
-        <td class="admin-row-name">${inst.name}</td>
-        <td><span class="admin-pill ${inst.type}">${institutionTypeLabel(inst.type)}</span></td>
-        <td>${inst.city.split(',')[0]}</td>
-        <td>${(inst.jobs||[]).length}</td>
-        <td><button class="admin-viewbtn" onclick="event.stopPropagation(); openInstitutionProfile('${id}')">View</button></td>
-      </tr>`;
-    }).join('');
-
-    document.getElementById('adminOverviewFacultyBody').innerHTML = facultyIds.slice(0,5).map(id=>{
-      const p = facultyProfiles[id];
-      return `<tr class="clickable" onclick="openFacultyDetail('${id}')">
-        <td class="admin-row-name"><img class="admin-row-avatar" src="${p.avatar}">${p.name}</td>
-        <td>${p.role}</td>
-        <td>${p.tags[0]}</td>
-        <td>${p.tags[2]}</td>
-        <td><span class="admin-pill open">Open to opportunities</span></td>
-      </tr>`;
-    }).join('');
-
-    const activity = [];
-    instIds.slice(0,3).forEach(id=>{
-      const inst = institutionsData[id];
-      (inst.jobs||[]).slice(0,1).forEach(j=> activity.push({ text:`${inst.name} posted "${j.title}"`, time:j.posted }));
-    });
-    facultyIds.slice(0,2).forEach(id=>{
-      activity.push({ text:`${facultyProfiles[id].name} joined as new faculty`, time:'this week' });
-    });
-    document.getElementById('adminActivityFeed').innerHTML = activity.map(a=>`
-      <div style="padding:10px 0; border-bottom:1px solid var(--line); font-size:13px;">
-        <div style="color:var(--ink);">${a.text}</div>
-        <div style="color:var(--ink-faint); font-size:11.5px; margin-top:2px;">${a.time}</div>
-      </div>`).join('') || '<p class="sub" style="margin:0;">No recent activity.</p>';
-  }
-
-  function populateAdminFacultyLocationFilter(){
-    const sel = document.getElementById('adminFacultyLocationFilter');
-    if(!sel || sel.options.length > 1) return;
-    const cities = [...new Set(Object.values(facultyProfiles).map(p=>p.tags[2]))].sort();
-    cities.forEach(city=>{
-      const opt = document.createElement('option');
-      opt.value = city; opt.textContent = city;
-      sel.appendChild(opt);
-    });
-  }
-
-  function renderAdminFaculty(){
-    populateAdminFacultyLocationFilter();
-    const q = (document.getElementById('adminFacultySearch').value || '').toLowerCase();
-    const qualFilter = document.getElementById('adminFacultyQualFilter').value;
-    const locationFilter = document.getElementById('adminFacultyLocationFilter').value;
-    const expFilter = document.getElementById('adminFacultyExpFilter').value;
-    const ids = Object.keys(facultyProfiles).filter(id=>{
-      const p = facultyProfiles[id];
-      const collegeText = (p.experience||[]).map(e=>e[1]).join(' ').toLowerCase();
-      const expYrs = parseInt(p.tags[1], 10) || 0;
-      const matchesQ = !q || p.name.toLowerCase().includes(q) || p.role.toLowerCase().includes(q) || collegeText.includes(q);
-      const matchesQual = !qualFilter || p.tags[0]===qualFilter;
-      const matchesLocation = !locationFilter || p.tags[2]===locationFilter;
-      let matchesExp = true;
-      if(expFilter){
-        const [lo,hi] = expFilter.split('-').map(Number);
-        matchesExp = expYrs >= lo && expYrs <= hi;
-      }
-      return matchesQ && matchesQual && matchesLocation && matchesExp;
-    });
-    document.getElementById('adminFacultyCount').textContent = ids.length + (ids.length===1 ? ' faculty' : ' faculty members');
-    document.getElementById('adminFacultyBody').innerHTML = ids.map(id=>{
-      const p = facultyProfiles[id];
-      return `<tr class="clickable" onclick="openFacultyDetail('${id}')">
-        <td class="admin-row-name"><img class="admin-row-avatar" src="${p.avatar}">${p.name}</td>
-        <td>${p.role}</td>
-        <td>${p.tags[0]}</td>
-        <td>${p.tags[2]}</td>
-        <td><span class="admin-pill open">Open to opportunities</span></td>
-      </tr>`;
-    }).join('') || `<tr><td colspan="5" style="text-align:center; color:var(--ink-faint); padding:22px;">No faculty match your filters.</td></tr>`;
-  }
-
-  function normalizeCity(raw){
-    return (raw || '').split(',')[0].trim();
-  }
-  function populateAdminInstitutionsLocationFilter(){
-    const sel = document.getElementById('adminInstitutionsLocationFilter');
-    if(!sel || sel.options.length > 1) return;
-    const cities = [...new Set(Object.values(institutionsData).map(inst=>normalizeCity(inst.city)).filter(Boolean))].sort();
-    cities.forEach(city=>{
-      const opt = document.createElement('option');
-      opt.value = city; opt.textContent = city;
-      sel.appendChild(opt);
-    });
-  }
-
-  function renderAdminInstitutions(){
-    populateAdminInstitutionsLocationFilter();
-    const q = (document.getElementById('adminInstitutionsSearch').value || '').toLowerCase();
-    const typeFilter = document.getElementById('adminInstitutionsTypeFilter').value;
-    const locationFilter = document.getElementById('adminInstitutionsLocationFilter').value;
-    const ids = Object.keys(institutionsData).filter(id=>{
-      const inst = institutionsData[id];
-      const matchesQ = !q || inst.name.toLowerCase().includes(q) || inst.city.toLowerCase().includes(q);
-      const matchesType = !typeFilter || inst.type===typeFilter;
-      const matchesLocation = !locationFilter || normalizeCity(inst.city)===locationFilter;
-      return matchesQ && matchesType && matchesLocation;
-    });
-    document.getElementById('adminInstitutionsCount').textContent = ids.length + (ids.length===1 ? ' institution' : ' institutions');
-    document.getElementById('adminInstitutionsBody').innerHTML = ids.map(id=>{
-      const inst = institutionsData[id];
-      return `<tr class="clickable" onclick="openInstitutionProfile('${id}')">
-        <td class="admin-row-name">${inst.name}</td>
-        <td><span class="admin-pill ${inst.type}">${institutionTypeLabel(inst.type)}</span></td>
-        <td>${inst.contact}</td>
-        <td>${inst.city}</td>
-        <td>${inst.phone}</td>
-        <td>${inst.website}</td>
-        <td>${(inst.jobs||[]).length}</td>
-        <td><button class="admin-viewbtn" onclick="event.stopPropagation(); openInstitutionProfile('${id}')">View</button></td>
-      </tr>`;
-    }).join('') || `<tr><td colspan="8" style="text-align:center; color:var(--ink-faint); padding:22px;">No institutions match your filters.</td></tr>`;
-  }
-
-  function renderAdminJobs(){
-    const categoryFilter = document.getElementById('adminJobsCategoryFilter').value;
-    const statusFilter = document.getElementById('adminJobsStatusFilter').value;
-    const demoJobs = allInstitutionJobs().filter(j=>{
-      const matchesCat = !categoryFilter || j.category===categoryFilter;
-      const matchesStatus = !statusFilter || j.status===statusFilter;
-      return matchesCat && matchesStatus;
-    });
-    document.getElementById('adminJobsCount').textContent = demoJobs.length + (demoJobs.length===1 ? ' job' : ' jobs');
-    document.getElementById('adminJobsBody').innerHTML = demoJobs.map(j=>`
-      <tr class="clickable" onclick="openInstitutionProfile('${j.instId}')">
-        <td class="admin-row-name">${j.title}</td>
-        <td>${j.instName}</td>
-        <td>${j.category}</td>
-        <td>${j.location}</td>
-        <td><span class="admin-pill ${j.status}">${j.status==='live' ? 'Live' : 'Closed'}</span></td>
-        <td>${j.applicants}</td>
-      </tr>`).join('') || `<tr><td colspan="6" style="text-align:center; color:var(--ink-faint); padding:22px;">No jobs match this filter.</td></tr>`;
-  }
-
-  function openFacultyDetail(id){
-    const p = facultyProfiles[id];
-    if(!p) return;
-    document.getElementById('adminDetailAvatarWrap').innerHTML = `<img src="${p.avatar}" style="width:52px;height:52px;border-radius:50%;object-fit:cover;flex-shrink:0;">`;
-    document.getElementById('adminDetailName').textContent = p.name;
-    document.getElementById('adminDetailSub').textContent = p.role;
-    const statsRows = (p.stats||[]).map(([v,l])=>`<div class="admin-detail-row"><span class="k">${l}</span><span class="v">${v}</span></div>`).join('');
-    const expRows = (p.experience||[]).map(([title,meta])=>`<div class="admin-detail-row"><span class="k">${title}</span><span class="v">${meta}</span></div>`).join('');
-    const tagsRow = `<div class="admin-detail-row"><span class="k">Qualification / Location</span><span class="v">${(p.tags||[]).join(' · ')}</span></div>`;
-    document.getElementById('adminDetailBody').innerHTML = `
-      ${tagsRow}
-      ${statsRows}
-      ${expRows ? `<h4 style="margin:16px 0 6px; font-size:13px; color:var(--ink-faint);">Experience</h4>${expRows}` : ''}
-    `;
-    document.getElementById('adminDetailOverlay').classList.add('open');
-  }
-  function closeAdminDetail(){
-    document.getElementById('adminDetailOverlay').classList.remove('open');
-  }
-
-  let currentAdminInstitutionId = null;
-
-  function openInstitutionProfile(id){
-    const inst = institutionsData[id];
-    if(!inst) return;
-    currentAdminInstitutionId = id;
-    switchAdminTab('institutionProfile');
-    document.getElementById('adminProfileAvatar').textContent = institutionInitials(inst.name);
-    document.getElementById('adminProfileName').textContent = inst.name;
-    document.getElementById('adminProfileMeta').textContent = institutionTypeLabel(inst.type) + ' · ' + inst.city;
-    const jobs = inst.jobs || [];
-    const liveCount = jobs.filter(j=>j.status==='live').length;
-    const totalApplicants = jobs.reduce((s,j)=>s+j.applicants,0);
-    document.getElementById('adminProfileJobsCount').textContent = jobs.length;
-    document.getElementById('adminProfileLiveCount').textContent = liveCount;
-    document.getElementById('adminProfileApplicantsCount').textContent = totalApplicants;
-    document.getElementById('adminProfileJoined').textContent = inst.joined;
-    document.getElementById('adminProfileContact').textContent = `${inst.contact} (${inst.designation})`;
-    document.getElementById('adminProfileEmail').textContent = inst.email;
-    document.getElementById('adminProfilePhone').textContent = inst.phone;
-    document.getElementById('adminProfileWebsite').textContent = inst.website;
-
-    document.getElementById('adminProfileJobsGrid').innerHTML = jobs.map(j=>`
-      <div class="admin-jobcard">
-        <div class="admin-jobcard-top">
-          <div>
-            <div class="admin-jobcard-title">${j.title}</div>
-            <div class="admin-jobcard-meta">${j.category} · ${j.qualification} · ${j.location}</div>
-          </div>
-          <span class="admin-pill ${j.status}">${j.status==='live' ? 'Live' : 'Closed'}</span>
-        </div>
-        <div class="admin-jobcard-foot">
-          <div class="admin-jobcard-applicants">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 20c1-3.6 4.2-6 7.5-6s6.5 2.4 7.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-            ${j.applicants} applicants
-          </div>
-          <span style="font-size:11.5px; color:var(--ink-faint);">${j.posted}</span>
-        </div>
-      </div>`).join('') || `<p class="sub" style="grid-column:1/-1;">No jobs posted yet.</p>`;
-  }
-
-  // ---------- CSV export helpers ----------
-  function csvEscape(val){
-    const s = String(val==null ? '' : val);
-    return /[",\n]/.test(s) ? '"' + s.replace(/"/g,'""') + '"' : s;
-  }
-  function downloadCSV(filename, rows){
-    const csv = rows.map(row=> row.map(csvEscape).join(',')).join('\r\n');
-    const blob = new Blob(['\ufeff' + csv], { type:'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function downloadInstitutionsCSV(){
-    const rows = [['Institution','Type','Contact Person','Designation','Email','Phone','Website','Location','Jobs Posted','Joined']];
-    Object.values(institutionsData).forEach(inst=>{
-      rows.push([inst.name, institutionTypeLabel(inst.type), inst.contact, inst.designation, inst.email, inst.phone, inst.website, inst.city, (inst.jobs||[]).length, inst.joined]);
-    });
-    downloadCSV('upadyay-institutions.csv', rows);
-  }
-
-  function downloadFacultyCSV(){
-    const rows = [['Name','Subject / Role','Qualification','Experience','Location','Status']];
-    Object.values(facultyProfiles).forEach(p=>{
-      rows.push([p.name, p.role, p.tags[0], p.tags[1]||'', p.tags[2], 'Open to opportunities']);
-    });
-    downloadCSV('upadyay-faculty.csv', rows);
-  }
-
-  function downloadJobsCSV(){
-    const rows = [['Job Title','Institution','Category','Qualification','Location','Status','Applicants','Posted']];
-    allInstitutionJobs().forEach(j=>{
-      rows.push([j.title, j.instName, j.category, j.qualification, j.location, j.status==='live'?'Live':'Closed', j.applicants, j.posted]);
-    });
-    downloadCSV('upadyay-job-applications.csv', rows);
-  }
-
-  // Deterministic pseudo-random applicant list per job, drawn from the faculty pool
-  function applicantsForJob(j, instId, jobIndex){
-    const pool = Object.values(facultyProfiles);
-    const out = [];
-    const seedBase = (instId.length + jobIndex*7);
-    for(let i=0;i<j.applicants;i++){
-      const p = pool[(seedBase + i*3) % pool.length];
-      out.push(p);
+  // Called once by login.html / register.html on load.
+  //   mode = 'login' | 'register'   (fixed by which page it is)
+  //   role comes from ?role=seeker|company — if absent, ask via popup first.
+  function initAuthPage(mode){
+    if(isLoggedIn){ goTo(dashboardPageForRole()); return; }   // already signed in
+    const roleParam = getParam('role');
+    if(roleParam !== 'company' && roleParam !== 'seeker'){
+      // No role chosen yet — show the picker first, form stays hidden.
+      document.getElementById('authCard').style.display = 'none';
+      openRolePopup(mode, /*forcedChoice*/ true);
+      return;
     }
-    return out;
+    startAuthPage(mode, roleParam);
   }
 
-  function downloadInstitutionApplicantsCSV(){
-    const inst = institutionsData[currentAdminInstitutionId];
-    if(!inst) return;
-    const rows = [['Job Title','Category','Qualification Required','Job Status','Applicant Name','Applicant Subject / Role','Applicant Qualification','Applicant Location']];
-    (inst.jobs||[]).forEach((j,idx)=>{
-      const applicants = applicantsForJob(j, currentAdminInstitutionId, idx);
-      applicants.forEach(p=>{
-        rows.push([j.title, j.category, j.qualification, j.status==='live'?'Live':'Closed', p.name, p.role, p.tags[0], p.tags[2]]);
-      });
-    });
-    downloadCSV(`upadyay-${inst.name.replace(/\s+/g,'-').toLowerCase()}-applicants.csv`, rows);
+  function startAuthPage(mode, role){
+    selectedRole = role;
+    intendedPanel = role==='company' ? 'post' : 'search';
+    authMethod = 'email';
+    authOtpSent = false;
+    document.getElementById('authCard').style.display = 'block';
+    updateAuthLeftPanel(intendedPanel);
+    setAuthMethod('email');
+    setAuthTab(mode);
+  }
+
+  function updateAuthLeftPanel(panel){
+    const isCompany = panel === 'post';
+    const tagEl = document.getElementById('apPageTag');
+    if(tagEl) tagEl.textContent = isCompany ? 'Employer account' : 'Faculty account';
+    const switchEl = document.getElementById('acSwitchRole');
+    if(switchEl) switchEl.firstChild.textContent = isCompany ? 'Not an institution? ' : 'Not a faculty member? ';
+  }
+
+  function setAuthMethod(method){
+    authMethod = method;
+    authOtpSent = false;
+    document.getElementById('methodEmail').classList.toggle('active', method==='email');
+    document.getElementById('methodPhone').classList.toggle('active', method==='phone');
+    document.getElementById('authEmailFields').style.display = method==='email' ? 'block' : 'none';
+    document.getElementById('authPhoneFields').style.display = method==='phone' ? 'block' : 'none';
+    document.getElementById('authOtpField').style.display = 'none';
+    document.getElementById('authSendOtpBtn').textContent = 'Send OTP';
+    document.getElementById('authError').style.display = 'none';
+  }
+  function sendAuthOtp(){
+    const phone = document.getElementById('authPhoneInput').value.trim();
+    const errEl = document.getElementById('authError');
+    if(phone.length < 10){
+      errEl.textContent = 'Enter a valid 10-digit mobile number.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+    authOtpSent = true;
+    document.getElementById('authOtpField').style.display = 'block';
+    document.getElementById('authSendOtpBtn').textContent = 'Resend OTP';
+    showGenericToast('OTP sent to +91 ' + phone + ' (demo)');
+  }
+
+  function setAuthTab(mode){
+    authMode = mode;
+    document.getElementById('backToLoginLink').style.display = 'block';
+    document.getElementById('backToLoginLink').innerHTML = mode==='register'
+      ? '<a href="javascript:void(0)" onclick="goTo(\'login\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700); display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Already have an account? Log in</a>'
+      : '<a href="javascript:void(0)" onclick="goTo(\'register\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700);">New here? Create an account</a>';
+    const isCompany = selectedRole === 'company';
+    document.getElementById('fieldName').style.display = (mode==='register' && !isCompany) ? 'flex' : 'none';
+    document.getElementById('fieldCompanyName').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
+    document.getElementById('fieldContactPerson').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
+    const confirmPwField = document.getElementById('fieldConfirmPassword');
+    if(confirmPwField) confirmPwField.style.display = (mode==='register') ? 'flex' : 'none';
+    document.querySelector('#authOverlay form').style.display = 'block';
+    document.getElementById('authTitle').textContent = mode==='register'
+      ? (isCompany ? 'Create your institution account' : 'Create your faculty account')
+      : (isCompany ? 'Welcome back' : 'Welcome back');
+    document.getElementById('authSub').textContent = mode==='register' ? 'Register free to continue' : 'Log in to continue';
+    document.getElementById('authSubmitBtn').textContent = mode==='register' ? 'Register free' : 'Log in';
+    document.getElementById('authError').style.display = 'none';
+  }
+
+  function openRolePopup(mode, forcedChoice){
+    popupMode = mode || 'register';
+    popupForcedChoice = !!forcedChoice;
+    const isLogin = popupMode === 'login';
+    document.getElementById('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
+    document.getElementById('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
+    document.getElementById('popupRoleSeekerDesc').textContent = isLogin ? 'Faculty account' : 'Find faculty roles';
+    document.getElementById('popupRoleCompanyDesc').textContent = isLogin ? 'Institution account' : 'Hire faculty';
+    document.getElementById('rolePopupOverlay').classList.add('open');
+  }
+  function closeRolePopup(){
+    if(popupForcedChoice) { goTo('home'); return; } // no role picked yet — nothing to show, bail to home
+    document.getElementById('rolePopupOverlay').classList.remove('open');
+  }
+  function pickRoleFromPopup(role){
+    document.getElementById('rolePopupOverlay').classList.remove('open');
+    if(popupForcedChoice){
+      // We're already on login.html/register.html — just reveal the form, no navigation needed.
+      const url = new URL(window.location.href);
+      url.searchParams.set('role', role);
+      history.replaceState(null, '', url);
+      startAuthPage(popupMode, role);
+    } else {
+      goTo(popupMode === 'login' ? 'login' : 'register', { role });
+    }
+  }
+
+  function submitAuth(e){
+    e.preventDefault();
+    const errEl = document.getElementById('authError');
+    errEl.style.display = 'none';
+    const wasRegister = authMode === 'register';
+    const isCompanyRole = selectedRole === 'company';
+    const nameInput = document.getElementById('authNameInput');
+    const companyNameInput = document.getElementById('authCompanyNameInput');
+    const contactPersonInput = document.getElementById('authContactPersonInput');
+    let name = '';
+    let companyName = '';
+    let emailVal = '';
+    let phoneVal = '';
+
+    if(wasRegister && isCompanyRole){
+      companyName = companyNameInput.value.trim();
+      const contactName = contactPersonInput.value.trim();
+      if(!companyName || !contactName){
+        errEl.textContent = 'Enter your institution name and contact person.';
+        errEl.style.display = 'block';
+        return false;
+      }
+      name = contactName;
+    }
+
+    if(authMethod === 'email'){
+      emailVal = document.getElementById('authEmailInput').value.trim();
+      const pass = document.getElementById('authPasswordInput').value;
+      if(!emailVal || !pass){
+        errEl.textContent = 'Enter your email and password.';
+        errEl.style.display = 'block';
+        return false;
+      }
+      if(wasRegister){
+        const confirmPwInput = document.getElementById('authConfirmPasswordInput');
+        const confirmPw = confirmPwInput ? confirmPwInput.value : '';
+        if(pass !== confirmPw){
+          errEl.textContent = 'Passwords do not match.';
+          errEl.style.display = 'block';
+          return false;
+        }
+      }
+      if(!name) name = (wasRegister && nameInput.value.trim()) ? nameInput.value.trim() : (emailVal.split('@')[0] || 'User');
+    } else {
+      phoneVal = document.getElementById('authPhoneInput').value.trim();
+      const otp = document.getElementById('authOtpInput').value.trim();
+      if(phoneVal.length < 10){
+        errEl.textContent = 'Enter a valid 10-digit mobile number.';
+        errEl.style.display = 'block';
+        return false;
+      }
+      if(!authOtpSent){
+        errEl.textContent = 'Send and enter the OTP first.';
+        errEl.style.display = 'block';
+        return false;
+      }
+      if(otp.length < 6){
+        errEl.textContent = 'Enter the 6-digit OTP.';
+        errEl.style.display = 'block';
+        return false;
+      }
+      if(!name) name = (wasRegister && nameInput.value.trim()) ? nameInput.value.trim() : ('User ' + phoneVal.slice(-4));
+    }
+
+    isLoggedIn = true;
+    currentRole = intendedPanel==='post' ? 'company' : 'seeker';
+    currentUser.name = name;
+    if(companyName) currentUser.companyName = companyName;
+    currentUser.loginMethod = authMethod;
+    if(emailVal) currentUser.email = emailVal;
+    if(phoneVal) currentUser.phone = phoneVal;
+    const idKey = (emailVal || phoneVal || '').toLowerCase();
+
+    // A brand-new account lands on the profile section once, permanently.
+    const seenKey = 'upadyay_profile_seen_' + idKey;
+    const isFirstEverLogin = wasRegister && !localStorage.getItem(seenKey);
+    if(isFirstEverLogin) localStorage.setItem(seenKey, '1');
+
+    // Employers: carry the registration details into the company profile form.
+    if(currentRole === 'company' && wasRegister){
+      if(companyName) currentCompany.name = companyName;
+      if(name) currentCompany.contactName = name;
+      if(emailVal) currentCompany.email = emailVal;
+      if(phoneVal) currentCompany.phone = phoneVal;
+    }
+    saveState();
+
+    // Real navigation to the dashboard page (state is already saved above).
+    goTo(dashboardPageForRole(), isFirstEverLogin ? { welcome: '1' } : null);
+    return false;
+  }
+
+  function updateNavForLogin(){
+    const cta = document.getElementById('navCta'); if(cta) cta.style.display = isLoggedIn ? 'none' : 'flex';
+    const usr = document.getElementById('navUser'); if(usr) usr.style.display = isLoggedIn ? 'flex' : 'none';
+    if(isLoggedIn){
+      const av = document.getElementById('navAvatarImg'); if(av) av.src = currentUser.avatar;
+      if(document.getElementById('miniPanel')) refreshMiniProfile();
+    }
+    const isSeeker = isLoggedIn && currentRole !== 'company';
+    const bjLink = document.getElementById('navBrowseJobsLink');
+    if(bjLink) bjLink.style.display = isSeeker ? 'inline' : 'none';
+    const dashLink = document.getElementById('navDashLink');
+    if(dashLink){ dashLink.href = PAGES[dashboardPageForRole()]; dashLink.style.display = isLoggedIn ? 'inline' : 'none'; }
+    const miniLink = document.getElementById('miniBrowseJobsLink');
+    if(miniLink) miniLink.style.display = isSeeker ? 'flex' : 'none';
+  }
+
+  function logoutUser(){
+    clearSession();
+    goTo('home');
+  }
+
+  function showGenericToast(msg){
+    const t = document.getElementById('genericToast');
+    if(!t) return;
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(window._genericToastTimer);
+    window._genericToastTimer = setTimeout(()=>{
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(12px)';
+    }, 1800);
+  }
+
+  function openNavDrop(){
+    const m1 = document.getElementById('navDropMenu'); if(m1) m1.classList.add('open');
+    const m2 = document.getElementById('navDropMenuBj'); if(m2) m2.classList.add('open');
+  }
+  function closeNavDrop(){
+    const m1 = document.getElementById('navDropMenu'); if(m1) m1.classList.remove('open');
+    const m2 = document.getElementById('navDropMenuBj'); if(m2) m2.classList.remove('open');
+  }
+  function quickBrowse(category){
+    goTo('jobs', { cat: category });
+  }
+
+  function renderNotifPanelList(){
+    const list = document.getElementById('notifPanelList');
+    list.innerHTML = dashNotifs.length
+      ? dashNotifs.map(n=>`<div class="notif-panel-item">${n.text}</div>`).join('')
+      : `<div class="notif-panel-empty">No notifications yet.</div>`;
+  }
+  function openNotifPanel(){
+    closeMiniProfile();
+    renderNotifPanelList();
+    document.getElementById('notifPanel').classList.add('open');
+    const navDot = document.getElementById('navBellDot'); if(navDot) navDot.style.display = 'none';
+    const bjDot = document.getElementById('bjBellDot'); if(bjDot) bjDot.style.display = 'none';
+    hasUnreadNotif = false; saveState();
+  }
+  function closeNotifPanel(){
+    document.getElementById('notifPanel').classList.remove('open');
+  }
+  document.addEventListener('click', function(e){
+    const panel = document.getElementById('notifPanel');
+    if(!panel || !panel.classList.contains('open')) return;
+    if(panel.contains(e.target)) return;
+    if(e.target.closest('.nav-bell')) return;
+    closeNotifPanel();
+  });
+
+  function openMiniProfile(){
+    closeNotifPanel();
+    refreshMiniProfile();
+    document.getElementById('miniScrim').classList.add('open');
+    document.getElementById('miniPanel').classList.add('open');
+  }
+  function closeMiniProfile(){
+    document.getElementById('miniScrim').classList.remove('open');
+    document.getElementById('miniPanel').classList.remove('open');
+  }
+  function refreshMiniProfile(){
+    document.getElementById('miniAvatar').src = currentUser.avatar;
+    document.getElementById('miniName').textContent = currentUser.name || 'Your name';
+    document.getElementById('miniDegree').textContent = currentUser.qualification
+      ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}`
+      : (currentRole==='company' ? 'Company account' : 'Add your qualification');
+    const tagsWrap = document.getElementById('miniPrefTags');
+    if(tagsWrap){
+      const tags = [currentUser.category, currentUser.subject, currentUser.location].filter(Boolean);
+      tagsWrap.innerHTML = tags.length
+        ? tags.map(t=>`<span class="bj-pref-tag">${t}</span>`).join('')
+        : `<span style="font-size:12px; color:var(--ink-faint);">Add preferences on your profile to see matches.</span>`;
+    }
+  }
+
+  function computeCompleteness(){
+    const fields = [currentUser.subject, currentUser.qualification, currentUser.category, currentUser.experience, currentUser.location];
+    const filled = fields.filter(v=>v && v.trim()).length;
+    return Math.round((filled/fields.length)*100) || 15;
+  }
+
+  // The full profile lives on the dashboard's own profile tab now (faculty or employer, per role).
+  function openFullProfile(){ goTo(dashboardPageForRole()); }
+  function closeFullProfile(){ goTo(dashboardPageForRole()); }
+
+  // Called once by profile.html on load: fills the page from saved state.
+  function initFullProfilePage(){
+    document.getElementById('fpAvatar').src = currentUser.avatar;
+    document.getElementById('fpName').textContent = currentUser.name || 'Your name';
+    document.getElementById('fpDegree').textContent = currentUser.qualification
+      ? `${currentUser.qualification}${currentUser.subject ? ' · '+currentUser.subject : ''}`
+      : 'Add your degree and specialisation';
+    document.getElementById('fpLocation').textContent = currentUser.location || 'Add location';
+    document.getElementById('fpCategory').value = currentUser.category || '';
+    document.getElementById('fpQualification').value = currentUser.qualification || '';
+    document.getElementById('fpExperience').textContent = currentUser.experience || 'Not set';
+    document.getElementById('fpSubject').textContent = currentUser.subject || 'Not set';
+    document.getElementById('fpEduLine').textContent = currentUser.college || 'Not set';
+    const links = currentUser.links || {};
+    document.getElementById('fpResume').value = links.resume || '';
+    document.getElementById('fpDegreeCertLink').value = links.degreeCert || '';
+    document.getElementById('fpPublicationsLink').value = links.publications || '';
+    document.getElementById('fpPatentLink').value = links.patent || '';
+    document.getElementById('fpPct').textContent = computeCompleteness() + '%';
   }
