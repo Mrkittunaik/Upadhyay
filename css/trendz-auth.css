@@ -1,0 +1,163 @@
+/* ==========================================================================
+   Trendz-style login/register skin
+   Overrides .auth-page / .auth-card visuals only — all IDs, JS hooks and
+   form logic from style.css / auth.js are untouched.
+   ========================================================================== */
+
+.auth-page{
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center;
+  padding:40px 24px;
+  overflow-y:auto;
+
+  background-image:
+    linear-gradient(rgba(15,12,10,.55), rgba(15,12,10,.55)),
+    url('https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=1600&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center;
+}
+
+.auth-card{
+  position:relative;
+  width:100%; max-width:400px;
+  margin:auto;
+  padding:0 0 30px;
+  border-radius:6px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 25px 70px rgba(0,0,0,.45);
+  border:none;
+  text-align:center;
+}
+
+/* ---- header: half-circle photo panel with brand + name ---- */
+.auth-card::before{
+  content:"";
+  display:block;
+  height:150px;
+  background-image:
+    linear-gradient(rgba(11,29,58,.35), rgba(11,29,58,.55)),
+    url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center 30%;
+  border-radius:0 0 50% 50% / 0 0 22% 22%;
+}
+
+.ac-brand{
+  position:absolute;
+  top:16px; left:0; right:0;
+  margin:0;
+  justify-content:center;
+  color:#fff;
+  font-size:15px;
+  letter-spacing:.02em;
+  text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.ac-brand img{ filter:brightness(0) invert(1); opacity:.95; }
+
+.ap-page-tag{
+  position:absolute;
+  top:50px; left:0; right:0;
+  margin:0 auto;
+  width:max-content;
+  background:rgba(255,255,255,.15);
+  color:#fff;
+  backdrop-filter:blur(2px);
+}
+
+.auth-card h2{
+  margin-top:-34px;
+  font-size:19px;
+  font-weight:700;
+  color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.5);
+}
+
+.auth-card .sub{
+  margin:2px 0 18px;
+  font-size:12.5px;
+  color:var(--ink-faint);
+}
+
+/* little circular avatar glyph sitting on the seam, Trendz-style */
+.auth-card form{
+  position:relative;
+  padding:0 34px;
+}
+.auth-card form::before{
+  content:"";
+  position:absolute;
+  top:-46px; left:50%;
+  transform:translateX(-50%);
+  width:46px; height:46px;
+  border-radius:50%;
+  background:#fff center/22px no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B1D3A' stroke-width='1.8'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 20c0-4 4-7 8-7s8 3 8 7'/%3E%3C/svg%3E");
+  box-shadow:0 3px 10px rgba(0,0,0,.25);
+  border:1px solid var(--line);
+}
+.auth-card form{ margin-top:34px; }
+
+.ap-close{
+  color:#fff;
+  top:14px; right:14px;
+  opacity:.9;
+}
+.ap-close:hover{ opacity:1; }
+
+/* ---- fields: pill/underline inputs like the reference shot ---- */
+.auth-card .modal-field{ margin-bottom:14px; text-align:left; }
+.auth-card .modal-field label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--ink-faint);
+}
+.auth-card .modal-field input,
+.auth-card .modal-field select{
+  border:1px solid var(--line);
+  border-radius:4px;
+  background:#FAFAFA;
+  padding:11px 12px;
+  font-size:13.5px;
+}
+.auth-card .modal-field input:focus{
+  border-color:#3E2C23;
+  background:#fff;
+}
+
+.auth-card .modal-tabs{ margin-bottom:16px; }
+
+/* ---- submit button: dark coffee-brown bar, full width, tracked caps ---- */
+.auth-card button[type="submit"]{
+  width:100%;
+  background:#2E2118;
+  color:#fff;
+  border:none;
+  border-radius:3px;
+  padding:13px;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:background .15s, transform .15s;
+}
+.auth-card button[type="submit"]:hover{
+  background:#1c130d;
+  transform:translateY(-1px);
+}
+
+.auth-card #authError{ text-align:left; }
+
+.ac-switch-role{
+  padding:0 34px;
+  margin-top:16px !important;
+}
+.ac-switch-role a{ color:#8C5A32; }
+
+@media (max-width:480px){
+  .auth-card{ max-width:100%; }
+  .auth-card form,
+  .ac-switch-role{ padding-left:22px; padding-right:22px; }
+}
