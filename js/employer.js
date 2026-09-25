@@ -1,4 +1,4 @@
-  // ---------- Faculty profile data + slide-in panel ----------
+// ---------- Faculty profile data + slide-in panel ----------
   const facultyProfiles = {
     priya: {
       avatar:'https://i.pravatar.cc/160?img=47', name:'Dr. Priya Menon', role:'Physics · Quantum Optics',
@@ -278,8 +278,8 @@
 
   function statusBadge(id){
     const s = candidateStatus[id];
-    if(s==='shortlisted') return '<span class="badge-live" style="background:var(--green);">Shortlisted</span>';
-    if(s==='invited') return '<span class="badge-live" style="background:var(--blue-600);">Invited</span>';
+    if(s==='shortlisted') return '<span class="badge badge-accepted">Shortlisted</span>';
+    if(s==='invited') return '<span class="badge badge-pending">Invited</span>';
     return '';
   }
 
@@ -342,7 +342,12 @@
       return !q || p.name.toLowerCase().includes(q) || p.role.toLowerCase().includes(q);
     });
     const visibleIds = ids.slice(0, candVisibleCount);
-    document.getElementById('candidateList').innerHTML = visibleIds.map(candidateCardHTML).join('') || '<p class="sub">No candidates match your search.</p>';
+    document.getElementById('candidateList').innerHTML = visibleIds.map(candidateCardHTML).join('') || `
+      <div class="empty-state">
+        <div class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 20H7a2 2 0 01-2-2V6a2 2 0 012-2h6l6 6v8a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="14" r="2.5" stroke="currentColor" stroke-width="2"/></svg></div>
+        <h4>No profiles found</h4>
+        <p>No published profiles match your search and filters yet. Try clearing a filter or broadening your search.</p>
+      </div>`;
     document.getElementById('candidateCount').textContent = ids.length + (ids.length===1 ? ' profile found' : ' profiles found');
 
     const moreWrap = document.getElementById('candidateShowMoreWrap');
@@ -427,7 +432,11 @@
   function renderApplicants(jobId){
     const job = jobsData[jobId];
     if(!job) return;
-    document.getElementById('apList').innerHTML = job.applicantIds.map(candidateCardHTML).join('') || '<p class="sub">No applicants yet.</p>';
+    document.getElementById('apList').innerHTML = job.applicantIds.map(candidateCardHTML).join('') || `
+      <div class="empty-state">
+        <div class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></div>
+        <h4>No applicants yet</h4>
+        <p>Once faculty or staff apply to this job, they'll show up here.</p>
+      </div>`;
     document.getElementById('apCount').textContent = job.applicantIds.length + (job.applicantIds.length===1 ? ' applicant' : ' applicants');
   }
-
