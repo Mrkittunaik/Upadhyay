@@ -209,56 +209,50 @@
   let slideProfileId = null;
   function openProfile(id){
     if(!isLoggedIn){ openAuth('post'); return; }
+    if(!facultyProfiles[id]) return;
+    window.location.href = `candidate-profile.html?id=${encodeURIComponent(id)}`;
+  }
+
+  // ---------- Full candidate profile page renderer (used by candidate-profile.html) ----------
+  function renderCandidateProfilePage(id){
     const p = facultyProfiles[id];
-    if(!p) return;
+    if(!p){
+      const root = document.getElementById('cpRoot');
+      if(root) root.innerHTML = '<div style="padding:60px; text-align:center; color:var(--ink-faint);">Candidate not found.</div>';
+      return;
+    }
     slideProfileId = id;
-    const spBanner = document.getElementById('spBanner');
-    if(spBanner) spBanner.style.background = bannerGradient(p.name);
-    document.getElementById('spAvatar').style.backgroundImage = `url('${p.avatar}')`;
-    document.getElementById('spName').textContent = p.name;
-    document.getElementById('spRole').textContent = p.role;
-    document.getElementById('spTags').innerHTML = p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('');
-    const spAbout = document.getElementById('spAbout');
-    if(spAbout) spAbout.textContent = p.about || '';
-    document.getElementById('spStats').innerHTML = p.stats.map(([num,label])=>`<div class="hp-stat"><span class="num tabular">${num}</span><span class="label">${label}</span></div>`).join('');
-    document.getElementById('spExperience').innerHTML = p.experience.map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
-    const spEducation = document.getElementById('spEducation');
-    if(spEducation) spEducation.innerHTML = (p.education||[]).map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
-    const spSkills = document.getElementById('spSkills');
-    if(spSkills) spSkills.innerHTML = (p.skills||[]).map(s=>`<span class="hp-tag">${s}</span>`).join('');
-    document.getElementById('spLinks').innerHTML = p.links.map(([label,type])=>`<a class="slide-link" href="javascript:void(0)">${docIcon(type)}${label}</a>`).join('');
-    const spCollege = document.getElementById('spCollege');
-    if(spCollege) spCollege.textContent = p.college || '—';
+    document.title = `${p.name} — Upadyay`;
+    const cpBanner = document.getElementById('cpBanner');
+    if(cpBanner) cpBanner.style.background = bannerGradient(p.name);
+    document.getElementById('cpAvatar').style.backgroundImage = `url('${p.avatar}')`;
+    document.getElementById('cpName').textContent = p.name;
+    document.getElementById('cpRole').textContent = p.role;
+    document.getElementById('cpTags').innerHTML = p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('');
+    document.getElementById('cpAbout').textContent = p.about || '';
+    document.getElementById('cpStats').innerHTML = p.stats.map(([num,label])=>`<div class="hp-stat"><span class="num tabular">${num}</span><span class="label">${label}</span></div>`).join('');
+    document.getElementById('cpExperience').innerHTML = p.experience.map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
+    document.getElementById('cpEducation').innerHTML = (p.education||[]).map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
+    document.getElementById('cpSkills').innerHTML = (p.skills||[]).map(s=>`<span class="hp-tag">${s}</span>`).join('');
+    document.getElementById('cpLinks').innerHTML = p.links.map(([label,type])=>`<a class="slide-link" href="javascript:void(0)">${docIcon(type)}${label}</a>`).join('');
+    document.getElementById('cpCollege').textContent = p.college || '—';
     const strengthPct = Math.min(100, 60 + p.links.length*10);
-    const fillEl = document.getElementById('spStrengthFill');
-    if(fillEl) fillEl.style.width = strengthPct + '%';
-    const noteEl = document.getElementById('spStrengthNote');
-    if(noteEl) noteEl.textContent = strengthPct >= 90 ? 'Verified & document-complete' : 'Verified profile';
-    let actions = document.getElementById('spActions');
+    document.getElementById('cpStrengthFill').style.width = strengthPct + '%';
+    document.getElementById('cpStrengthNote').textContent = strengthPct >= 90 ? 'Verified & document-complete' : 'Verified profile';
+
+    let actions = document.getElementById('cpActions');
     if(currentRole==='company'){
-      if(!actions){
-        actions = document.createElement('div');
-        actions.id = 'spActions';
-        actions.style.cssText = 'display:flex; gap:10px; margin-top:18px;';
-        document.getElementById('spLinks').insertAdjacentElement('afterend', actions);
-      }
       actions.style.display = 'flex';
       actions.innerHTML = `
-        <button class="btn btn-light btn-sm" onclick="messageCandidate('${id}')">Message</button>
+        <button class="btn btn-light" onclick="messageCandidate('${id}')">Message</button>
         ${candidateStatus[id]==='shortlisted'
-          ? `<button class="btn btn-primary btn-sm" disabled>Shortlisted</button>`
-          : `<button class="btn btn-primary btn-sm" onclick="inviteCandidate('${id}'); openProfile('${id}');">${candidateStatus[id]==='invited' ? 'Invited ✓' : 'Invite candidate'}</button>`}
-        ${candidateStatus[id]==='invited' ? `<button class="btn btn-ghost btn-sm" onclick="shortlistCandidate('${id}'); openProfile('${id}');">Shortlist</button>` : ''}
+          ? `<button class="btn btn-primary" disabled>Shortlisted</button>`
+          : `<button class="btn btn-primary" onclick="inviteCandidate('${id}'); renderCandidateProfilePage('${id}');">${candidateStatus[id]==='invited' ? 'Invited ✓' : 'Invite candidate'}</button>`}
+        ${candidateStatus[id]==='invited' ? `<button class="btn btn-ghost" onclick="shortlistCandidate('${id}'); renderCandidateProfilePage('${id}');">Shortlist</button>` : ''}
       `;
-    } else if(actions){
+    } else {
       actions.style.display = 'none';
     }
-    document.getElementById('slideScrim').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeProfile(){
-    document.getElementById('slideScrim').classList.remove('open');
-    document.body.style.overflow = '';
   }
 
   function switchDashTab(which){
@@ -267,6 +261,7 @@
     const pf = document.getElementById('dashProfileTab');
     if(pf) pf.style.display = 'block';
   }
+
 
   function switchEmployerTab(which){
     const $ = id => document.getElementById(id);
