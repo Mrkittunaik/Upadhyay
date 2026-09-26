@@ -50,6 +50,7 @@
         <div class="dash-tabs" id="employerTabsBar" style="display:none;">
           <button class="dash-subtab active" id="subtabCompany" onclick="switchEmployerTab('company')">Company profile</button>
           <button class="dash-subtab" id="subtabPost" onclick="switchEmployerTab('post')">Post a job</button>
+          <button class="dash-subtab" id="subtabMyJobs" onclick="switchEmployerTab('myjobs')">Posted jobs</button>
           <button class="dash-subtab" id="subtabCandidates" onclick="switchEmployerTab('candidates')">Browse candidates</button>
         </div>
         <p class="sub" id="employerSetupNote" style="margin:0 0 18px;">Create your institution account with these basic details. Once saved, you'll get your full poster panel — jobs, candidates, invites and messages.</p>
@@ -124,6 +125,11 @@
           </div>
         </div>
 
+        <div id="dashMyJobsTab" style="display:none;">
+          <div class="candidates-section-head"><h3>Posted jobs</h3><span class="count" id="myJobsCount"></span></div>
+          <div class="demo-grid" id="myJobsList"></div>
+        </div>
+
         <div id="dashCandidatesTab" style="display:none;">
           <h3>Browse candidates</h3>
           <div class="dash-form-row">
@@ -162,6 +168,6 @@
 <script src="../js/faculty.js"></script>
 <script src="../js/admin.js"></script>
 <script src="../js/layout.js"></script>
-<script>mountNav(); mountChrome(); if(requireLogin('company')){ openDash(currentCompany.name || 'Institution', 'post'); const _t = getParam('tab'); if(_t==='candidates' || _t==='company') switchEmployerTab(_t); }</script>
+<script>mountNav(); mountChrome(); if(requireLogin('company')){ openDash(currentCompany.name || 'Institution', 'post'); const _t = getParam('tab'); if(_t==='candidates' || _t==='company' || _t==='myjobs') switchEmployerTab(_t); }</script>
 </body>
 </html>
