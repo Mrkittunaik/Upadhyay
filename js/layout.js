@@ -148,7 +148,7 @@ function mountChrome(opts){
         <h4 id="miniStatsHeading">Your profile performance</h4>
       </div>
       <div class="mini-stats">
-        <div><span class="num tabular" id="miniStat1Num">12</span><label id="miniStat1Label">Search appearances</label></div>
+        <div id="miniStat1Box"><span class="num tabular" id="miniStat1Num">12</span><label id="miniStat1Label">Search appearances</label></div>
         <div><span class="num tabular" id="miniStat2Num">4</span><label id="miniStat2Label">Recruiter actions</label></div>
       </div>
     </div>
@@ -185,6 +185,10 @@ function mountChrome(opts){
       <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer');">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         Post a job
+      </a>
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer', {tab:'myjobs'});">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 12H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 17H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Posted jobs
       </a>
       <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer', {tab:'candidates'});">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
