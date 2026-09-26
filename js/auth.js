@@ -12,6 +12,7 @@
   let authOtpSent = false;
   let intendedPanel = 'search';
   let selectedRole = null;
+  let authStep = 1;   // 1: method choice, 2: identifier, 3: name/company (register only), 4: password
   // isLoggedIn, currentRole, currentUser now live in store.js (persisted across pages)
 
   let popupMode = 'register';
@@ -50,6 +51,7 @@
     updateAuthLeftPanel(intendedPanel);
     setAuthMethod('email');
     setAuthTab(mode);
+    goToAuthStep(1);
   }
 
   function updateAuthLeftPanel(panel){
@@ -58,6 +60,110 @@
     if(tagEl) tagEl.textContent = isCompany ? 'Employer account' : 'Faculty account';
     const switchEl = document.getElementById('acSwitchRole');
     if(switchEl) switchEl.firstChild.textContent = isCompany ? 'Not an institution? ' : 'Not a faculty member? ';
+  }
+
+  // ---- wizard step control ----
+  function totalAuthSteps(){
+    return authMode === 'register' ? 4 : 3;   // login skips step 3 (name/company)
+  }
+  function stepIdForIndex(i){
+    // register: 1,2,3,4 map straight through.
+    // login: step index 3 maps to the password step (authStep4 element), since there's no name/company step.
+    if(authMode !== 'register' && i === 3) return 4;
+    return i;
+  }
+  function goToAuthStep(i){
+    authStep = i;
+    for(let n=1;n<=4;n++){
+      const el = document.getElementById('authStep'+n);
+      if(el) el.style.display = 'none';
+    }
+    const targetId = stepIdForIndex(i);
+    const target = document.getElementById('authStep'+targetId);
+    if(target) target.style.display = 'block';
+    const backBtn = document.getElementById('authStepBack');
+    if(backBtn) backBtn.style.display = (i>1) ? 'flex' : 'none';
+    const errEl = document.getElementById('authError');
+    if(errEl) errEl.style.display = 'none';
+  }
+  function authWizardNext(){
+    const errEl = document.getElementById('authError');
+    // Step 1 -> 2: nothing to validate, method already chosen.
+    if(authStep === 1){
+      goToAuthStep(2);
+      return;
+    }
+    // Step 2 -> 3 (register) or -> password step (login): validate identifier.
+    if(authStep === 2){
+      if(authMethod === 'email'){
+        const emailVal = document.getElementById('authEmailInput').value.trim();
+        if(!emailVal){
+          errEl.textContent = 'Enter your email address.';
+          errEl.style.display = 'block';
+          return;
+        }
+      } else {
+        const phoneVal = document.getElementById('authPhoneInput').value.trim();
+        if(phoneVal.length < 10){
+          errEl.textContent = 'Enter a valid 10-digit mobile number.';
+          errEl.style.display = 'block';
+          return;
+        }
+        if(!authOtpSent){
+          errEl.textContent = 'Send and enter the OTP first.';
+          errEl.style.display = 'block';
+          return;
+        }
+        const otp = document.getElementById('authOtpInput').value.trim();
+        if(otp.length < 6){
+          errEl.textContent = 'Enter the 6-digit OTP.';
+          errEl.style.display = 'block';
+          return;
+        }
+      }
+      errEl.style.display = 'none';
+      goToAuthStep(authMode === 'register' ? 3 : 4);
+      return;
+    }
+    // Step 3 -> 4 (register only): validate name/company.
+    if(authStep === 3){
+      const isCompanyRole = selectedRole === 'company';
+      if(isCompanyRole){
+        const companyName = document.getElementById('authCompanyNameInput').value.trim();
+        const contactName = document.getElementById('authContactPersonInput').value.trim();
+        if(!companyName || !contactName){
+          errEl.textContent = 'Enter your institution name and contact person.';
+          errEl.style.display = 'block';
+          return;
+        }
+      } else {
+        const nameVal = document.getElementById('authNameInput').value.trim();
+        if(!nameVal){
+          errEl.textContent = 'Enter your full name.';
+          errEl.style.display = 'block';
+          return;
+        }
+      }
+      errEl.style.display = 'none';
+      goToAuthStep(4);
+      return;
+    }
+  }
+  function authWizardBack(){
+    if(authStep <= 1) return;
+    if(authStep === 4 && authMode !== 'register'){
+      goToAuthStep(2);
+      return;
+    }
+    goToAuthStep(authStep - 1);
+  }
+
+  function togglePwVisibility(inputId, btnEl){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btnEl.classList.toggle('showing', !showing);
   }
 
   function setAuthMethod(method){
@@ -108,7 +214,7 @@
     document.getElementById('fieldContactPerson').style.display = (mode==='register' && isCompany) ? 'flex' : 'none';
     const confirmPwField = document.getElementById('fieldConfirmPassword');
     if(confirmPwField) confirmPwField.style.display = (mode==='register') ? 'flex' : 'none';
-    document.querySelector('#authOverlay form').style.display = 'block';
+    document.getElementById('authForm').style.display = 'block';
     document.getElementById('authTitle').textContent = mode==='register'
       ? (isCompany ? 'Create your institution account' : 'Create your faculty account')
       : (isCompany ? 'Welcome back' : 'Welcome back');
