@@ -194,6 +194,6 @@
 <script src="../js/faculty.js"></script>
 <script src="../js/admin.js"></script>
 <script src="../js/layout.js"></script>
-<script>mountNav(); mountChrome(); if(requireLogin('company')) openDash(currentCompany.name || 'Institution', 'post');</script>
+<script>mountNav(); mountChrome(); if(requireLogin('company')){ openDash(currentCompany.name || 'Institution', 'post'); const _t = getParam('tab'); if(_t==='candidates' || _t==='company') switchEmployerTab(_t); }</script>
 </body>
 </html>
