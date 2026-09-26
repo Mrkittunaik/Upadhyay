@@ -21,7 +21,7 @@
   position:relative;
   width:100%; max-width:400px;
   margin:auto;
-  padding:0 0 30px;
+  padding:0 0 18px;
   border-radius:6px;
   overflow:hidden;
   background:#fff;
@@ -34,7 +34,7 @@
 .auth-card::before{
   content:"";
   display:block;
-  height:150px;
+  height:100px;
   background-image:
     linear-gradient(rgba(11,29,58,.35), rgba(11,29,58,.55)),
     url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop');
@@ -57,7 +57,7 @@
 
 .ap-page-tag{
   position:absolute;
-  top:50px; left:0; right:0;
+  top:38px; left:0; right:0;
   margin:0 auto;
   width:max-content;
   background:rgba(255,255,255,.15);
@@ -68,33 +68,35 @@
 #backToLoginLink{
   position:relative;
   z-index:2;
-  margin-top:14px;
+  margin-top:10px;
 }
 #backToLoginLink a{
-  color:#fff !important;
-  text-shadow:0 1px 6px rgba(0,0,0,.5);
+  color:#1D5FD6 !important;
+  text-shadow:none;
 }
 
 .auth-card h2{
   position:relative;
   z-index:2;
-  margin-top:8px;
-  font-size:19px;
+  margin-top:4px;
+  font-size:18px;
   font-weight:700;
-  color:#fff;
-  text-shadow:0 1px 6px rgba(0,0,0,.5);
+  color:#1D5FD6;
+  text-shadow:none;
 }
 
 /* When the back-link isn't shown (login mode), pull the title back up
    into the hero the way it did before. */
 #backToLoginLink[style*="display:none"] + h2,
 #backToLoginLink[style*="display: none"] + h2{
-  margin-top:-34px;
+  margin-top:-24px;
+  color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.5);
 }
 
 .auth-card .sub{
-  margin:2px 0 18px;
-  font-size:12.5px;
+  margin:2px 0 10px;
+  font-size:12px;
   color:var(--ink-faint);
 }
 
@@ -106,16 +108,16 @@
 .auth-card form::before{
   content:"";
   position:absolute;
-  top:-46px; left:50%;
+  top:-30px; left:50%;
   transform:translateX(-50%);
-  width:46px; height:46px;
+  width:34px; height:34px;
   border-radius:50%;
-  background:#fff center/22px no-repeat
+  background:#fff center/16px no-repeat
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230B1D3A' stroke-width='1.8'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 20c0-4 4-7 8-7s8 3 8 7'/%3E%3C/svg%3E");
   box-shadow:0 3px 10px rgba(0,0,0,.25);
   border:1px solid var(--line);
 }
-.auth-card form{ margin-top:34px; }
+.auth-card form{ margin-top:22px; }
 
 .ap-close{
   color:#fff;
@@ -125,7 +127,7 @@
 .ap-close:hover{ opacity:1; }
 
 /* ---- fields: pill/underline inputs like the reference shot ---- */
-.auth-card .modal-field{ margin-bottom:14px; text-align:left; }
+.auth-card .modal-field{ margin-bottom:10px; text-align:left; }
 .auth-card .modal-field label{
   font-size:11px;
   text-transform:uppercase;
