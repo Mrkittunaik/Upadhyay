@@ -57,12 +57,13 @@
 
 .ap-page-tag{
   position:absolute;
-  top:42px; left:0; right:0;
+  top:44px; left:0; right:0;
   margin:0 auto;
   width:max-content;
   background:rgba(255,255,255,.15);
   color:#fff;
   backdrop-filter:blur(2px);
+  border-radius:2px !important;
 }
 
 #backToLoginLink{
