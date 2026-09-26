@@ -234,8 +234,24 @@
       if(document.getElementById('miniPanel')) refreshMiniProfile();
     }
     const isSeeker = isLoggedIn && currentRole !== 'company';
+    const isCompany = isLoggedIn && currentRole === 'company';
+
+    // Faculty-only links: only relevant to logged-out visitors and seekers.
+    const forFaculty = document.getElementById('navForFacultyLink');
+    if(forFaculty) forFaculty.style.display = isCompany ? 'none' : 'inline';
+    const jobsDrop = document.getElementById('navJobsDropWrap');
+    if(jobsDrop) jobsDrop.style.display = isCompany ? 'none' : '';
+
+    // Employer-only link: hidden once a seeker is signed in.
+    const forEmployers = document.getElementById('navForEmployersLink');
+    if(forEmployers) forEmployers.style.display = isSeeker ? 'none' : 'inline';
+
     const bjLink = document.getElementById('navBrowseJobsLink');
     if(bjLink) bjLink.style.display = isSeeker ? 'inline' : 'none';
+    const postJobLink = document.getElementById('navPostJobLink');
+    if(postJobLink) postJobLink.style.display = isCompany ? 'inline' : 'none';
+    const browseCandLink = document.getElementById('navBrowseCandidatesLink');
+    if(browseCandLink) browseCandLink.style.display = isCompany ? 'inline' : 'none';
     const dashLink = document.getElementById('navDashLink');
     if(dashLink){ dashLink.href = PAGES[dashboardPageForRole()]; dashLink.style.display = isLoggedIn ? 'inline' : 'none'; }
     const miniLink = document.getElementById('miniBrowseJobsLink');
