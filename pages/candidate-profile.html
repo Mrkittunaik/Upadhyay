@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate profile — Upadyay</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="page">
+  <div id="siteNav"></div>
+
+  <div class="cp-page" id="cpRoot">
+    <div class="cp-back-row">
+      <a href="javascript:history.back()" class="cp-back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to candidates
+      </a>
+    </div>
+
+    <div class="cp-card">
+      <div class="cp-banner" id="cpBanner"></div>
+
+      <div class="cp-main">
+        <div class="cp-body">
+          <div class="cp-avatar-row">
+            <div class="cp-avatar" id="cpAvatar"></div>
+          </div>
+          <h1 class="cp-name">
+            <span id="cpName"></span>
+            <svg class="cp-verified" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" title="Verified profile">
+              <path d="M12 2L14.4 4.1L17.5 3.6L18.4 6.6L21.2 8.1L20 11L21.2 13.9L18.4 15.4L17.5 18.4L14.4 17.9L12 20L9.6 17.9L6.5 18.4L5.6 15.4L2.8 13.9L4 11L2.8 8.1L5.6 6.6L6.5 3.6L9.6 4.1L12 2Z" fill="#1652C7"/>
+              <path d="M8.5 12L10.8 14.3L15.5 9.6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </h1>
+          <p class="cp-role" id="cpRole"></p>
+          <div class="jc-tags" id="cpTags"></div>
+
+          <div class="cp-actions-row" id="cpActions"></div>
+
+          <div class="slide-section">
+            <h4>About</h4>
+            <p class="slide-about" id="cpAbout"></p>
+          </div>
+
+          <div class="slide-section">
+            <h4>Snapshot</h4>
+            <div class="slide-stats" id="cpStats"></div>
+          </div>
+
+          <div class="slide-section">
+            <h4>Experience</h4>
+            <div id="cpExperience"></div>
+          </div>
+
+          <div class="slide-section">
+            <h4>Education</h4>
+            <div id="cpEducation"></div>
+          </div>
+
+          <div class="slide-section">
+            <h4>Skills</h4>
+            <div class="jc-tags" id="cpSkills"></div>
+          </div>
+
+          <div class="slide-section">
+            <h4>Certifications &amp; documents</h4>
+            <div class="slide-links" id="cpLinks"></div>
+          </div>
+        </div>
+
+        <aside class="slide-sidebar cp-sidebar">
+          <div class="slide-side-card">
+            <h5>Profile strength</h5>
+            <div class="slide-strength-bar"><div class="slide-strength-fill" id="cpStrengthFill"></div></div>
+            <p class="slide-side-note" id="cpStrengthNote">Verified &amp; document-complete</p>
+          </div>
+          <div class="slide-side-card">
+            <h5>College</h5>
+            <p class="slide-side-value" id="cpCollege"></p>
+          </div>
+          <div class="slide-side-card">
+            <h5>Response activity</h5>
+            <p class="slide-side-note">Typically responds within 24 hours</p>
+          </div>
+          <div class="slide-side-card slide-side-tip">
+            <h5>Hiring tip</h5>
+            <p class="slide-side-note">Message before inviting to gauge availability and salary expectations.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div id="siteChrome"></div>
+
+<script src="../js/store.js"></script>
+<script src="../js/employer.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/faculty.js"></script>
+<script src="../js/admin.js"></script>
+<script src="../js/layout.js"></script>
+<script>
+  mountNav(); mountChrome();
+  requireLogin('company');
+  renderCandidateProfilePage(getParam('id'));
+</script>
+</body>
+</html>
