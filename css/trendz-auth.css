@@ -65,12 +65,31 @@
   backdrop-filter:blur(2px);
 }
 
+#backToLoginLink{
+  position:relative;
+  z-index:2;
+  margin-top:14px;
+}
+#backToLoginLink a{
+  color:#fff !important;
+  text-shadow:0 1px 6px rgba(0,0,0,.5);
+}
+
 .auth-card h2{
-  margin-top:-34px;
+  position:relative;
+  z-index:2;
+  margin-top:8px;
   font-size:19px;
   font-weight:700;
   color:#fff;
   text-shadow:0 1px 6px rgba(0,0,0,.5);
+}
+
+/* When the back-link isn't shown (login mode), pull the title back up
+   into the hero the way it did before. */
+#backToLoginLink[style*="display:none"] + h2,
+#backToLoginLink[style*="display: none"] + h2{
+  margin-top:-34px;
 }
 
 .auth-card .sub{
