@@ -533,6 +533,22 @@
   .slide-exp-item .t1{font-size:13.5px; font-weight:600;}
   .slide-exp-item .t2{font-size:12px; color:var(--ink-faint);}
 
+  /* Roles/departments interested in */
+  .cp-interest-row{padding:8px 0;}
+  .cp-interest-row + .cp-interest-row{border-top:1px dashed var(--line);}
+  .cp-interest-label{font-size:12px; font-weight:600; color:var(--ink-faint); margin-bottom:6px;}
+
+  /* Salary grid */
+  .cp-salary-grid{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+  .cp-salary-cell{flex:1 1 120px; text-align:center; padding:14px 10px; border-left:1px solid var(--line);}
+  .cp-salary-cell:first-child{border-left:none;}
+  .cp-salary-cell .t2{font-size:11px; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-faint); margin-bottom:6px;}
+  .cp-salary-cell .t1{font-size:16px; font-weight:700; color:var(--ink);}
+  @media (max-width:600px){
+    .cp-salary-cell{flex:1 1 45%; border-left:none; border-top:1px solid var(--line);}
+    .cp-salary-cell:nth-child(-n+2){border-top:none;}
+  }
+
   /* Right-rail sidebar inside the candidate profile panel */
   .slide-sidebar{
     flex:0 0 220px; width:220px; padding:24px 22px 32px 18px; margin-top:18px;
