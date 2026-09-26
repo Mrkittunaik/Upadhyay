@@ -143,23 +143,23 @@ function mountChrome(opts){
       </div>
     </div>
     <button class="btn btn-light btn-sm" style="width:100%; margin-bottom:4px;" onclick="openFullProfile()">Update profile</button>
-    <div class="mini-section">
+    <div class="mini-section" id="miniStatsSection">
       <div class="mini-section-head">
-        <h4>Your profile performance</h4>
+        <h4 id="miniStatsHeading">Your profile performance</h4>
       </div>
       <div class="mini-stats">
-        <div><span class="num tabular" id="miniViews">12</span><label>Search appearances</label></div>
-        <div><span class="num tabular" id="miniActions">4</span><label>Recruiter actions</label></div>
+        <div><span class="num tabular" id="miniStat1Num">12</span><label id="miniStat1Label">Search appearances</label></div>
+        <div><span class="num tabular" id="miniStat2Num">4</span><label id="miniStat2Label">Recruiter actions</label></div>
       </div>
     </div>
-    <div class="mini-section">
+    <div class="mini-section" id="miniPrefSection">
       <div class="mini-section-head">
-        <h4>Your preferences</h4>
+        <h4 id="miniPrefHeading">Your preferences</h4>
       </div>
-      <p style="font-size:12px; color:var(--ink-faint); margin:0 0 10px;">Matched roles are based on these.</p>
+      <p style="font-size:12px; color:var(--ink-faint); margin:0 0 10px;" id="miniPrefSub">Matched roles are based on these.</p>
       <div id="miniPrefTags" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
     </div>
-    <div class="mini-links">
+    <div class="mini-links" id="miniLinksFaculty">
       <a href="javascript:void(0)" id="miniBrowseJobsLink" onclick="closeMiniProfile(); openBrowseJobs();">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         Browse jobs
@@ -167,6 +167,28 @@ function mountChrome(opts){
       <a href="javascript:void(0)" onclick="openFullProfile()">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Career guidance
+      </a>
+      <a href="javascript:void(0)" onclick="openFullProfile()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8V12L15 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Settings
+      </a>
+      <a href="javascript:void(0)" onclick="logoutUser()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Logout
+      </a>
+    </div>
+    <div class="mini-links" id="miniLinksCompany" style="display:none;">
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer', {tab:'company'});">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 21V16H15V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        Company profile
+      </a>
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Post a job
+      </a>
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer', {tab:'candidates'});">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Browse candidates
       </a>
       <a href="javascript:void(0)" onclick="openFullProfile()">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 8V12L15 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
