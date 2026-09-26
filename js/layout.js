@@ -54,6 +54,7 @@ function mountNav(active){
         <a href="#" id="navPostJobLink" onclick="goTo('employer',{tab:'post'}); return false;" style="display:none; font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Post a job</a>
         <a href="#" id="navBrowseCandidatesLink" onclick="goTo('employer',{tab:'candidates'}); return false;" style="display:none; font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Browse candidates</a>
         <a href="#" id="navDashLink" style="font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Dashboard</a>
+        <span id="navRoleBadge" style="display:none; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--blue-700); background:var(--blue-50); padding:3px 8px; border-radius:var(--radius); margin-right:8px;"></span>
         <button class="nav-bell" onclick="openNotifPanel()">
           ${BELL_SVG}
           <span class="nav-bell-dot" id="navBellDot" style="display:none;"></span>
