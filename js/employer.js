@@ -2,7 +2,7 @@
   const facultyProfiles = {
     priya: {
       avatar:'https://i.pravatar.cc/160?img=47', name:'Dr. Priya Menon', role:'Physics · Quantum Optics',
-      tags:['PhD','8 yrs experience','Hyderabad'],
+      tags:['PhD','8 yrs experience','Hyderabad'], college:'IIT Bombay',
       stats:[['14','Publications'],['210','Citations'],['1','Patent']],
       experience:[
         ['Associate Professor, Physics','KL University · 2019 – Present'],
@@ -17,7 +17,7 @@
     },
     rohit:{
       avatar:'https://i.pravatar.cc/160?img=12', name:'Rohit Sharma', role:'Commerce · Accountancy',
-      tags:['PG','5 yrs experience','Chennai'],
+      tags:['PG','5 yrs experience','Chennai'], college:'Loyola College',
       stats:[['5','Yrs experience'],['2','Boards taught'],['120+','Students mentored']],
       experience:[
         ['Senior Lecturer, Commerce','Narayana Junior College · 2021 – Present'],
@@ -31,7 +31,7 @@
     },
     anjali:{
       avatar:'https://i.pravatar.cc/160?img=32', name:'Dr. Anjali Kulkarni', role:'Computer Science · AI/ML',
-      tags:['PhD','11 yrs experience','Vijayawada'],
+      tags:['PhD','11 yrs experience','Vijayawada'], college:'IIT Bombay',
       stats:[['22','Publications'],['340','Citations'],['3','Patents']],
       experience:[
         ['Professor, Computer Science','KL University · 2017 – Present'],
@@ -112,6 +112,11 @@
 
   // ---------- Extra demo candidates (auto-generated, 17 more → 20 total) ----------
   (function(){
+    const COLLEGE_POOL = [
+      'IIT Bombay','IIT Delhi','IIT Madras','NIT Warangal','NIT Trichy','VNIT Nagpur',
+      'IIIT Hyderabad','BITS Pilani','Anna University','Jadavpur University',
+      'Osmania University','Delhi University','VIT Vellore','IIM Ahmedabad','Amrita University'
+    ];
     const extra = [
       ['ravikumar','Dr. Ravi Kumar','Mathematics · Applied Statistics','PhD','9 yrs experience','Bengaluru',53],
       ['sneha','Sneha Reddy','English · Literature','PG','4 yrs experience','Hyderabad',44],
@@ -131,11 +136,12 @@
       ['manoj','Manoj Tiwari','Physics · Astrophysics','PhD','12 yrs experience','Delhi',11],
       ['harini','Harini Venkatesh','Computer Science · Data Science','PG','3 yrs experience','Bengaluru',45]
     ];
-    extra.forEach(([id,name,role,qual,exp,city,imgNum])=>{
+    extra.forEach(([id,name,role,qual,exp,city,imgNum], i)=>{
       facultyProfiles[id] = {
         avatar:`https://i.pravatar.cc/160?img=${imgNum}`,
         name, role,
         tags:[qual, exp, city],
+        college: COLLEGE_POOL[i % COLLEGE_POOL.length],
         stats: qual==='PhD'
           ? [[String(Math.floor(Math.random()*20)+3),'Publications'],[String(Math.floor(Math.random()*300)+40),'Citations'],[String(Math.floor(Math.random()*3)),'Patents']]
           : [[exp.split(' ')[0],'Yrs experience'],[String(Math.floor(Math.random()*3)+1),'Boards taught'],[String(Math.floor(Math.random()*150)+50)+'+','Students mentored']],
@@ -331,7 +337,7 @@
     return `
       <div class="job-card profile-card profile-card-banner" onclick="openProfile('${id}')" style="cursor:pointer;">
         <div class="pc-banner" style="background:${bannerGradient(p.name)};">
-          ${statusBadge(id) || `<span class="hp-badge pc-banner-badge">${p.tags[0]}</span>`}
+          ${statusBadge(id) || (p.college ? `<span class="pc-college-badge">${p.college}</span>` : '')}
         </div>
         <div class="pc-avatar-wrap">
           <div class="job-logo pc-avatar" style="background-image:url('${p.avatar}'); background-size:cover;"></div>
@@ -344,7 +350,7 @@
           <div class="jc-tags">${p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('')}</div>
           <div class="jc-foot">
             <span class="jc-posted">Open to opportunities</span>
-            <div style="display:flex; gap:8px;">
+            <div class="pc-actions">
               <button class="btn btn-light btn-sm" onclick="event.stopPropagation(); messageCandidate('${id}', event)">Message</button>
               ${candidateStatus[id]==='shortlisted'
                 ? `<button class="btn btn-primary btn-sm" disabled>Shortlisted</button>`
