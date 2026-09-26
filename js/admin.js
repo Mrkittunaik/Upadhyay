@@ -226,6 +226,10 @@
     return false;
   }
 
+  // Single source of truth for nav state across all three states:
+  // logged-out visitor, logged-in faculty (seeker), logged-in company (employer).
+  // NOTE: this function is defined identically in auth.js; admin.js loads after
+  // auth.js so this copy is the one that actually runs. Keep both in sync.
   function updateNavForLogin(){
     const cta = document.getElementById('navCta'); if(cta) cta.style.display = isLoggedIn ? 'none' : 'flex';
     const usr = document.getElementById('navUser'); if(usr) usr.style.display = isLoggedIn ? 'flex' : 'none';
@@ -236,24 +240,37 @@
     const isSeeker = isLoggedIn && currentRole !== 'company';
     const isCompany = isLoggedIn && currentRole === 'company';
 
-    // Faculty-only links: only relevant to logged-out visitors and seekers.
+    // Marketing/home nav links (For Faculty, For Employers, jobs-by-type dropdown,
+    // How it works) are for logged-out visitors deciding which side to join.
+    // Once someone is signed in as either role, these are hidden entirely —
+    // a signed-in faculty user doesn't need "For Employers" marketing copy,
+    // and a signed-in company doesn't need "For Faculty" or job-browsing links.
     const forFaculty = document.getElementById('navForFacultyLink');
-    if(forFaculty) forFaculty.style.display = isCompany ? 'none' : 'inline';
-    const jobsDrop = document.getElementById('navJobsDropWrap');
-    if(jobsDrop) jobsDrop.style.display = isCompany ? 'none' : '';
-
-    // Employer-only link: hidden once a seeker is signed in.
+    if(forFaculty) forFaculty.style.display = isLoggedIn ? 'none' : 'inline';
     const forEmployers = document.getElementById('navForEmployersLink');
-    if(forEmployers) forEmployers.style.display = isSeeker ? 'none' : 'inline';
+    if(forEmployers) forEmployers.style.display = isLoggedIn ? 'none' : 'inline';
+    const jobsDrop = document.getElementById('navJobsDropWrap');
+    if(jobsDrop) jobsDrop.style.display = isLoggedIn ? 'none' : '';
 
+    // Dashboard-side links, split cleanly by role — never both, never neither.
     const bjLink = document.getElementById('navBrowseJobsLink');
     if(bjLink) bjLink.style.display = isSeeker ? 'inline' : 'none';
     const postJobLink = document.getElementById('navPostJobLink');
     if(postJobLink) postJobLink.style.display = isCompany ? 'inline' : 'none';
     const browseCandLink = document.getElementById('navBrowseCandidatesLink');
     if(browseCandLink) browseCandLink.style.display = isCompany ? 'inline' : 'none';
+
     const dashLink = document.getElementById('navDashLink');
-    if(dashLink){ dashLink.href = PAGES[dashboardPageForRole()]; dashLink.style.display = isLoggedIn ? 'inline' : 'none'; }
+    if(dashLink){
+      dashLink.href = PAGES[dashboardPageForRole()];
+      dashLink.textContent = isCompany ? 'Employer dashboard' : 'My dashboard';
+      dashLink.style.display = isLoggedIn ? 'inline' : 'none';
+    }
+    const roleBadge = document.getElementById('navRoleBadge');
+    if(roleBadge){
+      roleBadge.style.display = isLoggedIn ? 'inline' : 'none';
+      roleBadge.textContent = isCompany ? 'Employer' : 'Faculty';
+    }
     const miniLink = document.getElementById('miniBrowseJobsLink');
     if(miniLink) miniLink.style.display = isSeeker ? 'flex' : 'none';
   }
