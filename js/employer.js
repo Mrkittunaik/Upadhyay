@@ -19,7 +19,16 @@
         ['Resume / CV.pdf','doc'],
         ['Publication list (Google Scholar)','link'],
         ['Patent certificate.pdf','doc']
-      ]
+      ],
+      interests:{
+        departments:['Physics','Applied Sciences'],
+        designations:['Associate Professor','Professor'],
+        subjects:['Quantum Mechanics','Photonics','Electrodynamics'],
+        orgType:'University / Higher Education',
+        location:'Hyderabad, Vijayawada',
+        employmentType:'Full-time'
+      },
+      salary:{ presentCtc:1200000, expectedCtc:1600000, minAcceptable:1400000 }
     },
     rohit:{
       avatar:'https://i.pravatar.cc/160?img=12', name:'Rohit Sharma', role:'Commerce · Accountancy',
@@ -39,7 +48,16 @@
         ['PG Degree Certificate.pdf','doc'],
         ['Resume / CV.pdf','doc'],
         ['Experience letter — Sri Chaitanya.pdf','doc']
-      ]
+      ],
+      interests:{
+        departments:['Commerce','Management'],
+        designations:['Senior Lecturer','HOD'],
+        subjects:['Financial Accounting','Taxation','Business Studies'],
+        orgType:'Junior College',
+        location:'Chennai',
+        employmentType:'Full-time'
+      },
+      salary:{ presentCtc:480000, expectedCtc:600000, minAcceptable:550000 }
     },
     anjali:{
       avatar:'https://i.pravatar.cc/160?img=32', name:'Dr. Anjali Kulkarni', role:'Computer Science · AI/ML',
@@ -61,7 +79,16 @@
         ['Publication list (Google Scholar)','link'],
         ['Patent certificates (3).pdf','doc'],
         ['Books published — list.pdf','doc']
-      ]
+      ],
+      interests:{
+        departments:['Computer Science','Artificial Intelligence'],
+        designations:['Professor','HOD'],
+        subjects:['Machine Learning','Deep Learning','Data Structures'],
+        orgType:'University / Higher Education',
+        location:'Vijayawada, Hyderabad',
+        employmentType:'Full-time'
+      },
+      salary:{ presentCtc:1800000, expectedCtc:2400000, minAcceptable:2100000 }
     }
   };
 
@@ -236,6 +263,43 @@
     document.getElementById('cpSkills').innerHTML = (p.skills||[]).map(s=>`<span class="hp-tag">${s}</span>`).join('');
     document.getElementById('cpLinks').innerHTML = p.links.map(([label,type])=>`<a class="slide-link" href="javascript:void(0)">${docIcon(type)}${label}</a>`).join('');
     document.getElementById('cpCollege').textContent = p.college || '—';
+
+    // Roles / departments the candidate is interested in
+    const cpInterests = document.getElementById('cpInterests');
+    if(cpInterests){
+      const iv = p.interests || {};
+      const rows = [
+        ['Departments', iv.departments],
+        ['Designations', iv.designations],
+        ['Preferred subjects', iv.subjects],
+        ['Organisation type', iv.orgType ? [iv.orgType] : null],
+        ['Preferred location', iv.location ? [iv.location] : null],
+        ['Employment type', iv.employmentType ? [iv.employmentType] : null]
+      ].filter(([,v]) => v && v.length);
+      cpInterests.innerHTML = rows.length
+        ? rows.map(([label,vals])=>`
+            <div class="cp-interest-row">
+              <div class="cp-interest-label">${label}</div>
+              <div class="jc-tags">${vals.map(v=>`<span class="hp-tag">${v}</span>`).join('')}</div>
+            </div>`).join('')
+        : '<p class="slide-side-note">Not specified by the candidate yet.</p>';
+    }
+
+    // Salary — present / expected / proposed, with auto-calculated hike
+    const cpSalary = document.getElementById('cpSalary');
+    if(cpSalary){
+      const s = p.salary || {};
+      const fmtINR = n => n || n===0 ? '₹' + Number(n).toLocaleString('en-IN') : '—';
+      const present = Number(s.presentCtc)||0, expected = Number(s.expectedCtc)||0;
+      const hikePct = present>0 ? Math.round(((expected-present)/present)*100) : null;
+      cpSalary.innerHTML = `
+        <div class="cp-salary-grid">
+          <div class="cp-salary-cell"><div class="t2">Present salary</div><div class="t1 tabular">${fmtINR(present)}</div></div>
+          <div class="cp-salary-cell"><div class="t2">Expected salary</div><div class="t1 tabular">${fmtINR(expected)}</div></div>
+          <div class="cp-salary-cell"><div class="t2">Min. acceptable</div><div class="t1 tabular">${fmtINR(s.minAcceptable)}</div></div>
+          <div class="cp-salary-cell"><div class="t2">Hike expected</div><div class="t1 tabular">${hikePct!==null ? hikePct+'%' : '—'}</div></div>
+        </div>`;
+    }
     const strengthPct = Math.min(100, 60 + p.links.length*10);
     document.getElementById('cpStrengthFill').style.width = strengthPct + '%';
     document.getElementById('cpStrengthNote').textContent = strengthPct >= 90 ? 'Verified & document-complete' : 'Verified profile';
