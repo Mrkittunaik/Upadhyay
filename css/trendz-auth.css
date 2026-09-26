@@ -11,10 +11,10 @@
   overflow-y:auto;
 
   background-image:
-    linear-gradient(rgba(15,12,10,.55), rgba(15,12,10,.55)),
-    url('https://images.unsplash.com/photo-1500534623283-312aade485b7?q=80&w=1600&auto=format&fit=crop');
+    linear-gradient(180deg, rgba(11,29,58,0.90) 0%, rgba(11,29,58,0.72) 55%, rgba(250,246,236,0.96) 100%),
+    url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=80');
   background-size:cover;
-  background-position:center;
+  background-position:center 30%;
 }
 
 .auth-card{
@@ -36,8 +36,8 @@
   display:block;
   height:115px;
   background-image:
-    linear-gradient(rgba(11,29,58,.35), rgba(11,29,58,.55)),
-    url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop');
+    linear-gradient(180deg, rgba(11,29,58,0.85) 0%, rgba(11,29,58,0.55) 100%),
+    url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80');
   background-size:cover;
   background-position:center 30%;
   border-radius:0 0 50% 50% / 0 0 22% 22%;
