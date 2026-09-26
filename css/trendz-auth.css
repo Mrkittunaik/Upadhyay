@@ -34,7 +34,7 @@
 .auth-card::before{
   content:"";
   display:block;
-  height:100px;
+  height:115px;
   background-image:
     linear-gradient(rgba(11,29,58,.35), rgba(11,29,58,.55)),
     url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1200&auto=format&fit=crop');
@@ -45,7 +45,7 @@
 
 .ac-brand{
   position:absolute;
-  top:16px; left:0; right:0;
+  top:12px; left:0; right:0;
   margin:0;
   justify-content:center;
   color:#fff;
@@ -57,7 +57,7 @@
 
 .ap-page-tag{
   position:absolute;
-  top:38px; left:0; right:0;
+  top:42px; left:0; right:0;
   margin:0 auto;
   width:max-content;
   background:rgba(255,255,255,.15);
@@ -89,7 +89,7 @@
    into the hero the way it did before. */
 #backToLoginLink[style*="display:none"] + h2,
 #backToLoginLink[style*="display: none"] + h2{
-  margin-top:-24px;
+  margin-top:-40px;
   color:#fff;
   text-shadow:0 1px 6px rgba(0,0,0,.5);
 }
