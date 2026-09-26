@@ -302,7 +302,8 @@
   .profile-card .jc-org{font-size:13px;}
 
   /* ---------- Candidate card — LinkedIn-style banner + overlapping avatar ---------- */
-  .profile-card-banner{padding:0; overflow:hidden; display:flex; flex-direction:column;}
+  .profile-card-banner{padding:0; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 8px 24px rgba(16,36,84,0.12);}
+  .profile-card-banner:hover{box-shadow:0 14px 34px rgba(16,36,84,0.18);}
   .pc-banner{height:60px; position:relative; flex-shrink:0;}
   .pc-college-badge{
     position:absolute; top:10px; right:12px; font-size:10.5px; font-weight:700; letter-spacing:.2px;
