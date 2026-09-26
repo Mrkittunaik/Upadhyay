@@ -152,6 +152,21 @@
     });
   })();
 
+  // ---------- Auto banner (deterministic gradient from name's first letter) ----------
+  const BANNER_PALETTE = [
+    ['#0A66C2','#2E8FE0'], ['#7C3AED','#A78BFA'], ['#0F766E','#2DD4BF'],
+    ['#B45309','#F59E0B'], ['#BE123C','#FB7185'], ['#166534','#4ADE80'],
+    ['#1D4ED8','#60A5FA'], ['#9D174D','#F472B6'], ['#4338CA','#818CF8'],
+    ['#0369A1','#38BDF8'], ['#B91C1C','#F87171'], ['#065F46','#34D399'],
+    ['#6D28D9','#C4B5FD'], ['#92400E','#FBBF24'], ['#374151','#9CA3AF']
+  ];
+  function bannerGradient(name){
+    const letter = (name || '?').replace(/^(Dr\.|Mr\.|Ms\.|Mrs\.)\s*/i,'').trim().charAt(0).toUpperCase();
+    const idx = Math.max(0, letter.charCodeAt(0) - 65) % BANNER_PALETTE.length;
+    const [c1,c2] = BANNER_PALETTE[idx];
+    return `linear-gradient(135deg, ${c1}, ${c2})`;
+  }
+
   function docIcon(type){
     return type==='link'
       ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14L20 4M20 4H13M20 4V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 13V18C18 19.1 17.1 20 16 20H6C4.9 20 4 19.1 4 18V8C4 6.9 4.9 6 6 6H11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -164,6 +179,8 @@
     const p = facultyProfiles[id];
     if(!p) return;
     slideProfileId = id;
+    const spBanner = document.getElementById('spBanner');
+    if(spBanner) spBanner.style.background = bannerGradient(p.name);
     document.getElementById('spAvatar').style.backgroundImage = `url('${p.avatar}')`;
     document.getElementById('spName').textContent = p.name;
     document.getElementById('spRole').textContent = p.role;
@@ -312,20 +329,27 @@
     const p = facultyProfiles[id];
     if(!p) return '';
     return `
-      <div class="job-card profile-card" onclick="openProfile('${id}')" style="cursor:pointer;">
-        <div class="job-card-top">
-          <div class="job-logo" style="background-image:url('${p.avatar}'); background-size:cover;"></div>
-          <div><p class="jc-title">${p.name}<span class="verified-tick" title="Verified profile"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></p><p class="jc-org">${p.role}</p></div>
-          ${statusBadge(id) || `<span class="hp-badge">${p.tags[0]}</span>`}
+      <div class="job-card profile-card profile-card-banner" onclick="openProfile('${id}')" style="cursor:pointer;">
+        <div class="pc-banner" style="background:${bannerGradient(p.name)};">
+          ${statusBadge(id) || `<span class="hp-badge pc-banner-badge">${p.tags[0]}</span>`}
         </div>
-        <div class="jc-tags">${p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('')}</div>
-        <div class="jc-foot">
-          <span class="jc-posted">Open to opportunities</span>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-light btn-sm" onclick="event.stopPropagation(); messageCandidate('${id}', event)">Message</button>
-            ${candidateStatus[id]==='shortlisted'
-              ? `<button class="btn btn-primary btn-sm" disabled>Shortlisted</button>`
-              : `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); inviteCandidate('${id}', event)">${candidateStatus[id]==='invited' ? 'Invited ✓' : 'Invite'}</button>`}
+        <div class="pc-avatar-wrap">
+          <div class="job-logo pc-avatar" style="background-image:url('${p.avatar}'); background-size:cover;"></div>
+        </div>
+        <div class="pc-body">
+          <div class="pc-headline">
+            <p class="jc-title">${p.name}<span class="verified-tick" title="Verified profile"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span></p>
+            <p class="jc-org">${p.role}</p>
+          </div>
+          <div class="jc-tags">${p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('')}</div>
+          <div class="jc-foot">
+            <span class="jc-posted">Open to opportunities</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-light btn-sm" onclick="event.stopPropagation(); messageCandidate('${id}', event)">Message</button>
+              ${candidateStatus[id]==='shortlisted'
+                ? `<button class="btn btn-primary btn-sm" disabled>Shortlisted</button>`
+                : `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); inviteCandidate('${id}', event)">${candidateStatus[id]==='invited' ? 'Invited ✓' : 'Invite'}</button>`}
+            </div>
           </div>
         </div>
       </div>`;
