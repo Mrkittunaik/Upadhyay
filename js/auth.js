@@ -480,12 +480,19 @@
       if(stat1Label) stat1Label.textContent = 'Jobs posted';
       if(stat2Num) stat2Num.textContent = invitedCount;
       if(stat2Label) stat2Label.textContent = 'Candidates contacted';
+      const stat1Box = document.getElementById('miniStat1Box');
+      if(stat1Box){
+        stat1Box.style.cursor = 'pointer';
+        stat1Box.onclick = ()=>{ closeMiniProfile(); goTo('employer', {tab:'myjobs'}); };
+      }
     } else {
       if(statsHeading) statsHeading.textContent = 'Your profile performance';
       if(stat1Num) stat1Num.textContent = '12';
       if(stat1Label) stat1Label.textContent = 'Search appearances';
       if(stat2Num) stat2Num.textContent = '4';
       if(stat2Label) stat2Label.textContent = 'Recruiter actions';
+      const stat1Box = document.getElementById('miniStat1Box');
+      if(stat1Box){ stat1Box.style.cursor = 'default'; stat1Box.onclick = null; }
     }
 
     const prefHeading = document.getElementById('miniPrefHeading');
