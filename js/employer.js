@@ -3,6 +3,12 @@
     priya: {
       avatar:'https://i.pravatar.cc/160?img=47', name:'Dr. Priya Menon', role:'Physics · Quantum Optics',
       tags:['PhD','8 yrs experience','Hyderabad'], college:'IIT Bombay',
+      about:'Quantum optics researcher and educator with 8 years of university teaching experience. Focused on making advanced physics accessible through lab-first, project-based instruction. Open to full-time faculty and visiting research positions.',
+      skills:['Quantum Optics','Photonics','Research Supervision','Curriculum Design','MATLAB','LaTeX'],
+      education:[
+        ['PhD, Physics','IIT Bombay · 2011 – 2015'],
+        ['MSc, Physics','University of Hyderabad · 2009 – 2011']
+      ],
       stats:[['14','Publications'],['210','Citations'],['1','Patent']],
       experience:[
         ['Associate Professor, Physics','KL University · 2019 – Present'],
@@ -18,6 +24,12 @@
     rohit:{
       avatar:'https://i.pravatar.cc/160?img=12', name:'Rohit Sharma', role:'Commerce · Accountancy',
       tags:['PG','5 yrs experience','Chennai'], college:'Loyola College',
+      about:'Commerce lecturer specializing in accountancy for junior college boards. 5 years of classroom experience with a strong track record of board-exam results and student mentorship.',
+      skills:['Financial Accounting','Taxation Basics','Board Exam Prep','Mentoring','Tally','MS Excel'],
+      education:[
+        ['PG, Commerce','Loyola College · 2018 – 2020'],
+        ['BCom','Madras Christian College · 2015 – 2018']
+      ],
       stats:[['5','Yrs experience'],['2','Boards taught'],['120+','Students mentored']],
       experience:[
         ['Senior Lecturer, Commerce','Narayana Junior College · 2021 – Present'],
@@ -32,6 +44,12 @@
     anjali:{
       avatar:'https://i.pravatar.cc/160?img=32', name:'Dr. Anjali Kulkarni', role:'Computer Science · AI/ML',
       tags:['PhD','11 yrs experience','Vijayawada'], college:'IIT Bombay',
+      about:'AI/ML researcher and professor with 11 years of experience across academia and applied research, including 3 patents and multiple funded projects. Passionate about mentoring students into research careers.',
+      skills:['Machine Learning','Deep Learning','Python','TensorFlow','Research Mentorship','Grant Writing'],
+      education:[
+        ['PhD, Computer Science','IIT Bombay · 2010 – 2014'],
+        ['MTech, Computer Science','VIT Vellore · 2008 – 2010']
+      ],
       stats:[['22','Publications'],['340','Citations'],['3','Patents']],
       experience:[
         ['Professor, Computer Science','KL University · 2017 – Present'],
@@ -137,11 +155,20 @@
       ['harini','Harini Venkatesh','Computer Science · Data Science','PG','3 yrs experience','Bengaluru',45]
     ];
     extra.forEach(([id,name,role,qual,exp,city,imgNum], i)=>{
+      const subject = role.split(' · ')[0];
+      const specialization = role.split(' · ')[1] || subject;
       facultyProfiles[id] = {
         avatar:`https://i.pravatar.cc/160?img=${imgNum}`,
         name, role,
         tags:[qual, exp, city],
         college: COLLEGE_POOL[i % COLLEGE_POOL.length],
+        about:`${name.replace(/^Dr\.\s*/,'')} is a ${subject} educator specializing in ${specialization}, with ${exp} teaching ${qual==='PhD' ? 'and research' : ''} experience based in ${city}. ${qual==='PhD' ? 'Actively engaged in research and student mentorship, ' : ''}Open to new academic opportunities.`,
+        skills: qual==='PhD'
+          ? [specialization, subject, 'Research Supervision', 'Academic Writing', 'Grant Applications', 'Curriculum Design']
+          : [specialization, subject, 'Lesson Planning', 'Exam Preparation', 'Student Mentoring', 'Classroom Management'],
+        education: qual==='PhD'
+          ? [[`PhD, ${subject}`, `${COLLEGE_POOL[i % COLLEGE_POOL.length]} · 2008 – 2013`], [`MSc, ${subject}`, `${COLLEGE_POOL[(i+3) % COLLEGE_POOL.length]} · 2006 – 2008`]]
+          : [[`${qual}, ${subject}`, `${COLLEGE_POOL[i % COLLEGE_POOL.length]} · 2016 – 2019`], [`BSc, ${subject}`, `${COLLEGE_POOL[(i+3) % COLLEGE_POOL.length]} · 2013 – 2016`]],
         stats: qual==='PhD'
           ? [[String(Math.floor(Math.random()*20)+3),'Publications'],[String(Math.floor(Math.random()*300)+40),'Citations'],[String(Math.floor(Math.random()*3)),'Patents']]
           : [[exp.split(' ')[0],'Yrs experience'],[String(Math.floor(Math.random()*3)+1),'Boards taught'],[String(Math.floor(Math.random()*150)+50)+'+','Students mentored']],
@@ -191,9 +218,22 @@
     document.getElementById('spName').textContent = p.name;
     document.getElementById('spRole').textContent = p.role;
     document.getElementById('spTags').innerHTML = p.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('');
+    const spAbout = document.getElementById('spAbout');
+    if(spAbout) spAbout.textContent = p.about || '';
     document.getElementById('spStats').innerHTML = p.stats.map(([num,label])=>`<div class="hp-stat"><span class="num tabular">${num}</span><span class="label">${label}</span></div>`).join('');
     document.getElementById('spExperience').innerHTML = p.experience.map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
+    const spEducation = document.getElementById('spEducation');
+    if(spEducation) spEducation.innerHTML = (p.education||[]).map(([t1,t2])=>`<div class="slide-exp-item"><div class="slide-exp-dot"></div><div><div class="t1">${t1}</div><div class="t2">${t2}</div></div></div>`).join('');
+    const spSkills = document.getElementById('spSkills');
+    if(spSkills) spSkills.innerHTML = (p.skills||[]).map(s=>`<span class="hp-tag">${s}</span>`).join('');
     document.getElementById('spLinks').innerHTML = p.links.map(([label,type])=>`<a class="slide-link" href="javascript:void(0)">${docIcon(type)}${label}</a>`).join('');
+    const spCollege = document.getElementById('spCollege');
+    if(spCollege) spCollege.textContent = p.college || '—';
+    const strengthPct = Math.min(100, 60 + p.links.length*10);
+    const fillEl = document.getElementById('spStrengthFill');
+    if(fillEl) fillEl.style.width = strengthPct + '%';
+    const noteEl = document.getElementById('spStrengthNote');
+    if(noteEl) noteEl.textContent = strengthPct >= 90 ? 'Verified & document-complete' : 'Verified profile';
     let actions = document.getElementById('spActions');
     if(currentRole==='company'){
       if(!actions){
