@@ -337,7 +337,8 @@
     return `
       <div class="job-card profile-card profile-card-banner" onclick="openProfile('${id}')" style="cursor:pointer;">
         <div class="pc-banner" style="background:${bannerGradient(p.name)};">
-          ${statusBadge(id) || (p.college ? `<span class="pc-college-badge">${p.college}</span>` : '')}
+          ${statusBadge(id)}
+          ${p.college ? `<span class="pc-college-badge">${p.college}</span>` : ''}
         </div>
         <div class="pc-avatar-wrap">
           <div class="job-logo pc-avatar" style="background-image:url('${p.avatar}'); background-size:cover;"></div>
