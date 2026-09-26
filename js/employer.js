@@ -333,13 +333,53 @@
     $('dashCompanyTab').style.display = which==='company' ? 'block' : 'none';
     $('dashPostTab').style.display = which==='post' ? 'block' : 'none';
     $('dashCandidatesTab').style.display = which==='candidates' ? 'block' : 'none';
+    const myJobsTab = $('dashMyJobsTab');
+    if(myJobsTab) myJobsTab.style.display = which==='myjobs' ? 'block' : 'none';
     $('subtabCompany').classList.toggle('active', which==='company');
     $('subtabPost').classList.toggle('active', which==='post');
     $('subtabCandidates').classList.toggle('active', which==='candidates');
+    const myJobsSubtab = $('subtabMyJobs');
+    if(myJobsSubtab) myJobsSubtab.classList.toggle('active', which==='myjobs');
     $('candidateListWrap').style.display = which==='candidates' ? 'block' : 'none';
     if(which!=='post') $('apListWrap').style.display = 'none';
     if(which==='candidates') renderCandidates();
     if(which==='post') renderPostedJobs();
+    if(which==='myjobs') renderMyJobsCards();
+  }
+
+  // Dedicated "Posted jobs" view: a card per job with its applicant count,
+  // reached from the mini profile panel / "Jobs posted" stat.
+  function renderMyJobsCards(){
+    const wrap = document.getElementById('myJobsList');
+    if(!wrap) return;
+    const ids = Object.keys(jobsData);
+    const countEl = document.getElementById('myJobsCount');
+    if(countEl) countEl.textContent = ids.length + (ids.length===1 ? ' job posted' : ' jobs posted');
+    if(!ids.length){
+      wrap.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17 20H7a2 2 0 01-2-2V6a2 2 0 012-2h6l6 6v8a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2"/></svg></div>
+          <h4>No jobs posted yet</h4>
+          <p>Once you post a job, it'll show up here as a card with its applicant count.</p>
+        </div>`;
+      return;
+    }
+    wrap.innerHTML = ids.slice().reverse().map(id=>{
+      const job = jobsData[id];
+      const count = job.applicantIds.length;
+      return `
+      <div class="job-card" onclick="openApplicantsView('${id}')" style="cursor:pointer;">
+        <div class="job-card-top">
+          <div class="job-logo" style="width:34px; height:34px; border-radius:8px; ${companyLogoStyle()}"></div>
+          <div><p class="jc-title">${job.title}</p><p class="jc-org">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'}</p></div>
+          <span class="badge-live">Live</span>
+        </div>
+        <div class="jc-foot">
+          <span class="jc-posted">${count} ${count===1?'applicant':'applicants'}</span>
+          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openApplicantsView('${id}')">View applicants</button>
+        </div>
+      </div>`;
+    }).join('');
   }
 
   function previewLogo(e){
@@ -545,6 +585,9 @@
 
   function openApplicantsView(jobId){
     activeJobId = jobId;
+    // works from the "Post a job" list or from the dedicated "Posted jobs" page
+    const postTab = document.getElementById('dashPostTab');
+    if(postTab && postTab.style.display === 'none') switchEmployerTab('post');
     document.getElementById('jobPostForm').style.display = 'none';
     document.getElementById('applicantsView').style.display = 'block';
     document.getElementById('apListWrap').style.display = 'block';
