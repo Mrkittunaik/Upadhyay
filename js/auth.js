@@ -455,17 +455,60 @@
     document.getElementById('miniPanel').classList.remove('open');
   }
   function refreshMiniProfile(){
-    document.getElementById('miniAvatar').src = currentUser.avatar;
-    document.getElementById('miniName').textContent = currentUser.name || 'Your name';
-    document.getElementById('miniDegree').textContent = currentUser.qualification
-      ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}`
-      : (currentRole==='company' ? 'Company account' : 'Add your qualification');
+    document.getElementById('miniAvatar').src = currentRole==='company' ? (currentCompany.logo || currentUser.avatar) : currentUser.avatar;
+    const isCompany = currentRole==='company';
+    document.getElementById('miniName').textContent = isCompany
+      ? (currentCompany.name || 'Your institution')
+      : (currentUser.name || 'Your name');
+    document.getElementById('miniDegree').textContent = isCompany
+      ? 'Company account'
+      : (currentUser.qualification ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}` : 'Add your qualification');
+
+    const linksFaculty = document.getElementById('miniLinksFaculty');
+    const linksCompany = document.getElementById('miniLinksCompany');
+    if(linksFaculty) linksFaculty.style.display = isCompany ? 'none' : 'flex';
+    if(linksCompany) linksCompany.style.display = isCompany ? 'flex' : 'none';
+
+    const statsHeading = document.getElementById('miniStatsHeading');
+    const stat1Num = document.getElementById('miniStat1Num'), stat1Label = document.getElementById('miniStat1Label');
+    const stat2Num = document.getElementById('miniStat2Num'), stat2Label = document.getElementById('miniStat2Label');
+    if(isCompany){
+      if(statsHeading) statsHeading.textContent = 'Your hiring activity';
+      const jobCount = Object.keys(postedJobs || {}).length;
+      const invitedCount = Object.values(candidateStatus || {}).filter(s=>s==='invited' || s==='shortlisted').length;
+      if(stat1Num) stat1Num.textContent = jobCount;
+      if(stat1Label) stat1Label.textContent = 'Jobs posted';
+      if(stat2Num) stat2Num.textContent = invitedCount;
+      if(stat2Label) stat2Label.textContent = 'Candidates contacted';
+    } else {
+      if(statsHeading) statsHeading.textContent = 'Your profile performance';
+      if(stat1Num) stat1Num.textContent = '12';
+      if(stat1Label) stat1Label.textContent = 'Search appearances';
+      if(stat2Num) stat2Num.textContent = '4';
+      if(stat2Label) stat2Label.textContent = 'Recruiter actions';
+    }
+
+    const prefHeading = document.getElementById('miniPrefHeading');
+    const prefSub = document.getElementById('miniPrefSub');
     const tagsWrap = document.getElementById('miniPrefTags');
-    if(tagsWrap){
-      const tags = [currentUser.category, currentUser.subject, currentUser.location].filter(Boolean);
-      tagsWrap.innerHTML = tags.length
-        ? tags.map(t=>`<span class="bj-pref-tag">${t}</span>`).join('')
-        : `<span style="font-size:12px; color:var(--ink-faint);">Add preferences on your profile to see matches.</span>`;
+    if(isCompany){
+      if(prefHeading) prefHeading.textContent = 'Your hiring focus';
+      if(prefSub) prefSub.textContent = 'What you typically hire for.';
+      if(tagsWrap){
+        const tags = [currentCompany.type, currentCompany.city].filter(Boolean);
+        tagsWrap.innerHTML = tags.length
+          ? tags.map(t=>`<span class="bj-pref-tag">${t}</span>`).join('')
+          : `<span style="font-size:12px; color:var(--ink-faint);">Add your institution type and city on your company profile.</span>`;
+      }
+    } else {
+      if(prefHeading) prefHeading.textContent = 'Your preferences';
+      if(prefSub) prefSub.textContent = 'Matched roles are based on these.';
+      if(tagsWrap){
+        const tags = [currentUser.category, currentUser.subject, currentUser.location].filter(Boolean);
+        tagsWrap.innerHTML = tags.length
+          ? tags.map(t=>`<span class="bj-pref-tag">${t}</span>`).join('')
+          : `<span style="font-size:12px; color:var(--ink-faint);">Add preferences on your profile to see matches.</span>`;
+      }
     }
   }
 
