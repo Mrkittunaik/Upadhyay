@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Browse Jobs — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
-<!-- >>> MODIFIED START: scoped styles for square job cards + institute boxes (uses your existing CSS variables) -->
+<!-- >>> MODIFIED START: 2-column job card grid, SVG icons, sidebar removed -->
 <style>
-  .bj-job-list{ display:grid !important; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:16px; }
-  .bj-card{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 18px 14px; display:flex; flex-direction:column; gap:12px; transition:box-shadow .15s, transform .15s; }
+  /* filters + jobs only (sidebar removed) */
+  .bj-layout{ grid-template-columns:260px minmax(0,1fr) !important; }
+  /* two cards per row */
+  .bj-job-list{ display:grid !important; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+  .bj-card{ background:#fff; border:1px solid var(--line); border-radius:18px; padding:18px 18px 14px; display:flex; flex-direction:column; gap:12px; min-width:0; transition:box-shadow .15s, transform .15s; }
   .bj-card:hover{ box-shadow:0 8px 24px rgba(15,23,42,.08); transform:translateY(-2px); }
   .bj-card-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
   .bj-card-main{ min-width:0; }
@@ -16,23 +19,20 @@
   .bj-card-org{ margin:0; font-size:14px; color:var(--ink-soft); font-weight:500; }
   .bj-card-logo{ flex-shrink:0; width:64px; height:64px; border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; background:#fff; overflow:hidden; }
   .bj-card-meta{ display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; font-size:12.5px; color:var(--ink-soft); }
+  .bj-card-meta span{ display:inline-flex; align-items:center; gap:5px; }
   .bj-card-meta i{ width:1px; height:12px; background:var(--line); }
+  .bj-ico{ width:15px; height:15px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
   .bj-card-skills{ font-size:12.5px; color:var(--ink-faint); display:flex; flex-wrap:wrap; gap:4px 6px; }
   .bj-card-skills b{ font-weight:400; opacity:.6; }
   .bj-card-chips{ display:flex; flex-wrap:wrap; gap:6px; }
   .bj-chip{ background:#f3f4f6; color:var(--ink-soft); font-size:12px; padding:5px 11px; border-radius:999px; }
-  .bj-salary{ align-self:flex-start; background:#e9fbef; border:1px solid #b7ebc7; color:#15803d; font-weight:600; font-size:13px; padding:5px 12px; border-radius:999px; font-style:italic; }
+  .bj-salary{ align-self:flex-start; display:inline-flex; align-items:center; gap:6px; background:#e9fbef; border:1px solid #b7ebc7; color:#15803d; font-weight:600; font-size:13px; padding:5px 12px; border-radius:999px; }
   .bj-card-foot{ margin-top:auto; padding-top:10px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .bj-card-dates{ display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; color:var(--blue-700); }
-  .bj-side-head h3{ margin:0 0 2px; font-size:15px; }
-  .bj-side-head p{ margin:0 0 12px; font-size:12.5px; color:var(--ink-faint); }
-  .bj-inst-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-  .bj-inst-card{ aspect-ratio:1/1; background:#fff; border:1px solid var(--line); border-radius:16px; padding:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:8px; }
-  .bj-inst-card:first-child{ grid-column:1 / -1; aspect-ratio:auto; padding:16px; }
-  .bj-inst-logo{ width:64px; height:64px; border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#fff; }
-  .bj-inst-name{ margin:0; font-size:13.5px; font-weight:700; color:var(--ink); }
-  .bj-inst-tag{ font-size:11.5px; color:#15803d; background:#e9fbef; padding:3px 9px; border-radius:999px; }
-  @media (max-width:640px){ .bj-job-list{ grid-template-columns:1fr; } }
+  .bj-card-dates span{ display:inline-flex; align-items:center; gap:4px; }
+  /* tablet/mobile: fall back to one column */
+  @media (max-width:1100px){ .bj-job-list{ grid-template-columns:1fr; } }
+  @media (max-width:900px){ .bj-layout{ grid-template-columns:1fr !important; } }
 </style>
 <!-- >>> MODIFIED END -->
 </head>
@@ -133,15 +133,6 @@
           <div class="bj-job-list" id="bjJobList"></div>
         </div>
 
-        <!-- >>> MODIFIED START: profile card removed; free institutes as square boxes -->
-        <div class="bj-side">
-          <div class="bj-side-head">
-            <h3>Free colleges &amp; courses</h3>
-            <p>Learn for free from top institutes.</p>
-          </div>
-          <div class="bj-inst-grid" id="bjInstituteGrid"></div>
-        </div>
-        <!-- >>> MODIFIED END -->
       </div>
     </div>
   </div>
