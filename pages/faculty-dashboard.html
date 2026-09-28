@@ -75,7 +75,20 @@
                   </div>
                 </div>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>Profile photo (link)</label><input type="text" id="pfProfilePhoto" class="pf-input" placeholder="https://... (photo link)" oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Profile photo (link)</label><input type="text" id="pfProfilePhoto" class="pf-input" placeholder="https://... (photo link)" oninput="pfOnInputProgress()">
+                    <!-- >>> MODIFIED START: upload widget (pfProfilePhoto) -->
+                    <div class="pf-upload" data-pf-kind="image" data-pf-target="pfProfilePhoto" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload photo
+                          <input type="file" accept=".jpg,.jpeg,.png,.webp" data-pf-upload="image" data-pf-target="pfProfilePhoto" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">JPG, JPEG, PNG, WEBP · Max 2 MB · auto-resized</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
+                  </div>
                   <div class="pf-field"></div>
                 </div>
                 <div class="dash-form-row">
@@ -518,18 +531,82 @@
                   </div>
                   <h3>13. Resume & documents</h3>
                 </div>
-                <p class="pf-section-sub">Add links to your resume, degree certificates, and publications.</p>
+                <p class="pf-section-sub">Upload files or paste links for your resume, degree certificates, and publications.</p>
                 <div class="dash-form-row">
                   <div class="pf-field"><label>Updated resume / CV link *</label><input type="text" id="pfResume" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()">
                     <span style="font-size:11.5px; color:var(--ink-faint);">Accepted: PDF, DOC, DOCX · Max file size 5 MB</span>
+                    <!-- >>> MODIFIED START: upload widget (pfResume) -->
+                    <div class="pf-upload" data-pf-kind="resume" data-pf-target="pfResume" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload resume
+                          <input type="file" accept=".pdf,.doc,.docx" data-pf-upload="resume" data-pf-target="pfResume" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">PDF, DOC, DOCX · Max 5 MB</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
                   </div>
-                  <div class="pf-field"><label>Passport size photo link *</label><input type="text" id="pfPassportPhoto" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Passport size photo link *</label><input type="text" id="pfPassportPhoto" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()">
+                    <!-- >>> MODIFIED START: upload widget (pfPassportPhoto) -->
+                    <div class="pf-upload" data-pf-kind="image" data-pf-target="pfPassportPhoto" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload photo
+                          <input type="file" accept=".jpg,.jpeg,.png,.webp" data-pf-upload="image" data-pf-target="pfPassportPhoto" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">JPG, JPEG, PNG, WEBP · Max 2 MB · auto-resized</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
+                  </div>
                 </div>
                 <div class="dash-form-row">
-                  <div class="pf-field"><label>Highest degree certificate link</label><input type="text" id="pfDegreeCert" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
-                  <div class="pf-field"><label>Publications / Google Scholar link</label><input type="text" id="pfPublications" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                  <div class="pf-field"><label>Highest degree certificate link</label><input type="text" id="pfDegreeCert" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()">
+                    <!-- >>> MODIFIED START: upload widget (pfDegreeCert) -->
+                    <div class="pf-upload" data-pf-kind="document" data-pf-target="pfDegreeCert" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload certificate
+                          <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" data-pf-upload="document" data-pf-target="pfDegreeCert" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">PDF, DOC, DOCX, JPG, PNG, WEBP · Max 5 MB</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
+                  </div>
+                  <div class="pf-field"><label>Publications / Google Scholar link</label><input type="text" id="pfPublications" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()">
+                    <!-- >>> MODIFIED START: upload widget (pfPublications) -->
+                    <div class="pf-upload" data-pf-kind="document" data-pf-target="pfPublications" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload file
+                          <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" data-pf-upload="document" data-pf-target="pfPublications" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">PDF, DOC, DOCX, JPG, PNG, WEBP · Max 5 MB</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
+                  </div>
                 </div>
-                <div class="pf-field"><label>Patent / additional document link</label><input type="text" id="pfPatent" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()"></div>
+                <div class="pf-field"><label>Patent / additional document link</label><input type="text" id="pfPatent" class="pf-input" placeholder="https://..." oninput="pfOnInputProgress()">
+                    <!-- >>> MODIFIED START: upload widget (pfPatent) -->
+                    <div class="pf-upload" data-pf-kind="document" data-pf-target="pfPatent" style="margin-top:8px;">
+                      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <label class="btn btn-ghost btn-sm pf-up-btn" style="cursor:pointer; margin:0;">Upload file
+                          <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" data-pf-upload="document" data-pf-target="pfPatent" style="display:none;">
+                        </label>
+                        <span style="font-size:11.5px; color:var(--ink-faint);">PDF, DOC, DOCX, JPG, PNG, WEBP · Max 5 MB</span>
+                      </div>
+                      <div class="pf-up-status" style="font-size:12px; margin-top:4px;"></div>
+                      <div class="pf-up-preview" style="display:none; align-items:center; gap:10px; margin-top:6px; padding:8px 10px; border:1px solid var(--line); border-radius:10px;"></div>
+                    </div>
+                    <!-- >>> MODIFIED END -->
+                </div>
 
                 <p class="pf-subsection-label">Other supporting documents</p>
                 <div class="pf-repeat-list" id="pfOtherDocsList"></div>
@@ -588,6 +665,7 @@
 <script src="../js/auth.js"></script>
 <script src="../js/faculty.js"></script>
 <script src="../js/layout.js"></script>
+<script>document.addEventListener("input", function(e){ if(e.target && e.target.id && document.querySelector('.pf-upload[data-pf-target="'+e.target.id+'"]')) pfRefreshUploadPreviews(); });</script>
 <script>mountNav(); mountChrome(); if(requireLogin('seeker')) openDash(currentUser.name || 'User', 'search');</script>
 </body>
 </html>
