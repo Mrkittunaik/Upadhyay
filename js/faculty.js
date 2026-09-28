@@ -21,6 +21,11 @@
   // Called once by jobs.html on load. Works for logged-in seekers AND visitors.
   // >>> MODIFIED START: profile column and sidebar removed <<<
   function initBrowseJobsPage(){
+    // >>> MODIFIED START: always remove the old "Free colleges & courses" sidebar, even if an older jobs.html is deployed <<<
+    document.querySelectorAll('.bj-side').forEach(el => el.remove());
+    const _lay = document.querySelector('.bj-layout');
+    if(_lay) _lay.style.gridTemplateColumns = '260px minmax(0,1fr)';
+    // >>> MODIFIED END <<<
     // Category from the URL (?cat=Schools) wins; otherwise pre-check the seeker's own category.
     const catParam = getParam('cat');
     const preselect = catParam || (isLoggedIn && currentRole !== 'company' ? currentUser.category : '');
