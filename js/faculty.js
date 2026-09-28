@@ -1,45 +1,61 @@
 // ---------- Browse jobs page ----------
+  // >>> MODIFIED START: job data now has salary, type, location, skills, deadline, logo <<<
+  // logo: put a real image URL here (e.g. '../img/logos/kluniversity.png'). Empty = initials tile.
   const bjJobs = [
-    { title:'Assistant Professor — CSE', org:'KL University · Vijayawada', cat:'Higher Education', tags:['PhD required','Full-time'], posted:2, applicants:34, color:'var(--blue-700)', initials:'KL', minExp:2 },
-    { title:'PGT Physics', org:'Delhi Public School · Hyderabad', cat:'Schools', tags:['PG required','CBSE'], posted:5, applicants:61, color:'var(--green)', initials:'DP', minExp:0 },
-    { title:'Senior Lecturer — Commerce', org:'Narayana Junior College · Chennai', cat:'Intermediate', tags:['PG required','MPC/CEC'], posted:6, applicants:22, color:'var(--blue-500)', initials:'NR', minExp:3 },
-    { title:'TGT Mathematics', org:'Ryan International School · Bengaluru', cat:'Schools', tags:['B.Ed required','CBSE'], posted:1, applicants:18, color:'var(--blue-900)', initials:'RI', minExp:1 },
-    { title:'Assistant Professor — English', org:'Osmania University · Hyderabad', cat:'Higher Education', tags:['PhD required','NET/SET'], posted:9, applicants:47, color:'var(--blue-700)', initials:'OU', minExp:4 },
-    { title:'Junior Lecturer — Botany', org:'Sri Chaitanya Junior College · Vijayawada', cat:'Intermediate', tags:['PG required','MPC/BiPC'], posted:3, applicants:15, color:'var(--blue-500)', initials:'SC', minExp:0 },
-    { title:'PRT Primary Teacher', org:'DAV Public School · Delhi', cat:'Schools', tags:['UG required','CBSE'], posted:1, applicants:29, color:'var(--green)', initials:'DA', minExp:0 },
-    { title:'Associate Professor — Management', org:'IIM Ranchi', cat:'Higher Education', tags:['PhD required','UGC-NET'], posted:14, applicants:53, color:'var(--blue-900)', initials:'IR', minExp:6 },
+    { title:'Assistant Professor — CSE', org:'KL University', city:'Vijayawada', cat:'Higher Education', tags:['PhD required','Full-time'], skills:['Data Structures','Machine Learning','Research'], salary:'₹60K – 90K/Month', type:'Full Time', mode:'In Office', posted:2, daysLeft:14, applicants:34, color:'var(--blue-700)', initials:'KL', logo:'', minExp:2 },
+    { title:'PGT Physics', org:'Delhi Public School', city:'Hyderabad', cat:'Schools', tags:['PG required','CBSE'], skills:['Physics','CBSE Curriculum','Lab Handling'], salary:'₹35K – 50K/Month', type:'Full Time', mode:'In Office', posted:5, daysLeft:9, applicants:61, color:'var(--green)', initials:'DP', logo:'', minExp:0 },
+    { title:'Senior Lecturer — Commerce', org:'Narayana Junior College', city:'Chennai', cat:'Intermediate', tags:['PG required','MPC/CEC'], skills:['Accountancy','Economics','Exam Prep'], salary:'₹40K – 55K/Month', type:'Full Time', mode:'In Office', posted:6, daysLeft:11, applicants:22, color:'var(--blue-500)', initials:'NR', logo:'', minExp:3 },
+    { title:'TGT Mathematics', org:'Ryan International School', city:'Bengaluru', cat:'Schools', tags:['B.Ed required','CBSE'], skills:['Algebra','Geometry','Classroom Mgmt'], salary:'₹30K – 42K/Month', type:'Full Time', mode:'In Office', posted:1, daysLeft:20, applicants:18, color:'var(--blue-900)', initials:'RI', logo:'', minExp:1 },
+    { title:'Assistant Professor — English', org:'Osmania University', city:'Hyderabad', cat:'Higher Education', tags:['PhD required','NET/SET'], skills:['Literature','Linguistics','Research'], salary:'₹57K – 85K/Month', type:'Full Time', mode:'In Office', posted:9, daysLeft:6, applicants:47, color:'var(--blue-700)', initials:'OU', logo:'', minExp:4 },
+    { title:'Junior Lecturer — Botany', org:'Sri Chaitanya Junior College', city:'Vijayawada', cat:'Intermediate', tags:['PG required','MPC/BiPC'], skills:['Botany','NEET Prep','Practicals'], salary:'₹30K – 45K/Month', type:'Full Time', mode:'In Office', posted:3, daysLeft:15, applicants:15, color:'var(--blue-500)', initials:'SC', logo:'', minExp:0 },
+    { title:'PRT Primary Teacher', org:'DAV Public School', city:'Delhi', cat:'Schools', tags:['UG required','CBSE'], skills:['Primary Teaching','EVS','Child Psychology'], salary:'₹25K – 35K/Month', type:'Full Time', mode:'In Office', posted:1, daysLeft:18, applicants:29, color:'var(--green)', initials:'DA', logo:'', minExp:0 },
+    { title:'Associate Professor — Management', org:'IIM Ranchi', city:'Ranchi', cat:'Higher Education', tags:['PhD required','UGC-NET'], skills:['Strategy','Case Teaching','Publications'], salary:'₹1.2L – 1.8L/Month', type:'Full Time', mode:'In Office', posted:14, daysLeft:4, applicants:53, color:'var(--blue-900)', initials:'IR', logo:'', minExp:6 },
   ];
+
+  // Free colleges / institutes shown in the sidebar boxes (swap logo for real image URLs)
+  const bjFreeInstitutes = [
+    { name:'IIT Hyderabad', tag:'Free · NPTEL courses', color:'#1d4ed8', initials:'IIT', logo:'' },
+    { name:'IGNOU', tag:'Free · Open learning', color:'#b45309', initials:'IG', logo:'' },
+    { name:'SWAYAM', tag:'Free · Govt. of India', color:'#0f766e', initials:'SW', logo:'' },
+  ];
+  // >>> MODIFIED END <<<
 
   // Old behaviour opened an overlay. Now it navigates to jobs.html.
   function openBrowseJobs(){ goTo('jobs'); }
   function closeBrowseJobs(){ goTo(isLoggedIn ? dashboardPageForRole() : 'home'); }
 
   // Called once by jobs.html on load. Works for logged-in seekers AND visitors.
+  // >>> MODIFIED START: profile column removed; sidebar now shows square "free institute" boxes <<<
   function initBrowseJobsPage(){
-    const side = document.querySelector('.bj-side');
-    if(isLoggedIn && currentRole !== 'company'){
-      document.getElementById('bjAvatar').src = currentUser.avatar;
-      const bjTopImg = document.getElementById('bjTopAvatarImg'); if(bjTopImg) bjTopImg.src = currentUser.avatar;
-      document.getElementById('bjName').textContent = currentUser.name || 'Your name';
-      document.getElementById('bjRole').textContent = currentUser.qualification
-        ? `${currentUser.qualification}${currentUser.subject ? ' · '+currentUser.subject : ''}`
-        : 'Add your degree and specialisation';
-      const tagsWrap = document.getElementById('bjPrefTags');
-      const tags = [currentUser.category, currentUser.qualification, currentUser.subject].filter(Boolean);
-      tagsWrap.innerHTML = tags.length
-        ? tags.map(t=>`<span class="bj-pref-tag">${t}</span>`).join('')
-        : `<span style="font-size:12.5px; color:var(--ink-faint);">Add preferences on your profile to see matches.</span>`;
-    } else if(side){
-      side.style.display = 'none';   // visitors / employers have no seeker profile card
-    }
     // Category from the URL (?cat=Schools) wins; otherwise pre-check the seeker's own category.
     const catParam = getParam('cat');
     const preselect = catParam || (isLoggedIn && currentRole !== 'company' ? currentUser.category : '');
     if(preselect){
       document.querySelectorAll('.bj-cat-check').forEach(cb=>{ cb.checked = (cb.value === preselect); });
     }
+    if(isLoggedIn){
+      const bjTopImg = document.getElementById('bjTopAvatarImg');
+      if(bjTopImg && currentUser.avatar) bjTopImg.src = currentUser.avatar;
+    }
+    renderBjInstitutes();
     renderBrowseJobs();
   }
+  function bjLogoHtml(item, size){
+    const s = size || 56;
+    if(item.logo) return `<img src="${pfEsc(item.logo)}" alt="${pfEsc(item.name || item.org)}" style="width:${s}px;height:${s}px;object-fit:contain;">`;
+    return `<span style="width:${s}px;height:${s}px;border-radius:12px;background:${item.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(s*0.32)}px;letter-spacing:.5px;">${pfEsc(item.initials)}</span>`;
+  }
+  function renderBjInstitutes(){
+    const box = document.getElementById('bjInstituteGrid');
+    if(!box) return;
+    box.innerHTML = bjFreeInstitutes.map(c=>`
+      <div class="bj-inst-card">
+        <div class="bj-inst-logo">${bjLogoHtml(c, 52)}</div>
+        <p class="bj-inst-name">${pfEsc(c.name)}</p>
+        <span class="bj-inst-tag">${pfEsc(c.tag)}</span>
+      </div>`).join('');
+  }
+  // >>> MODIFIED END <<<
   function applyToJob(title){
     if(!isLoggedIn || currentRole === 'company'){
       goTo('register', { role: 'seeker' });
@@ -79,20 +95,39 @@
       list.innerHTML = `<div class="bj-empty">No jobs match your filters right now. Try clearing a filter or broadening your search.</div>`;
       return;
     }
-    list.innerHTML = filtered.map(j=>`
-      <div class="job-card">
-        <div class="job-card-top">
-          <div class="job-logo" style="background:${j.color};">${j.initials}</div>
-          <div><p class="jc-title">${j.title}</p><p class="jc-org">${j.org}</p></div>
-          <span class="jc-cat">${j.cat === 'Higher Education' ? 'Higher Ed' : j.cat}</span>
+    // >>> MODIFIED START: square job cards (title, company, exp/type/location, skills, salary, dates) <<<
+    list.innerHTML = filtered.map(j=>{
+      const exp = j.minExp === 0 ? 'No prior experience required' : `${j.minExp}+ years`;
+      const safeTitle = j.title.replace(/'/g,"\\'");
+      return `
+      <div class="bj-card">
+        <div class="bj-card-top">
+          <div class="bj-card-main">
+            <p class="bj-card-title">${pfEsc(j.title)}</p>
+            <p class="bj-card-org">${pfEsc(j.org)}</p>
+          </div>
+          <div class="bj-card-logo">${bjLogoHtml({logo:j.logo, name:j.org, color:j.color, initials:j.initials}, 56)}</div>
         </div>
-        <div class="jc-tags">${j.tags.map(t=>`<span class="hp-tag">${t}</span>`).join('')}</div>
-        <div class="jc-foot">
-          <span class="jc-posted">Posted ${j.posted} day${j.posted===1?'':'s'} ago · ${j.applicants} applicants</span>
-          <button class="btn btn-primary btn-sm" onclick="applyToJob('${j.title.replace(/'/g,"\\'")}')">Apply</button>
+        <div class="bj-card-meta">
+          <span>💼 ${exp}</span><i></i><span>🕒 ${pfEsc(j.type)}</span><i></i><span>📍 ${pfEsc(j.mode)} | ${pfEsc(j.city)}</span>
         </div>
-      </div>
-    `).join('');
+        <div class="bj-card-skills">${j.skills.map(s=>`<span>${pfEsc(s)}</span>`).join('<b>•</b>')}</div>
+        <div class="bj-card-chips">
+          <span class="bj-chip">${j.cat === 'Higher Education' ? 'Higher Ed' : pfEsc(j.cat)}</span>
+          ${j.tags.map(t=>`<span class="bj-chip">${pfEsc(t)}</span>`).join('')}
+        </div>
+        <span class="bj-salary">${pfEsc(j.salary)} 💰</span>
+        <div class="bj-card-foot">
+          <div class="bj-card-dates">
+            <span>Posted ${j.posted} day${j.posted===1?'':'s'} ago</span>
+            <span>⏳ ${j.daysLeft} days left</span>
+            <span>👥 ${j.applicants} applicants</span>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="applyToJob('${safeTitle}')">Apply</button>
+        </div>
+      </div>`;
+    }).join('');
+    // >>> MODIFIED END <<<
   }
 
   // Inline-edit handlers for the View Profile page (image-5 style: edit in place, no separate form)
