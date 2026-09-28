@@ -12,12 +12,6 @@
     { title:'Associate Professor — Management', org:'IIM Ranchi', city:'Ranchi', cat:'Higher Education', tags:['PhD required','UGC-NET'], skills:['Strategy','Case Teaching','Publications'], salary:'₹1.2L – 1.8L/Month', type:'Full Time', mode:'In Office', posted:14, daysLeft:4, applicants:53, color:'var(--blue-900)', initials:'IR', logo:'', minExp:6 },
   ];
 
-  // Free colleges / institutes shown in the sidebar boxes (swap logo for real image URLs)
-  const bjFreeInstitutes = [
-    { name:'IIT Hyderabad', tag:'Free · NPTEL courses', color:'#1d4ed8', initials:'IIT', logo:'' },
-    { name:'IGNOU', tag:'Free · Open learning', color:'#b45309', initials:'IG', logo:'' },
-    { name:'SWAYAM', tag:'Free · Govt. of India', color:'#0f766e', initials:'SW', logo:'' },
-  ];
   // >>> MODIFIED END <<<
 
   // Old behaviour opened an overlay. Now it navigates to jobs.html.
@@ -25,7 +19,7 @@
   function closeBrowseJobs(){ goTo(isLoggedIn ? dashboardPageForRole() : 'home'); }
 
   // Called once by jobs.html on load. Works for logged-in seekers AND visitors.
-  // >>> MODIFIED START: profile column removed; sidebar now shows square "free institute" boxes <<<
+  // >>> MODIFIED START: profile column and sidebar removed <<<
   function initBrowseJobsPage(){
     // Category from the URL (?cat=Schools) wins; otherwise pre-check the seeker's own category.
     const catParam = getParam('cat');
@@ -37,23 +31,23 @@
       const bjTopImg = document.getElementById('bjTopAvatarImg');
       if(bjTopImg && currentUser.avatar) bjTopImg.src = currentUser.avatar;
     }
-    renderBjInstitutes();
     renderBrowseJobs();
   }
+  // >>> MODIFIED START: SVG icon set (replaces emoji) <<<
+  const BJ_ICONS = {
+    briefcase:'<svg class="bj-ico" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg>',
+    clock:'<svg class="bj-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    pin:'<svg class="bj-ico" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+    rupee:'<svg class="bj-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 8h7M8.5 11h7M10 8c3.5 0 4.5 4-1 4l4.5 4"/></svg>',
+    hourglass:'<svg class="bj-ico" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 5 6 5 9s-5 4-5 9M17 3c0 5-5 6-5 9s5 4 5 9"/></svg>',
+    users:'<svg class="bj-ico" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M18 14.8c1.9.7 3 2.5 3 5.2"/></svg>',
+    calendar:'<svg class="bj-ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>'
+  };
+  // >>> MODIFIED END <<<
   function bjLogoHtml(item, size){
     const s = size || 56;
     if(item.logo) return `<img src="${pfEsc(item.logo)}" alt="${pfEsc(item.name || item.org)}" style="width:${s}px;height:${s}px;object-fit:contain;">`;
     return `<span style="width:${s}px;height:${s}px;border-radius:12px;background:${item.color};color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:${Math.round(s*0.32)}px;letter-spacing:.5px;">${pfEsc(item.initials)}</span>`;
-  }
-  function renderBjInstitutes(){
-    const box = document.getElementById('bjInstituteGrid');
-    if(!box) return;
-    box.innerHTML = bjFreeInstitutes.map(c=>`
-      <div class="bj-inst-card">
-        <div class="bj-inst-logo">${bjLogoHtml(c, 52)}</div>
-        <p class="bj-inst-name">${pfEsc(c.name)}</p>
-        <span class="bj-inst-tag">${pfEsc(c.tag)}</span>
-      </div>`).join('');
   }
   // >>> MODIFIED END <<<
   function applyToJob(title){
@@ -109,19 +103,19 @@
           <div class="bj-card-logo">${bjLogoHtml({logo:j.logo, name:j.org, color:j.color, initials:j.initials}, 56)}</div>
         </div>
         <div class="bj-card-meta">
-          <span>💼 ${exp}</span><i></i><span>🕒 ${pfEsc(j.type)}</span><i></i><span>📍 ${pfEsc(j.mode)} | ${pfEsc(j.city)}</span>
+          <span>${BJ_ICONS.briefcase}${exp}</span><i></i><span>${BJ_ICONS.clock}${pfEsc(j.type)}</span><i></i><span>${BJ_ICONS.pin}${pfEsc(j.mode)} | ${pfEsc(j.city)}</span>
         </div>
         <div class="bj-card-skills">${j.skills.map(s=>`<span>${pfEsc(s)}</span>`).join('<b>•</b>')}</div>
         <div class="bj-card-chips">
           <span class="bj-chip">${j.cat === 'Higher Education' ? 'Higher Ed' : pfEsc(j.cat)}</span>
           ${j.tags.map(t=>`<span class="bj-chip">${pfEsc(t)}</span>`).join('')}
         </div>
-        <span class="bj-salary">${pfEsc(j.salary)} 💰</span>
+        <span class="bj-salary">${BJ_ICONS.rupee}${pfEsc(j.salary)}</span>
         <div class="bj-card-foot">
           <div class="bj-card-dates">
-            <span>Posted ${j.posted} day${j.posted===1?'':'s'} ago</span>
-            <span>⏳ ${j.daysLeft} days left</span>
-            <span>👥 ${j.applicants} applicants</span>
+            <span>${BJ_ICONS.calendar}Posted ${j.posted} day${j.posted===1?'':'s'} ago</span>
+            <span>${BJ_ICONS.hourglass}${j.daysLeft} days left</span>
+            <span>${BJ_ICONS.users}${j.applicants} applicants</span>
           </div>
           <button class="btn btn-primary btn-sm" onclick="applyToJob('${safeTitle}')">Apply</button>
         </div>
