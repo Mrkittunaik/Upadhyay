@@ -129,18 +129,225 @@
     saveState();
     showFpSaveToast();
   }
-  function fpUploadAvatar(e){
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      currentUser.avatar = ev.target.result;
-      document.getElementById('fpAvatar').src = currentUser.avatar;
-      saveState();
-      updateNavForLogin();
-    };
-    reader.readAsDataURL(file);
+  // =====================================================================
+  // >>> MODIFIED START: FILE UPLOAD VALIDATION + FormData UPLOAD LAYER <<<
+  // Replaces the old base64/FileReader avatar handler.
+  // Nothing in this block writes file contents to localStorage / currentUser.
+  // Only server-returned URLs are ever stored.
+  // =====================================================================
+
+  // ---- Config (edit here) ----
+  const UPLOAD_API = {
+    // Backend endpoint that accepts multipart/form-data and returns JSON: { url: "https://..." }
+    endpoint: '/api/faculty/upload',
+    // Add auth header here if your API needs it, e.g. () => ({ Authorization: 'Bearer ' + token })
+    headers: () => ({})
+  };
+  const UPLOAD_RULES = {
+    image: {
+      label: 'Profile image',
+      exts: ['jpg','jpeg','png','webp'],
+      mimes: ['image/jpeg','image/png','image/webp'],
+      maxBytes: 2 * 1024 * 1024,           // 2 MB
+      typeMsg: 'JPG, JPEG, PNG or WEBP',
+      // resize/compress target
+      maxDim: 800, quality: 0.82
+    },
+    resume: {
+      label: 'Resume',
+      exts: ['pdf','doc','docx'],
+      mimes: ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+      maxBytes: 5 * 1024 * 1024,           // 5 MB
+      typeMsg: 'PDF, DOC or DOCX'
+    },
+    document: {
+      label: 'Document',
+      // Other profile docs: PDF/DOC/DOCX + JPG/PNG/WEBP scans, 5 MB
+      exts: ['pdf','doc','docx','jpg','jpeg','png','webp'],
+      mimes: ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','image/jpeg','image/png','image/webp'],
+      maxBytes: 5 * 1024 * 1024,           // 5 MB
+      typeMsg: 'PDF, DOC, DOCX, JPG, PNG or WEBP'
+    }
+  };
+
+  function fmtBytes(b){
+    return b >= 1024*1024 ? (b/(1024*1024)).toFixed(1).replace(/\.0$/,'') + ' MB' : Math.round(b/1024) + ' KB';
   }
+
+  // Returns { ok:true } or { ok:false, message }
+  function validateUploadFile(file, kind){
+    const rule = UPLOAD_RULES[kind];
+    if(!file) return { ok:false, message:'No file selected.' };
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    if(!rule.exts.includes(ext)){
+      return { ok:false, message:`${rule.label}: unsupported file type ".${ext}". Allowed: ${rule.typeMsg}.` };
+    }
+    // Browsers sometimes report an empty MIME for .doc/.docx; extension check above still applies,
+    // but a NON-empty MIME must match the allowed list.
+    if(file.type && !rule.mimes.includes(file.type)){
+      return { ok:false, message:`${rule.label}: invalid file format (${file.type}). Allowed: ${rule.typeMsg}.` };
+    }
+    if(!file.type && kind === 'image'){
+      return { ok:false, message:`${rule.label}: could not verify file type. Allowed: ${rule.typeMsg}.` };
+    }
+    if(file.size > rule.maxBytes){
+      return { ok:false, message:`${rule.label} is too large (${fmtBytes(file.size)}). Maximum allowed size is ${fmtBytes(rule.maxBytes)}.` };
+    }
+    if(file.size === 0){
+      return { ok:false, message:`${rule.label} is empty.` };
+    }
+    return { ok:true };
+  }
+
+  // Uses the existing toast; falls back to alert if it isn't on this page.
+  function showUploadError(message){
+    if(typeof showGenericToast === 'function') showGenericToast(message);
+    else alert(message);
+  }
+
+  // Resize (keep aspect ratio) + compress to JPEG/WEBP/PNG Blob. Result is re-checked against the 2 MB cap.
+  function compressImage(file, rule){
+    return new Promise((resolve, reject)=>{
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = function(){
+        URL.revokeObjectURL(url);
+        let w = img.naturalWidth, h = img.naturalHeight;
+        const scale = Math.min(1, rule.maxDim / Math.max(w, h));
+        w = Math.round(w * scale); h = Math.round(h * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        // PNG stays PNG only if it has to (transparency); everything else -> JPEG for size.
+        const outType = file.type === 'image/png' ? 'image/png' : (file.type === 'image/webp' ? 'image/webp' : 'image/jpeg');
+        let q = rule.quality;
+        const attempt = ()=> canvas.toBlob(blob=>{
+          if(!blob) return reject(new Error('Image compression failed.'));
+          if(blob.size > rule.maxBytes && q > 0.4 && outType !== 'image/png'){ q -= 0.1; return attempt(); }
+          if(blob.size > rule.maxBytes) return reject(new Error('Image is still larger than ' + fmtBytes(rule.maxBytes) + ' after compression. Please choose a smaller image.'));
+          resolve(blob);
+        }, outType, q);
+        attempt();
+      };
+      img.onerror = function(){
+        URL.revokeObjectURL(url);
+        reject(new Error('This file is not a valid image or is corrupted.'));
+      };
+      img.src = url;
+    });
+  }
+
+  // POST a file to the backend as multipart/form-data. Resolves to the uploaded file's URL.
+  async function uploadFileToServer(fileOrBlob, kind, fileName){
+    const fd = new FormData();
+    fd.append('file', fileOrBlob, fileName || fileOrBlob.name || 'upload');
+    fd.append('kind', kind);                                   // 'image' | 'resume' | 'document'
+    if(currentUser && currentUser.candidateId) fd.append('candidateId', currentUser.candidateId);
+    const res = await fetch(UPLOAD_API.endpoint, {
+      method: 'POST',
+      headers: UPLOAD_API.headers(),                            // do NOT set Content-Type; browser sets the boundary
+      body: fd
+    });
+    if(!res.ok) throw new Error('Upload failed (' + res.status + '). Please try again.');
+    const data = await res.json();
+    if(!data || !data.url) throw new Error('Upload failed: server did not return a file URL.');
+    return data.url;
+  }
+
+  // ---- Profile image (keeps existing UI: #fpAvatar, updateNavForLogin) ----
+  async function fpUploadAvatar(e){
+    const input = e.target;
+    const file = input.files && input.files[0];
+    if(!file) return;
+    const rule = UPLOAD_RULES.image;
+
+    // 1. Validate type + size BEFORE doing anything else
+    const v = validateUploadFile(file, 'image');
+    if(!v.ok){ showUploadError(v.message); input.value = ''; return; }
+
+    try {
+      // 2. Resize / compress
+      const blob = await compressImage(file, rule);
+      // 3. Instant local preview only (object URL, never persisted)
+      const previewUrl = URL.createObjectURL(blob);
+      const avatarEl = document.getElementById('fpAvatar');
+      const prevSrc = avatarEl ? avatarEl.src : '';
+      if(avatarEl) avatarEl.src = previewUrl;
+      // 4. Upload via FormData; store only the returned URL
+      try {
+        const url = await uploadFileToServer(blob, 'image', file.name);
+        currentUser.avatar = url;
+        if(avatarEl) avatarEl.src = url;
+        saveState();
+        updateNavForLogin();
+      } catch(err){
+        if(avatarEl) avatarEl.src = prevSrc;                    // roll back preview; nothing saved
+        showUploadError(err.message);
+      } finally {
+        URL.revokeObjectURL(previewUrl);
+      }
+    } catch(err){
+      showUploadError(err.message);
+    }
+    input.value = '';
+  }
+
+  // ---- Resume / degree cert / publications / patent / passport photo / other docs ----
+  // Wire-up (no markup change required beyond an <input type="file">):
+  //   <input type="file" data-pf-upload="resume"   data-pf-target="pfResume">
+  //   <input type="file" data-pf-upload="document" data-pf-target="pfDegreeCert">
+  //   <input type="file" data-pf-upload="image"    data-pf-target="pfPassportPhoto">
+  // data-pf-upload = rule kind; data-pf-target = id of the existing text field that stores the URL.
+  // For otherDocuments rows use pfUploadOtherDocument(i, inputEl).
+  async function pfHandleFileInput(input){
+    const kind = input.dataset.pfUpload;
+    const targetId = input.dataset.pfTarget;
+    const file = input.files && input.files[0];
+    if(!file || !UPLOAD_RULES[kind]) return;
+
+    const v = validateUploadFile(file, kind);
+    if(!v.ok){ showUploadError(v.message); input.value = ''; return; }   // invalid file is never stored
+
+    try {
+      let payload = file;
+      if(kind === 'image') payload = await compressImage(file, UPLOAD_RULES.image);
+      const url = await uploadFileToServer(payload, kind, file.name);
+      const target = targetId && document.getElementById(targetId);
+      if(target){ target.value = url; pfOnInputProgress(); }
+      showGenericToast(UPLOAD_RULES[kind].label + ' uploaded.');
+    } catch(err){
+      showUploadError(err.message);
+    }
+    input.value = '';
+  }
+
+  async function pfUploadOtherDocument(i, input){
+    const file = input.files && input.files[0];
+    if(!file) return;
+    const v = validateUploadFile(file, 'document');
+    if(!v.ok){ showUploadError(v.message); input.value = ''; return; }
+    try {
+      const url = await uploadFileToServer(file, 'document', file.name);
+      pfUpdateArrItem('otherDocuments', i, 'link', url);
+      renderPfOtherDocs();
+      pfOnInputProgress();
+      showGenericToast('Document uploaded.');
+    } catch(err){
+      showUploadError(err.message);
+    }
+    input.value = '';
+  }
+
+  // Delegated listener so file inputs work without editing HTML or re-binding after re-renders.
+  document.addEventListener('change', function(ev){
+    const t = ev.target;
+    if(t && t.matches && t.matches('input[type=file][data-pf-upload]')) pfHandleFileInput(t);
+  });
+
+  // =====================================================================
+  // >>> MODIFIED END <<<
+  // =====================================================================
 
   // ---------- Dashboard top account + notifications ----------
   // dashNotifs now lives in store.js (persisted across pages)
@@ -329,7 +536,11 @@
         <button type="button" class="pf-repeat-remove" onclick="pfRemoveOtherDocument(${i})">✕</button>
         <div class="dash-form-row" style="margin-bottom:0;">
           <div class="pf-field"><label>Document name</label><input type="text" placeholder="e.g. Project completion certificate" value="${pfEsc(d.label)}" oninput="pfUpdateArrItem('otherDocuments',${i},'label',this.value)"></div>
-          <div class="pf-field"><label>Link</label><input type="text" placeholder="https://..." value="${pfEsc(d.link)}" oninput="pfUpdateArrItem('otherDocuments',${i},'link',this.value)"></div>
+          <div class="pf-field"><label>Link</label><input type="text" placeholder="https://..." value="${pfEsc(d.link)}" oninput="pfUpdateArrItem('otherDocuments',${i},'link',this.value)">
+            <!-- >>> MODIFIED START: optional file upload (validated, FormData) -->
+            <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" style="margin-top:6px; font-size:12.5px;" onchange="pfUploadOtherDocument(${i}, this)">
+            <!-- >>> MODIFIED END -->
+          </div>
         </div>
       </div>`).join('');
   }
