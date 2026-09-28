@@ -300,26 +300,86 @@
   //   <input type="file" data-pf-upload="image"    data-pf-target="pfPassportPhoto">
   // data-pf-upload = rule kind; data-pf-target = id of the existing text field that stores the URL.
   // For otherDocuments rows use pfUploadOtherDocument(i, inputEl).
+  // >>> MODIFIED (v2): widget-aware handler: shows status, preview, remove <<<
+  function pfWidgetEl(input){ return input.closest('.pf-upload'); }
+  function pfSetUploadStatus(w, text, kind){
+    const s = w && w.querySelector('.pf-up-status');
+    if(!s) return;
+    s.textContent = text || '';
+    s.style.color = kind === 'error' ? '#c0392b' : (kind === 'ok' ? 'var(--green, #1e8e5a)' : 'var(--ink-faint)');
+  }
+  function pfRenderUploadPreview(w, url, name){
+    const box = w && w.querySelector('.pf-up-preview');
+    if(!box) return;
+    if(!url){ box.style.display = 'none'; box.innerHTML = ''; return; }
+    const isImg = /\.(jpe?g|png|webp)(\?|#|$)/i.test(url) || url.startsWith('blob:') && w.dataset.pfKind === 'image';
+    const label = name || decodeURIComponent((url.split('?')[0].split('/').pop()) || 'file');
+    box.style.display = 'flex';
+    box.innerHTML = (isImg
+      ? `<img src="${pfEsc(url)}" alt="Preview" style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--line);">`
+      : `<span style="width:40px;height:40px;border-radius:8px;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ink-soft);">${pfEsc((label.split('.').pop() || 'FILE').slice(0,4).toUpperCase())}</span>`)
+      + `<span style="flex:1;min-width:0;font-size:12.5px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${pfEsc(label)}</span>`
+      + `<a href="${pfEsc(url)}" target="_blank" rel="noopener" style="font-size:12.5px;">View</a>`
+      + `<button type="button" class="btn btn-ghost btn-sm" onclick="pfClearUpload(this)">Remove</button>`;
+  }
+  function pfClearUpload(btn){
+    const w = btn.closest('.pf-upload');
+    if(!w) return;
+    const target = document.getElementById(w.dataset.pfTarget);
+    if(target){ target.value = ''; pfOnInputProgress(); }
+    pfRenderUploadPreview(w, '');
+    pfSetUploadStatus(w, '');
+  }
+  // Show preview for a URL already saved in the text field (called on page load + on manual edit)
+  function pfRefreshUploadPreviews(){
+    document.querySelectorAll('.pf-upload').forEach(w=>{
+      const t = document.getElementById(w.dataset.pfTarget);
+      pfRenderUploadPreview(w, t && t.value.trim() ? t.value.trim() : '');
+    });
+  }
+
   async function pfHandleFileInput(input){
     const kind = input.dataset.pfUpload;
     const targetId = input.dataset.pfTarget;
     const file = input.files && input.files[0];
+    const w = pfWidgetEl(input);
     if(!file || !UPLOAD_RULES[kind]) return;
 
     const v = validateUploadFile(file, kind);
-    if(!v.ok){ showUploadError(v.message); input.value = ''; return; }   // invalid file is never stored
+    if(!v.ok){
+      pfSetUploadStatus(w, v.message, 'error');      // clear inline message
+      showUploadError(v.message);
+      input.value = '';                               // invalid file is never stored
+      return;
+    }
 
+    const btn = w && w.querySelector('.pf-up-btn');
+    const oldLabel = btn ? btn.textContent : '';
     try {
+      if(btn){ btn.disabled = true; btn.textContent = 'Uploading…'; }
+      pfSetUploadStatus(w, 'Uploading ' + file.name + ' (' + fmtBytes(file.size) + ')…');
       let payload = file;
       if(kind === 'image') payload = await compressImage(file, UPLOAD_RULES.image);
-      const url = await uploadFileToServer(payload, kind, file.name);
-      const target = targetId && document.getElementById(targetId);
-      if(target){ target.value = url; pfOnInputProgress(); }
-      showGenericToast(UPLOAD_RULES[kind].label + ' uploaded.');
+      // instant preview for images while the request is in flight (object URL, never persisted)
+      let tmp = null;
+      if(kind === 'image'){ tmp = URL.createObjectURL(payload); pfRenderUploadPreview(w, tmp, file.name); }
+      try {
+        const url = await uploadFileToServer(payload, kind, file.name);
+        const target = targetId && document.getElementById(targetId);
+        if(target){ target.value = url; pfOnInputProgress(); }
+        pfRenderUploadPreview(w, url, file.name);
+        pfSetUploadStatus(w, 'Uploaded ✓ · ' + fmtBytes(payload.size), 'ok');
+      } catch(err){
+        pfRenderUploadPreview(w, (document.getElementById(targetId)||{}).value || '');
+        throw err;
+      } finally { if(tmp) URL.revokeObjectURL(tmp); }
     } catch(err){
+      pfSetUploadStatus(w, err.message, 'error');
       showUploadError(err.message);
+    } finally {
+      if(btn){ btn.disabled = false; btn.textContent = oldLabel; }
+      input.value = '';
     }
-    input.value = '';
   }
 
   async function pfUploadOtherDocument(i, input){
@@ -537,8 +597,14 @@
         <div class="dash-form-row" style="margin-bottom:0;">
           <div class="pf-field"><label>Document name</label><input type="text" placeholder="e.g. Project completion certificate" value="${pfEsc(d.label)}" oninput="pfUpdateArrItem('otherDocuments',${i},'label',this.value)"></div>
           <div class="pf-field"><label>Link</label><input type="text" placeholder="https://..." value="${pfEsc(d.link)}" oninput="pfUpdateArrItem('otherDocuments',${i},'link',this.value)">
-            <!-- >>> MODIFIED START: optional file upload (validated, FormData) -->
-            <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" style="margin-top:6px; font-size:12.5px;" onchange="pfUploadOtherDocument(${i}, this)">
+            <!-- >>> MODIFIED START: upload button + limits + preview (validated, FormData) -->
+            <div style="margin-top:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <label class="btn btn-ghost btn-sm" style="cursor:pointer; margin:0;">Upload file
+                <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" style="display:none;" onchange="pfUploadOtherDocument(${i}, this)">
+              </label>
+              <span style="font-size:11.5px; color:var(--ink-faint);">PDF, DOC, DOCX, JPG, PNG, WEBP · Max 5 MB</span>
+            </div>
+            ${d.link ? `<div style="margin-top:6px; font-size:12.5px;"><a href="${pfEsc(d.link)}" target="_blank" rel="noopener">Preview / view file</a></div>` : ''}
             <!-- >>> MODIFIED END -->
           </div>
         </div>
@@ -804,6 +870,7 @@
 
       pfOnInputProgress();
       pfInitAccordion();
+      pfRefreshUploadPreviews();   // >>> MODIFIED: show preview for already-saved file links <<<
     }
     if(panel==='post'){
       document.getElementById('employerTabsBar').style.display = currentCompany.saved ? 'flex' : 'none';
