@@ -153,6 +153,20 @@
 <script src="../js/auth.js"></script>
 <script src="../js/faculty.js"></script>
 <script src="../js/layout.js"></script>
-<script>mountNav('jobs'); mountChrome(); initBrowseJobsPage();</script>
+<!-- >>> MODIFIED START: each step isolated so one failure can't blank the jobs list; errors shown on page -->
+<script>
+  function bjSafe(label, fn){
+    try{ fn(); }
+    catch(e){
+      console.error('[jobs page] ' + label + ' failed:', e);
+      var l = document.getElementById('bjJobList');
+      if(l && !l.innerHTML.trim()) l.innerHTML = '<div class="bj-empty" style="grid-column:1/-1;">Something went wrong loading jobs (' + label + '): ' + e.message + '</div>';
+    }
+  }
+  bjSafe('nav', function(){ mountNav('jobs'); });
+  bjSafe('footer', function(){ mountChrome(); });
+  bjSafe('jobs', function(){ initBrowseJobsPage(); });
+</script>
+<!-- >>> MODIFIED END -->
 </body>
 </html>
