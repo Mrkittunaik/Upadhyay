@@ -122,7 +122,7 @@ function vBadge(){
   return '<span class="in-vbadge p">Verification pending</span>';
 }
 const locStr=o=>[o.city,o.state].filter(Boolean).join(', ');
-const thumb=(o,n)=>`<div class="in-thumb">${o.img?`<img src="${o.img}" alt="${esc(o.name)}">`:esc((o.name||n||'').slice(0,2).toUpperCase())}</div>`;
+const thumb=(o,n)=>`<div class="in-thumb" style="width:52px;height:52px;overflow:hidden">${o.img?`<img src="${o.img}" alt="${esc(o.name)}" style="width:100%;height:100%;object-fit:cover">`:esc((o.name||n||'').slice(0,2).toUpperCase())}</div>`;
 const logoBox=(s)=>`<div class="in-logo-box" style="width:${s}px;height:${s}px">${I.d.logo?`<img src="${I.d.logo}" alt="Institution logo">`:esc((I.d.short||I.d.name||'IN').slice(0,2).toUpperCase())}</div>`;
 
 /* ---------- wizard ---------- */
@@ -201,7 +201,7 @@ function branchMgr(){
   const d=I.d, n=I.branches.length+1;
   return card('Branches &amp; campuses','Add campuses or branches belonging to this institution.',
    `<p style="font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 10px">${n} ${n===1?'campus':'campuses'}</p>
-   <div class="in-camp"><div class="lft"><div class="in-thumb">${d.logo?`<img src="${d.logo}" alt="Main campus logo">`:esc((d.name||'IN').slice(0,2).toUpperCase())}</div><div><b>${esc(d.name||'Your institution')}</b><span>Main campus: ${esc(locStr(d)||'location not added yet')}</span></div></div><span class="in-vbadge">${ck(12)} Main campus</span></div>
+   <div class="in-camp"><div class="lft"><div class="in-thumb" style="width:52px;height:52px;overflow:hidden">${d.logo?`<img src="${d.logo}" alt="Main campus logo" style="width:100%;height:100%;object-fit:cover">`:esc((d.name||'IN').slice(0,2).toUpperCase())}</div><div><b>${esc(d.name||'Your institution')}</b><span>Main campus: ${esc(locStr(d)||'location not added yet')}</span></div></div><span class="in-vbadge">${ck(12)} Main campus</span></div>
    ${I.branches.length?I.branches.map((b,i)=>`<div class="in-camp"><div class="lft">${thumb(b)}<div><b>${esc(b.name)}</b><span>${esc(locStr(b))}${b.type?' · '+esc(b.type):''}</span></div></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="IN.bView(${i})">View</button><button class="btn btn-ghost btn-sm" onclick="IN.bEdit(${i})">Edit</button></div></div>`).join(''):'<div class="empty-state"><h4>No other campuses yet</h4><p>Add a campus if this institution runs from more than one location. You can skip this step.</p></div>'}
    <button class="btn btn-primary btn-sm" onclick="IN.bEdit(-1)">+ Add branch / campus</button>`);
 }
