@@ -73,7 +73,7 @@
     display:flex; align-items:center; justify-content:center;
     color:#fff; font-family:'Lora',serif; font-weight:700; font-size:16px;
   }
-  .nav-links{display:flex; align-items:center; gap:28px;}
+  .nav-links{display:flex; align-items:center; justify-content:center; gap:28px; flex:1;}
   .nav-links a{font-size:14.5px; color:var(--ink-soft); font-weight:500; transition:color .15s;}
   .nav-links a:hover{color:var(--blue-700);}
   .nav-drop{position:relative;}
@@ -83,6 +83,7 @@
     padding:18px; gap:22px; min-width:560px; max-width:calc(100vw - 48px); z-index:50;
   }
   .nav-drop.open .nav-drop-menu, .nav-drop-menu.open{display:flex;}
+  .nav-drop-menu::before{content:''; position:absolute; top:-14px; left:0; right:0; height:14px;}
   .nav-drop-col{display:flex; flex-direction:column; gap:2px; flex:1;}
   .nav-drop-label{font-size:11.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px;}
   .nav-drop-col a{font-size:13.5px; padding:7px 8px; border-radius:2px; color:var(--ink); font-weight:500;}
@@ -833,6 +834,8 @@
     .flow-grid{grid-template-columns:1fr 1fr; row-gap:26px;}
     .footer-grid{grid-template-columns:1fr 1fr;}
     .nav-links{display:none;}
+    .nav.logged-in .nav-links{display:flex; justify-content:flex-end; gap:12px;}
+    .nav.logged-in .nav-links a:not(#navDashLink){display:none !important;}
   }
 
   /* ---------- True mobile fit ---------- */
@@ -844,7 +847,7 @@
     .nav-cta .btn{padding:7px 10px; font-size:12px;}
     .nav-user{gap:8px;}
     .nav-bell, .nav-avatar-btn{width:32px; height:32px;}
-    #navBrowseJobsLink{display:none;}
+    #navBrowseJobsLink{display:none !important;}
 
     .hero-inner{padding:56px 16px 40px; gap:28px;}
     .hero h1{font-size:28px; max-width:none;}
