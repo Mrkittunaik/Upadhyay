@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Employer Dashboard — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/institution.css">
 </head>
 <body class="page">
   <div id="siteNav"></div>
@@ -56,6 +57,9 @@
         <p class="sub" id="employerSetupNote" style="margin:0 0 18px;">Create your institution account with these basic details. Once saved, you'll get your full poster panel — jobs, candidates, invites and messages.</p>
 
         <div id="dashCompanyTab">
+          <div id="instRoot"></div>
+          <!-- legacy fields kept hidden so existing scripts (openDash, saveCompany) keep working -->
+          <div style="display:none" aria-hidden="true">
           <h3>Institution details</h3>
           <div class="dash-form-row">
             <div class="logo-upload" id="logoUpload" onclick="document.getElementById('logoFile').click()">
@@ -90,6 +94,7 @@
           </div>
           <button class="btn btn-primary btn-sm" onclick="saveCompany()">Save company profile</button>
           <span id="coSavedNote" style="display:none; margin-left:12px; font-size:12.5px; font-weight:600; color:var(--green);">✓ Institution profile saved</span>
+          </div>
         </div>
 
         <div id="dashPostTab" style="display:none;">
@@ -113,6 +118,14 @@
               </select>
               <input type="text" id="jbLocation" placeholder="Location" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
             </div>
+            <div class="in-card" style="margin-bottom:16px;">
+              <h4>Job location</h4>
+              <div class="in-grid" style="margin-top:12px;">
+                <div class="in-f"><label>Institution</label><div id="jbInst" style="font-weight:700;color:var(--blue-900);padding:10px 0;">—</div></div>
+                <div class="in-f"><label>Campus / branch<i>Required</i></label><select id="jbCampus" onchange="instCampusChange()"><option value="">Select campus</option></select></div>
+              </div>
+              <div class="in-note" id="jbCampusNote" style="display:none;">This job is available across all listed campuses.</div>
+            </div>
             <button class="btn btn-primary btn-sm" onclick="addJob(event)">+ Post job — free</button>
 
             <div id="jobList" style="margin-top:18px;"></div>
@@ -120,6 +133,7 @@
 
           <div id="applicantsView" style="display:none;">
             <button class="btn btn-ghost btn-sm" onclick="closeApplicantsView()" style="margin-bottom:14px;">← Back to jobs</button>
+            <div id="apJobInst" style="margin-bottom:8px;"></div>
             <h3 id="apJobTitle" style="margin-bottom:2px;"></h3>
             <p class="sub" id="apJobMeta" style="margin-top:0; margin-bottom:0;"></p>
           </div>
@@ -164,6 +178,7 @@
 
 <script src="../js/store.js"></script>
 <script src="../js/employer.js"></script>
+<script src="../js/institution.js"></script>
 <script src="../js/auth.js"></script>
 <script src="../js/faculty.js"></script>
 <script src="../js/layout.js"></script>
