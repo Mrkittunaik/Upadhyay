@@ -122,6 +122,7 @@ function vBadge(){
   return '<span class="in-vbadge p">Verification pending</span>';
 }
 const locStr=o=>[o.city,o.state].filter(Boolean).join(', ');
+const thumb=(o,n)=>`<div class="in-thumb">${o.img?`<img src="${o.img}" alt="${esc(o.name)}">`:esc((o.name||n||'').slice(0,2).toUpperCase())}</div>`;
 const logoBox=(s)=>`<div class="in-logo-box" style="width:${s}px;height:${s}px">${I.d.logo?`<img src="${I.d.logo}" alt="Institution logo">`:esc((I.d.short||I.d.name||'IN').slice(0,2).toUpperCase())}</div>`;
 
 /* ---------- wizard ---------- */
@@ -190,7 +191,7 @@ function s5(){
    ['Location',1,`${esc(locStr(d))}<br>${r('PIN code',d.pin)}${r('Area',d.area)}${r('Address',d.address)}`],
    ['Representative details',2,`<b>${esc(d.rname)}</b><br>${esc(d.rdes)}${d.rdep?', '+esc(d.rdep):''}<br>${esc(d.remail)}<br>${I.em==='ok'?ck(12)+' Email verified':'Email not verified yet'}`],
    ['Verification',3,`${I.em==='ok'?ck(12)+' Official email verified':'Official email not verified'}<br>${I.doc?ck(12)+' Document uploaded ('+esc(I.doc.name)+')':'No document uploaded'}<br>Review pending after submission`],
-   ['Branches / campuses',4,`${I.branches.length+1} ${I.branches.length?'campuses':'campus'}<br>Main: ${esc(d.name)}<br>${I.branches.map(b=>esc(b.name)).join('<br>')}`]];
+   ['Branches / campuses',4,`${I.branches.length+1} ${I.branches.length?'campuses':'campus'}<br>Main: ${esc(d.name)}<br>${I.branches.map(b=>(b.img?`<img class="in-mini" src="${b.img}" alt="">`:'')+esc(b.name)).join('<br>')}`]];
   return card('Review your institution profile','Check everything before you submit.',S.map((x,i)=>`<div class="in-acc${i===0?' open':''}"><button onclick="this.parentNode.classList.toggle('open')"><span>${x[0]}</span><span><a href="#" onclick="event.stopPropagation();IN.edit(${x[1]});return false" style="color:var(--blue-700);font-size:13px">Edit</a></span></button><div class="body">${x[2]}</div></div>`).join('')
    +`<label class="in-check"><input type="checkbox" id="finalChk"${I.c2?' checked':''} onchange="IN.c2(this.checked)"> I confirm that the information provided is accurate.</label><div class="in-err" id="finalErr" style="display:none;margin-bottom:8px">Confirm that the information is accurate before submitting.</div>`);
 }
@@ -200,16 +201,16 @@ function branchMgr(){
   const d=I.d, n=I.branches.length+1;
   return card('Branches &amp; campuses','Add campuses or branches belonging to this institution.',
    `<p style="font-size:13px;font-weight:600;color:var(--ink-soft);margin:0 0 10px">${n} ${n===1?'campus':'campuses'}</p>
-   <div class="in-camp"><div><b>${esc(d.name||'Your institution')}</b><span>Main campus: ${esc(locStr(d)||'location not added yet')}</span></div><span class="in-vbadge">${ck(12)} Main campus</span></div>
-   ${I.branches.length?I.branches.map((b,i)=>`<div class="in-camp"><div><b>${esc(b.name)}</b><span>${esc(locStr(b))}</span></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="IN.bView(${i})">View</button><button class="btn btn-ghost btn-sm" onclick="IN.bEdit(${i})">Edit</button></div></div>`).join(''):'<div class="empty-state"><h4>No other campuses yet</h4><p>Add a campus if this institution runs from more than one location. You can skip this step.</p></div>'}
+   <div class="in-camp"><div class="lft"><div class="in-thumb">${d.logo?`<img src="${d.logo}" alt="Main campus logo">`:esc((d.name||'IN').slice(0,2).toUpperCase())}</div><div><b>${esc(d.name||'Your institution')}</b><span>Main campus: ${esc(locStr(d)||'location not added yet')}</span></div></div><span class="in-vbadge">${ck(12)} Main campus</span></div>
+   ${I.branches.length?I.branches.map((b,i)=>`<div class="in-camp"><div class="lft">${thumb(b)}<div><b>${esc(b.name)}</b><span>${esc(locStr(b))}${b.type?' · '+esc(b.type):''}</span></div></div><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="IN.bView(${i})">View</button><button class="btn btn-ghost btn-sm" onclick="IN.bEdit(${i})">Edit</button></div></div>`).join(''):'<div class="empty-state"><h4>No other campuses yet</h4><p>Add a campus if this institution runs from more than one location. You can skip this step.</p></div>'}
    <button class="btn btn-primary btn-sm" onclick="IN.bEdit(-1)">+ Add branch / campus</button>`);
 }
 function modal(h){ closeM(); const m=document.createElement('div'); m.className='in-modal'; m.id='inModal'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.innerHTML='<div>'+h+'</div>'; m.addEventListener('click',e=>{ if(e.target===m) closeM(); }); document.body.appendChild(m); }
 function closeM(){ const m=$('inModal'); if(m) m.remove(); }
 function bForm(){
   return `<h4 style="margin:0 0 14px;font-size:18px">${BRi<0?'Add branch / campus':'Edit branch / campus'}</h4>${grid(FB,'b')}
-  <div class="in-f"><label>Campus image<i>Optional</i></label><input type="file" id="inBimg" accept="image/png,image/jpeg" style="display:none" onchange="IN.bImg(event)">
-  <div class="in-logo">${BR.img?`<div class="in-logo-box" style="width:120px"><img src="${BR.img}" alt="Campus"></div>`:''}<button class="btn btn-ghost btn-sm" onclick="document.getElementById('inBimg').click()">${BR.img?'Change image':'Upload campus image'}</button></div></div>
+  <div class="in-f"><label>Branch logo / campus photo<i>Optional</i></label><input type="file" id="inBimg" accept="image/png,image/jpeg" style="display:none" onchange="IN.bImg(event)">
+  <div class="in-logo">${BR.img?`<div class="in-logo-box" style="width:120px"><img src="${BR.img}" alt="Campus"></div>`:''}<button class="btn btn-ghost btn-sm" onclick="document.getElementById('inBimg').click()">${BR.img?'Change photo':'Upload photo'}</button></div></div>
   <div class="in-map" style="margin-top:12px">${BR.city?`<span>${PIN_IC} ${esc(locStr(BR))}</span>`:'<span>Location preview appears once you add a PIN code</span>'}</div>
   <div class="in-actions" style="margin-top:14px"><span></span><div class="r"><button class="btn btn-ghost btn-sm" onclick="IN.closeM()">Cancel</button><button class="btn btn-primary btn-sm" onclick="IN.bSave()">Save branch</button></div></div>`;
 }
@@ -248,14 +249,26 @@ function dash(){
   <p style="font-size:13px;color:var(--ink-soft);margin:0 0 10px">Complete your profile to improve your institution's visibility.</p><button class="btn btn-primary btn-sm" onclick="IN.edit(0)">Complete profile</button></div></div>
   <div class="in-nav">${nav}</div>${body}</div>`;
 }
-function render(){ const r=$('instRoot'); if(!r) return; r.innerHTML=I.view==='wizard'?wiz():I.view==='status'?statusPage():dash(); }
+function instHeader(){
+  const av=$('dashAvatar'), nm=$('dashName'); if(!av) return;
+  const d=I.d, name=d.name||'';
+  if(name&&nm) nm.textContent=name;
+  if(d.logo){
+    av.textContent=''; av.style.backgroundImage="url('"+d.logo+"')"; av.style.backgroundSize='contain'; av.style.backgroundRepeat='no-repeat'; av.style.backgroundPosition='center'; av.style.backgroundColor='#fff'; av.style.border='1px solid var(--line)';
+  } else {
+    av.style.backgroundImage=''; av.style.backgroundColor=''; av.style.border=''; if(name) av.textContent=name.slice(0,2).toUpperCase();
+  }
+  try{ currentCompany.logo=d.logo||''; if(name) currentCompany.name=name; saveState(); refreshDashTopAccount(); }catch(e){}
+}
+window.instHeader=instHeader;
+function render(){ const r=$('instRoot'); if(!r) return; r.innerHTML=I.view==='wizard'?wiz():I.view==='status'?statusPage():dash(); instHeader(); }
 function setHeader(){
   try{
     const d=I.d; Object.assign(currentCompany,{name:d.name,type:d.type,city:d.city||locStr(d),website:d.website,desc:d.about2||d.about1||'',contactName:d.rname,designation:d.rdes,email:d.remail||d.email,phone:d.rphone||d.phone,logo:d.logo||'',saved:true}); saveState();
     if($('dashName')) $('dashName').textContent=d.name; if($('dashAvatar')) $('dashAvatar').textContent=d.name.slice(0,2).toUpperCase();
     if($('dashSub')) $('dashSub').textContent='Your poster panel: post jobs, review and invite candidates';
     if($('employerSetupNote')) $('employerSetupNote').style.display='none'; if($('employerTabsBar')) $('employerTabsBar').style.display='flex';
-    refreshDashTopAccount();
+    refreshDashTopAccount(); instHeader();
   }catch(e){}
 }
 
@@ -290,7 +303,7 @@ window.IN={
   logo(e){ const f=e.target.files[0]; if(!f) return; const er=$('logoErr');
     if(!/^image\/(png|jpeg)$/.test(f.type)){ er.textContent='Use a PNG or JPG image.'; return; }
     if(f.size>2*1048576){ er.textContent='Logo must be under 2 MB.'; return; }
-    const r=new FileReader(); r.onload=x=>{ I.d.logo=x.target.result; save(); render(); }; r.readAsDataURL(f); },
+    const r=new FileReader(); r.onload=x=>{ I.d.logo=x.target.result; save(); render(); toast('Logo updated'); }; r.readAsDataURL(f); },
   rmLogo(){ I.d.logo=''; save(); render(); },
   send(){ const m=chk(EMAILF,I.d.email); mark('d',EMAILF,m); if(m) return; I.em='sending'; render(); setTimeout(()=>{ I.em='sent'; save(); render(); },900); },
   resend(){ toast('A new code was sent to '+I.d.email); },
@@ -317,7 +330,7 @@ window.IN={
   bImg(e){ const f=e.target.files[0]; if(!f) return; if(f.size>2*1048576){ toast('Image must be under 2 MB'); return; } const r=new FileReader(); r.onload=x=>{ BR.img=x.target.result; modal(bForm()); }; r.readAsDataURL(f); },
   bSave(){ if(!valid(FB,'b')) return; if(BRi<0) I.branches.push(BR); else I.branches[BRi]=BR; save(); closeM(); render(); toast('Branch saved'); },
   bView(i){ const b=I.branches[i];
-    modal(`<h4 style="margin:0 0 12px;font-size:18px">${esc(b.name)}</h4>${b.img?`<img src="${b.img}" alt="Campus" style="width:100%;max-height:160px;object-fit:cover;margin-bottom:12px">`:''}${rows([['Type',b.type],['Code',b.code],['Contact person',b.cname],['Designation',b.cdes],['Email',b.email],['Phone',b.phone],['Location',locStr(b)],['Address',b.address]])}<p style="font-size:13.5px;color:var(--ink-soft)">${esc(b.desc)}</p>
+    modal(`<div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${thumb(b)}<div><h4 style="margin:0;font-size:18px">${esc(b.name)}</h4><span style="font-size:13px;color:var(--ink-soft)">${esc(locStr(b))}</span></div></div>${b.img?`<img src="${b.img}" alt="Campus" style="width:100%;max-height:180px;object-fit:cover;margin-bottom:12px">`:''}${rows([['Type',b.type],['Code',b.code],['Contact person',b.cname],['Designation',b.cdes],['Email',b.email],['Phone',b.phone],['Location',locStr(b)],['Address',b.address]])}<p style="font-size:13.5px;color:var(--ink-soft)">${esc(b.desc)}</p>
     <div class="in-actions"><button class="btn btn-ghost btn-sm" style="color:#B3261E;border-color:#B3261E" onclick="IN.bDel(${i})">Remove</button><div class="r"><button class="btn btn-ghost btn-sm" onclick="IN.closeM()">Close</button><button class="btn btn-primary btn-sm" onclick="IN.bEdit(${i})">Edit</button></div></div>`); },
   bDel(i){ modal(`<h4 style="margin:0 0 8px;font-size:18px">Remove ${esc(I.branches[i].name)}?</h4><p style="color:var(--ink-soft);font-size:14px">This campus will be removed from your institution profile. Jobs already posted to it stay live.</p>
     <div class="in-actions"><span></span><div class="r"><button class="btn btn-ghost btn-sm" onclick="IN.closeM()">Cancel</button><button class="btn btn-primary btn-sm" style="background:#B3261E" onclick="IN.bDelOk(${i})">Remove campus</button></div></div>`); },
@@ -352,4 +365,5 @@ window.instJobHeader=function(j){
   const n=(I.d.name||(typeof currentCompany!=='undefined'&&currentCompany.name)||'').toUpperCase();
   return `<div style="font-weight:700;color:var(--blue-900);letter-spacing:.02em">${esc(n)}</div>${instJobMeta(j)}${j.campus==='All Campuses'?'<p style="font-size:12.5px;color:var(--ink-soft);margin:4px 0 0">This job is available across all listed campuses.</p>':''}`;
 };
+document.addEventListener('DOMContentLoaded',function(){ if(I.d.name||I.d.logo) instHeader(); });
 })();
