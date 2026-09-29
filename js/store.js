@@ -146,7 +146,14 @@ function ensureCandidateId(){
    These paths are root-relative ("/index.html", "/pages/login.html") so
    goTo() and links built by layout.js work the same regardless of which
    folder the current page happens to be in. */
-const SITE_ROOT = '/';
+/* Auto-detect site root from this script's own URL so links work from any
+   location: localhost, GitHub Pages subpath (/Upadhyay/), or file:// */
+const SITE_ROOT = (function(){
+  try{
+    const src = document.currentScript.src;
+    return src.substring(0, src.lastIndexOf('/js/') + 1);
+  }catch(e){ return '/'; }
+})();
 const PAGES = {
   home:      SITE_ROOT + 'index.html',
   login:     SITE_ROOT + 'pages/login.html',
