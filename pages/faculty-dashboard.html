@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Dashboard — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/faculty-profile.css?v=1">
 </head>
 <body class="page">
   <div id="siteNav"></div>
@@ -40,7 +41,8 @@
     <div class="dash-inner-wide" id="dashInnerWide">
       <div class="dash-panel" id="panelSearch">
         <div id="dashProfileTab" style="display:block;">
-          <div class="pf-layout">
+          <div id="fpRoot"></div>
+          <div class="pf-layout" style="display:none" aria-hidden="true">
             <aside class="pf-side">
               <img class="pf-side-img" src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=700&q=80" alt="">
               <div class="pf-side-body">
@@ -665,6 +667,7 @@
 <script src="../js/auth.js"></script>
 <script src="../js/faculty.js"></script>
 <script src="../js/layout.js"></script>
+<script src="../js/faculty-profile.js?v=1"></script>
 <script>document.addEventListener("input", function(e){ if(e.target && e.target.id && document.querySelector('.pf-upload[data-pf-target="'+e.target.id+'"]')) pfRefreshUploadPreviews(); });</script>
 <script>mountNav(); mountChrome(); if(requireLogin('seeker')) openDash(currentUser.name || 'User', 'search');</script>
 </body>
