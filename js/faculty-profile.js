@@ -22,7 +22,33 @@ const OPT={
  exp:['Fresher','1–2 Years','3–5 Years','6–10 Years','11–15 Years','15+ Years']};
 const PIN={'500001':['Telangana','Hyderabad','Hyderabad','Abids'],'440001':['Maharashtra','Nagpur','Nagpur','Sitabuldi'],'560001':['Karnataka','Bengaluru Urban','Bengaluru','MG Road'],'400001':['Maharashtra','Mumbai','Mumbai','Fort'],'110001':['Delhi','New Delhi','New Delhi','Connaught Place'],'411001':['Maharashtra','Pune','Pune','Camp']};
 const SEC=['Personal Details','Account & Contact','Professional Profile','Education & Qualifications','Teaching Qualifications','Employment History','Teaching Experience','Documents','Professional Links','Teaching Preferences','Verification','Profile Preview'];
-const ICON=['👤','🔐','🎓','📚','📜','💼','⏳','📁','🔗','🎯','✅','👁'];
+const ICON=['user','lock','cap','book','award','briefcase','hourglass','folder','link','target','shield','eye'];
+/* inline SVG icons (Lucide-style, stroke = currentColor) — no emoji anywhere */
+const SVG={
+user:'<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+lock:'<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+cap:'<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
+book:'<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+award:'<path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/>',
+briefcase:'<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+hourglass:'<path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>',
+folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+shield:'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+eye:'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+pin:'<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+cal:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+check:'<path d="M20 6 9 17l-5-5"/>',
+plus:'<path d="M5 12h14"/><path d="M12 5v14"/>',
+x:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+circle:'<circle cx="12" cy="12" r="9"/>',
+alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>'};
+const ic=(n,z=14)=>`<svg class="ic" width="${z}" height="${z}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${SVG[n]}</svg>`;
+const pill=(c,i,t)=>`<span class="fp-pill ${c}">${ic(i,11)}${t}</span>`;
+const cap=t=>t.charAt(0).toUpperCase()+t.slice(1);
 const TAG={req:['t-req','Required'],rec:['t-rec','Recommended'],opt:['t-opt','Optional']};
 const S={open:0,done:{},
  title:'Dr.',first:'Kittu',middle:'',last:'Kumar',dob:'14/03/2000',gender:'Male',headline:'Assistant Professor - Computer Science',
@@ -42,9 +68,9 @@ const F=(label,t,inner,o={})=>`<div class="fp-f ${o.full?'full':''}"><label>${la
 const I=(p,o={})=>`<input class="fp-in" data-k="${p}" ${o.v?`data-v="${o.v}"`:''} value="${esc(get(p))}" placeholder="${esc(o.ph||'')}" ${o.type?`type="${o.type}"`:''} ${o.dis?'disabled':''}>`;
 const SEL=(p,opts,o={})=>`<select class="fp-in" data-k="${p}" ${o.v?`data-v="${o.v}"`:''} ${o.re?`data-re="${o.re}"`:''}><option value="">${o.ph||'Select…'}</option>${opts.map(x=>`<option ${get(p)===x?'selected':''}>${esc(x)}</option>`).join('')}</select>`;
 const RAD=(p,opts)=>`<div class="fp-radio">${opts.map(x=>`<label><input type="radio" name="${p}" data-k="${p}" value="${esc(x)}" ${get(p)===x?'checked':''}>${esc(x)}</label>`).join('')}</div>`;
-const MS=(p,opts,ph)=>{const v=get(p)||[];return `<div class="fp-ms" data-ms="${p}" data-opts="${opts}"><div class="box">${v.map(x=>`<span class="fp-chip">${esc(x)}<u data-rm="${esc(x)}">×</u></span>`).join('')}<input placeholder="${v.length?'':esc(ph||'Search & select…')}"></div></div>`};
+const MS=(p,opts,ph)=>{const v=get(p)||[];return `<div class="fp-ms" data-ms="${p}" data-opts="${opts}"><div class="box">${v.map(x=>`<span class="fp-chip">${esc(x)}<u data-rm="${esc(x)}">${ic('x',11)}</u></span>`).join('')}<input placeholder="${v.length?'':esc(ph||'Search & select…')}"></div></div>`};
 const UP=(p,label,t)=>{const f=get(p,S.files)||S.files[p];return `<div class="fp-f"><label>${label}${t?tag(t):''}</label><div class="fp-up ${f?'has':''}" data-up="${p}">${UPin(p)}</div><div class="fp-hint">Accepted: PDF, JPG, JPEG, PNG · Max 5 MB</div></div>`};
-const UPin=p=>{const f=S.files[p];return f?`<span class="nm">✓ ${esc(f.name)}<br><small>${f.size} MB</small></span><button class="fp-btn sm" data-pick="${p}">Replace</button><button class="fp-btn sm dng" data-del="${p}">Remove</button>`:`<span class="nm"><small>No file uploaded</small></span><button class="fp-btn sm" data-pick="${p}">Upload</button>`};
+const UPin=p=>{const f=S.files[p];return f?`<span class="nm">${ic('check',13)} ${esc(f.name)}<br><small>${f.size} MB</small></span><button class="fp-btn sm" data-pick="${p}">Replace</button><button class="fp-btn sm dng" data-del="${p}">Remove</button>`:`<span class="nm"><small>No file uploaded</small></span><button class="fp-btn sm" data-pick="${p}">Upload</button>`};
 /* ---------- computed ---------- */
 function age(d){const m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(d||'');if(!m)return null;const D=+m[1],M=+m[2],Y=+m[3],dt=new Date(Y,M-1,D);if(dt.getMonth()!==M-1||dt.getDate()!==D||dt>new Date()||Y<1930)return null;const n=new Date();let a=n.getFullYear()-Y;if(n<new Date(n.getFullYear(),M-1,D))a--;return a}
 function months(){let t=0;const n=new Date();S.jobs.forEach(j=>{if(!j.start)return;const [y,m]=j.start.split('-').map(Number);let e=n;if(!j.cur){if(!j.end)return;const q=j.end.split('-').map(Number);e=new Date(q[0],q[1]-1)}t+=Math.max(0,(e.getFullYear()-y)*12+e.getMonth()-(m-1))});return t}
@@ -67,10 +93,10 @@ const R={
  ${F('PIN code','req',I('pin',{v:'pin',ph:'6-digit PIN'}),{hint:'Try 500001, 440001, 560001, 400001, 110001, 411001'})}${F('State','req',I('state'))}${F('District','opt',I('district'))}${F('City','req',I('city'))}${F('Area','opt',I('area'))}
  ${F('Full address','opt',`<textarea class="fp-in" data-k="addr" rows="2">${esc(S.addr)}</textarea>`,{full:1})}</div><div class="fp-hint" id="fpPinMsg"></div></div>`,
 1:()=>`<h3>Account & Contact</h3><p class="fp-sub">Contact and privacy controls.</p><div class="fp-card"><h4>Account details</h4>
- <div class="fp-row"><span>Email: <b>${esc(S.email)}</b></span><span class="fp-pill p-ok">✓ Verified</span></div><div class="fp-row"><span>Phone: <b>${esc(S.phone)}</b></span><span class="fp-pill p-ok">✓ Verified</span></div>
+ <div class="fp-row"><span>Email: <b>${esc(S.email)}</b></span>${pill('p-ok','check','Verified')}</div><div class="fp-row"><span>Phone: <b>${esc(S.phone)}</b></span>${pill('p-ok','check','Verified')}</div>
  <div class="fp-row"><span>Login email: <b>${esc(S.email)}</b></span><span class="fp-hint">Change from account settings</span></div></div>
  <div class="fp-card"><h4>Profile visibility ${tag('req')}</h4>${RAD('vis',['Public','Employers Only','Private'])}<div class="fp-hint" style="margin-top:8px">Employers Only: visible to registered institutions. Private: only visible to institutions you apply to.</div></div>
- <div class="fp-note">🔒 We never collect Aadhaar, PAN, bank details, passwords, OTPs or financial information in your faculty profile.</div>`,
+ <div class="fp-note fp-note-i">${ic('lock',14)}<span>We never collect Aadhaar, PAN, bank details, passwords, OTPs or financial information in your faculty profile.</span></div>`,
 2:()=>`<h3>Professional Profile</h3><p class="fp-sub">Helps institutions match you with the right roles.</p><div class="fp-grid">
  ${F('Current designation','req',SEL('desig',OPT.desig,{v:'req'}))}${F('Teaching / target level','req',MS('levels','levels'),{hint:'Drives which qualification fields are shown.'})}
  ${F('Subjects / specialization','req',MS('subjects','subjects','Search subjects…'),{full:1})}</div>`,
@@ -81,14 +107,14 @@ const R={
  return `<h3>Teaching Qualifications</h3><p class="fp-sub">Eligibility varies by post and institution (e.g. UGC norms for higher education). Nothing here is mandatory for every faculty member.</p>
  <div class="fp-note"><b>Based on your target levels (${esc(S.levels.join(', ')||'none selected')}):</b><ul>${rows.map(r=>`<li>${r[0]} ${tag(r[2]=='some'?r[1]:r[2],r[1])}</li>`).join('')||'<li>Select teaching levels in Professional Profile.</li>'}</ul></div>
  <div id="fpTq">${S.tq.length?S.tq.map(tqCard).join(''):`<div class="fp-empty">No teaching qualifications added yet.</div>`}</div>
- <div style="display:flex;gap:8px;flex-wrap:wrap"><select class="fp-in" id="fpTqSel" style="max-width:280px"><option value="">Choose qualification…</option>${OPT.tq.map(x=>`<option>${x}</option>`).join('')}</select><button class="fp-btn pri" data-act="addtq">+ Add qualification</button></div>`},
-5:()=>`<h3>Employment History</h3><p class="fp-sub">Add current and past teaching roles. Documents are optional unless a job requires them.</p><div id="fpJobs">${jobsHTML()}</div><button class="fp-btn pri" data-act="addjob">+ Add Employment</button>`,
+ <div style="display:flex;gap:8px;flex-wrap:wrap"><select class="fp-in" id="fpTqSel" style="max-width:280px"><option value="">Choose qualification…</option>${OPT.tq.map(x=>`<option>${x}</option>`).join('')}</select><button class="fp-btn pri" data-act="addtq">${ic('plus',13)}Add qualification</button></div>`},
+5:()=>`<h3>Employment History</h3><p class="fp-sub">Add current and past teaching roles. Documents are optional unless a job requires them.</p><div id="fpJobs">${jobsHTML()}</div><button class="fp-btn pri" data-act="addjob">${ic('plus',13)}Add employment</button>`,
 6:()=>{const m=months();return `<h3>Teaching Experience</h3><p class="fp-sub">Calculated from your employment history where possible.</p>
  <div class="fp-card"><h4>Total teaching experience ${tag('rec')}</h4><b style="font-size:20px" id="fpTotal">${Math.floor(m/12)} years ${m%12} months</b><div class="fp-hint">Auto-calculated from employment history (current roles counted to today).</div></div>
  <div class="fp-grid">${F('Experience level','req',SEL('expLevel',OPT.exp),{hint:'Suggested: '+expLabel(m)})}${F('Medium of instruction','rec',MS('medium','medium'))}
  ${F('Classes / levels taught','rec',MS('taught','levels'))}${F('Subjects taught','rec',MS('taughtSubs','subjects'))}${F('Boards / curricula','opt',MS('boards','boards'),{full:1})}</div>`},
 7:()=>{const items=docList();return `<h3>Documents</h3><p class="fp-sub">Everything you have uploaded. Add documents from the relevant sections.</p>
- ${items.length?items.map(d=>`<div class="fp-row"><span>📄 <b>${esc(d[1].name)}</b> <small>${d[1].size} MB · ${esc(d[0])}</small></span><span class="fp-pill p-pend">Pending review</span></div>`).join(''):`<div class="fp-empty">No documents uploaded yet.</div>`}
+ ${items.length?items.map(d=>`<div class="fp-row"><span>${ic('file',14)} <b>${esc(d[1].name)}</b> <small>${d[1].size} MB · ${esc(d[0])}</small></span><span class="fp-pill p-pend">Pending review</span></div>`).join(''):`<div class="fp-empty">No documents uploaded yet.</div>`}
  <div class="fp-note" style="margin-top:14px">Identity documents are not needed for a normal profile. If an institution requires them, you'll be asked in a separate step.</div>`},
 8:()=>`<h3>Professional Links</h3><p class="fp-sub">Optional — Google Scholar / ORCID are recommended for research roles.</p><div id="fpLinks">${linksHTML()}</div>
  <div class="fp-card"><h4>Add another link</h4><div class="fp-grid"><div class="fp-f"><select class="fp-in" id="fpLt">${OPT.linkt.map(x=>`<option>${x}</option>`).join('')}</select></div><div class="fp-f"><input class="fp-in" id="fpLu" placeholder="https://…"><div class="fp-err" data-e></div></div></div><button class="fp-btn pri" style="margin-top:10px" data-act="addlink">Add link</button></div>
@@ -97,17 +123,17 @@ const R={
  ${F('Preferred teaching level','opt',MS('prefLevels','pref'))}${F('Preferred subjects','opt',MS('prefSubs','subjects'))}${F('Preferred job type','opt',MS('prefJob','jobtype'))}
  ${F('Work location','opt',RAD('prefWork',['On-site','Remote','Hybrid']))}${F('Preferred locations','opt',MS('prefLoc','cities','Add cities / states'))}${F('Willing to relocate','opt',RAD('reloc',['Yes','No','Maybe']))}
  ${F('Expected salary','opt',I('salary',{ph:'e.g. ₹ per month'}),{hint:'Never required for profile completion.'})}</div>`,
-10:()=>{const V=(k,l,ready,up)=>{const s=k==='email'||k==='phone'?'ok':S.ver[k];const P={ok:['p-ok','✓ Verified'],pend:['p-pend','Pending'],upd:['p-upd','Needs Update'],none:['p-no',k==='id'?'○ Not Submitted':'○ Not Verified']}[s];
+10:()=>{const V=(k,l,ready,up)=>{const s=k==='email'||k==='phone'?'ok':S.ver[k];const P={ok:['p-ok',ic('check',11)+'Verified'],pend:['p-pend',ic('clock',11)+'Pending'],upd:['p-upd',ic('alert',11)+'Needs update'],none:['p-no',ic('circle',11)+(k==='id'?'Not submitted':'Not verified')]}[s];
  return `<div class="fp-card"><div class="fp-row" style="border:0;padding:0"><b>${l}</b><span class="fp-pill ${P[0]}">${P[1]}</span></div>${up?`<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="fp-btn sm" data-act="ver:${k}">${up}</button>${s!=='none'?`<select class="fp-in" style="width:auto;padding:5px" data-vs="${k}"><option value="pend" ${s==='pend'?'selected':''}>Demo: Pending</option><option value="ok" ${s==='ok'?'selected':''}>Demo: Verified</option><option value="upd" ${s==='upd'?'selected':''}>Demo: Needs Update</option></select>`:''}</div>`:''}</div>`};
  return `<h3>Profile Verification</h3><p class="fp-sub">Status shown to institutions. UI states only — no real verification runs.</p>${V('email','Email')}${V('phone','Phone')}${V('edu','Education',0,'Upload Education Certificate')}${V('exp','Experience',0,'Upload Experience Certificate')}${V('id','Identity',0,'')}
  <div class="fp-note">Identity verification is not required to create a faculty profile. If a specific institution or job needs it, it will appear as a separate process.</div>`},
 11:()=>{const a=age(S.dob),m=months(),ed=(EDU[S.high]||[]).filter(x=>['ug','pg','phd','mphil','dip'].includes(x)).reverse();
  const lab={ug:"Bachelor's",pg:"Master's",phd:'Ph.D.',mphil:'M.Phil',dip:'Diploma'},ch=l=>l&&l.length?l.map(x=>`<span class="fp-chip">${esc(x)}</span>`).join(''):'<span class="fp-hint">Not added</span>';
- const jobs=S.jobs.filter(j=>j.org).map(j=>`<div class="fp-tl"><i class="${j.cur?'cur':''}"></i><div><b>${esc(j.desig)}</b>${j.cur?' <span class="fp-pill p-ok">✓ Current</span>':''}<div>${esc(j.org)}${j.dept?' · '+esc(j.dept):''}</div><small>${fmt(j.start)} – ${j.cur?'Present':fmt(j.end)} · ${esc(j.type||'')}</small></div></div>`).join('');
+ const jobs=S.jobs.filter(j=>j.org).map(j=>`<div class="fp-tl"><i class="${j.cur?'cur':''}"></i><div><b>${esc(j.desig)}</b>${j.cur?' '+pill('p-ok','check','Current'):''}<div>${esc(j.org)}${j.dept?' · '+esc(j.dept):''}</div><small>${fmt(j.start)} – ${j.cur?'Present':fmt(j.end)} · ${esc(j.type||'')}</small></div></div>`).join('');
  const eds=ed.map(k=>{const e=S.edu[k]||{};return `<div class="fp-tl"><i></i><div><b>${esc((e.type?e.type+' ':'')+(e.major||lab[k]))}</b><div>${esc(e.uni||'')}</div><small>${esc(lab[k])}${e.end?' · '+esc(e.end):''}</small></div></div>`}).join('');
- return `<div class="fp-pv"><div class="fp-pv-ban"></div><div class="fp-pv-head"><div class="fp-av lg">${esc((S.first[0]||'')+(S.last[0]||''))}</div><div style="flex:1;min-width:200px"><h2>${esc([S.title,S.first,S.middle,S.last].filter(Boolean).join(' '))}</h2><div class="fp-pv-role">${esc(S.headline||S.desig||'')}</div><div class="fp-meta"><span>📍 ${esc([S.city,S.state].filter(Boolean).join(', ')||'Location not set')}</span><span>⏱ ${m>=12?Math.floor(m/12)+'+ years':m+' months'} experience</span>${a!==null?`<span>🎂 ${a} yrs</span>`:''}</div></div><button class="fp-btn pri" data-go="0">Edit Profile</button></div>
- <div class="fp-pv-badges"><span class="fp-pill p-ok">✓ Email verified</span><span class="fp-pill p-ok">✓ Phone verified</span>${S.ver.edu==='ok'?'<span class="fp-pill p-ok">✓ Education verified</span>':'<span class="fp-pill p-no">○ Education not verified</span>'}</div>
- <div class="fp-pv-grid"><div><h5>Teaching levels</h5><div class="fp-chips">${ch(S.levels)}</div><h5>Subjects</h5><div class="fp-chips">${ch(S.subjects)}</div><h5>Links</h5>${S.links.length?S.links.map(l=>`<div class="fp-hint">🔗 ${esc(l.t)}</div>`).join(''):'<span class="fp-hint">Not added</span>'}</div>
+ return `<div class="fp-pv"><div class="fp-pv-ban"></div><div class="fp-pv-head"><div class="fp-av lg">${esc((S.first[0]||'')+(S.last[0]||''))}</div><div style="flex:1;min-width:200px"><h2>${esc([S.title,S.first,S.middle,S.last].filter(Boolean).join(' '))}</h2><div class="fp-pv-role">${esc(S.headline||S.desig||'')}</div><div class="fp-meta"><span>${ic('pin',13)}${esc([S.city,S.state].filter(Boolean).join(', ')||'Location not set')}</span><span>${ic('clock',13)}${m>=12?Math.floor(m/12)+'+ years':m+' months'} experience</span>${a!==null?`<span>${ic('cal',13)}${a} yrs</span>`:''}</div></div><button class="fp-btn pri" data-go="0">Edit Profile</button></div>
+ <div class="fp-pv-badges">${pill('p-ok','check','Email verified')}${pill('p-ok','check','Phone verified')}${S.ver.edu==='ok'?pill('p-ok','check','Education verified'):pill('p-no','circle','Education not verified')}</div>
+ <div class="fp-pv-grid"><div><h5>Teaching levels</h5><div class="fp-chips">${ch(S.levels)}</div><h5>Subjects</h5><div class="fp-chips">${ch(S.subjects)}</div><h5>Links</h5>${S.links.length?S.links.map(l=>`<div class="fp-hint">${ic('link',12)} ${esc(l.t)}</div>`).join(''):'<span class="fp-hint">Not added</span>'}</div>
  <div><h5>Experience</h5>${jobs||'<span class="fp-hint">Fresher / not added</span>'}<h5>Education</h5>${eds||`<span class="fp-hint">${esc(S.high||'Not added')}</span>`}</div></div></div>`}};
 function eduBlock(k){const hi=(EDU[S.high]||[]).slice(-1)[0]===k,rq=hi?'req':(k==='ssc'||k==='hsc'?'rec':'some');const T=(t)=>tag(rq==='some'?'Required for some jobs':rq,rq==='some'?t:undefined);
  const e=`edu.${k}.`,names={ssc:'10th / SSC',hsc:'12th / Intermediate',ug:"Bachelor's Degree",pg:"Master's Degree",phd:'Ph.D. / Doctoral Details',mphil:'M.Phil',dip:'Diploma',oth:'Other qualification'};
@@ -122,27 +148,27 @@ function tqCard(q,i){const n=q.name,t=['B.Ed.','D.El.Ed.','CTET','TET','State TE
  return `<div class="fp-card"><h4>${esc(n)} ${tag(t==='Optional'?'opt':t)}<button class="fp-btn sm dng" style="margin-left:auto" data-act="rmtq:${i}">Remove</button></h4><div class="fp-grid">${F('Specialization','opt',I(p+'spec'))}${F('Issuing authority','rec',I(p+'auth'))}${F('Year','rec',I(p+'year',{ph:'YYYY'}))}${UP('tq'+i,'Certificate / scorecard','opt')}</div></div>`}
 function jobsHTML(){return S.jobs.length?S.jobs.map(jobCard).join(''):`<div class="fp-empty">No employment added yet. Freshers can skip this section.</div>`}
 function fmt(m){if(!m)return'';const[y,mo]=m.split('-');return['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][mo-1]+' '+y}
-function jobCard(j,i){const p=`jobs.${i}.`;return `<div class="fp-card"><div class="fp-job"><div><b>${esc(j.org||'New employment')}</b><div class="fp-hint">${esc(j.desig||'')} ${j.start?'· '+(j.start.slice(0,4))+' – '+(j.cur?'Present':(j.end||'').slice(0,4)):''}</div>${j.cur?'<span class="fp-pill p-ok">✓ Current</span>':''}</div><button class="fp-btn sm dng" data-act="rmjob:${i}">Remove</button></div>
+function jobCard(j,i){const p=`jobs.${i}.`;return `<div class="fp-card"><div class="fp-job"><div><b>${esc(j.org||'New employment')}</b><div class="fp-hint">${esc(j.desig||'')} ${j.start?'· '+(j.start.slice(0,4))+' – '+(j.cur?'Present':(j.end||'').slice(0,4)):''}</div>${j.cur?pill('p-ok','check','Current'):''}</div><button class="fp-btn sm dng" data-act="rmjob:${i}">Remove</button></div>
  <div class="fp-grid" style="margin-top:12px">${F('Organization / institution','req',I(p+'org',{v:'req'}))}${F('Designation','req',I(p+'desig',{v:'req'}))}${F('Department','opt',I(p+'dept'))}${F('Employment type','opt',SEL(p+'type',OPT.emp))}${F('Teaching level','opt',SEL(p+'level',OPT.levels))}${F('Subjects taught','opt',MS(p+'subs','subjects'))}
  ${F('Start date','req',I(p+'start',{type:'month',v:'req'}))}${j.cur?'':F('End date','req',I(p+'end',{type:'month',v:'req'}))}
  <div class="fp-f full"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-k="${p}cur" data-re="jobs" ${j.cur?'checked':''}> I currently work here</label></div></div>
- ${j.cur?`<div class="fp-cur"><b>✓ Current Employment</b><br>Current Position: ${esc(j.desig)} · Institution: ${esc(j.org)} · Department: ${esc(j.dept||'—')}<br>Currently working since: <b>${fmt(j.start)||'—'} – Present</b></div>`:''}
+ ${j.cur?`<div class="fp-cur"><b>${ic('check',13)} Current employment</b><br>Current Position: ${esc(j.desig)} · Institution: ${esc(j.org)} · Department: ${esc(j.dept||'—')}<br>Currently working since: <b>${fmt(j.start)||'—'} – Present</b></div>`:''}
  <div class="fp-grid g3" style="margin-top:12px">${UP('j'+i+'exp','Experience certificate','opt')}${UP('j'+i+'app','Appointment letter','opt')}${UP('j'+i+'rel','Relieving letter','opt')}</div></div>`}
 function linksHTML(){return S.links.length?S.links.map((l,i)=>`<div class="fp-row"><span><b>${esc(l.t)}</b><br><a href="${esc(l.u)}" target="_blank" rel="noopener">${esc(l.u)}</a></span><span><button class="fp-btn sm" data-act="editlink:${i}">Edit</button> <button class="fp-btn sm dng" data-act="rmlink:${i}">Remove</button></span></div>`).join(''):`<div class="fp-empty">No links added yet.</div>`}
 function docList(){const nm={photo:'Profile photo',resume:'Resume',phdcert:'Ph.D. certificate',ugcert:"Bachelor's certificate",pgcert:"Master's certificate",mphilcert:'M.Phil certificate',dipcert:'Diploma certificate',othcert:'Certificate'};return Object.entries(S.files).map(([k,f])=>[nm[k]||(/^tq/.test(k)?'Teaching qualification':/^j\d/.test(k)?'Employment document':'Document'),f])}
 /* ---------- shell ---------- */
 function heroHTML(){const c=completion(),m=months(),nx=c.rec.find(x=>!x[1]),miss=c.req.find(x=>!x[1]);
- return `<div class="fp-hero"><div class="fp-hero-l"><div class="fp-av lg">${esc((S.first[0]||'')+(S.last[0]||'')||'?')}</div><div><h2>${esc([S.title,S.first,S.last].filter(Boolean).join(' ')||'Your name')}</h2><p>${esc(S.headline||S.desig||'Add a professional headline')}</p><div class="fp-meta"><span>📍 ${esc(S.city||'Add location')}</span><span>🎓 ${esc(S.high||'Add qualification')}</span><span>⏱ ${m>=12?Math.floor(m/12)+'+ yrs':m+' mo'}</span></div></div></div>
+ return `<div class="fp-hero"><div class="fp-hero-l"><div class="fp-av lg">${esc((S.first[0]||'')+(S.last[0]||'')||'?')}</div><div><h2>${esc([S.title,S.first,S.last].filter(Boolean).join(' ')||'Your name')}</h2><p>${esc(S.headline||S.desig||'Add a professional headline')}</p><div class="fp-meta"><span>${ic('pin',13)}${esc(S.city||'Add location')}</span><span>${ic('cap',13)}${esc(S.high||'Add qualification')}</span><span>${ic('clock',13)}${m>=12?Math.floor(m/12)+'+ yrs':m+' mo'}</span></div></div></div>
  <div class="fp-hero-r"><div class="fp-ring" style="--p:${c.p}"><span>${c.p}%</span></div><div><b>Profile strength</b><small>${miss?'Complete: '+miss[0]:nx?'Next: '+nx[0]:'Looking great!'}</small></div></div>
- <div class="fp-steps">${c.req.map(x=>`<span class="st ${x[1]?'ok':'no'}">${x[1]?'✓':'○'} ${x[0]}</span>`).join('')}${c.rec.map(x=>`<span class="st rec ${x[1]?'ok':''}" ${x[1]?'':`data-go="${x[2]}"`}>${x[1]?'✓ '+x[0].replace(/^Add /,''):'＋ '+x[0]}</span>`).join('')}</div></div>`}
+ <div class="fp-steps">${c.req.map(x=>`<span class="st ${x[1]?'ok':'no'}">${ic(x[1]?'check':'circle',13)}<span>${x[0]}</span></span>`).join('')}${c.rec.map(x=>`<span class="st rec ${x[1]?'ok':''}" ${x[1]?'':`data-go="${x[2]}"`}>${ic(x[1]?'check':'plus',13)}<span>${x[1]?cap(x[0].replace(/^Add /,'')):x[0]}</span></span>`).join('')}</div></div>`}
 function shell(){
- $('#fpRoot').innerHTML=`<div id="fpHero"></div><div class="fp-wrap"><nav class="fp-nav" id="fpNav">${SEC.map((s,i)=>`<button data-go="${i}"><span class="n">${ICON[i]}</span>${s}<em>✓</em></button>`).join('')}</nav><div>${SEC.map((s,i)=>`<section class="fp-sec" data-i="${i}"><header data-go="${i}" data-tog="1">${ICON[i]} ${s}</header><div class="fp-body"></div></section>`).join('')}</div></div>`;
+ $('#fpRoot').innerHTML=`<div id="fpHero"></div><div class="fp-wrap"><nav class="fp-nav" id="fpNav">${SEC.map((s,i)=>`<button data-go="${i}"><span class="n">${ic(ICON[i],14)}</span>${s}<em>${ic('check',14)}</em></button>`).join('')}</nav><div>${SEC.map((s,i)=>`<section class="fp-sec" data-i="${i}"><header data-go="${i}" data-tog="1"><span class="fp-hl">${ic(ICON[i],15)}${s}</span></header><div class="fp-body"></div></section>`).join('')}</div></div>`;
  SEC.forEach((_,i)=>renderSec(i));paint()}
 function renderSec(i){const b=$(`.fp-sec[data-i="${i}"] .fp-body`);if(!b)return;b.innerHTML=R[i]()+(i<11?`<div class="fp-actions"><button class="fp-btn" data-back>Back</button><div><button class="fp-btn" data-act="draft">Save Draft</button><button class="fp-btn" data-next>Next</button><button class="fp-btn pri" data-act="save">Save & Continue</button></div></div>`:'');if(i===0)ageUpd()}
 function paint(){$$('.fp-sec').forEach(s=>s.classList.toggle('open',+s.dataset.i===S.open));$$('#fpNav button').forEach((b,i)=>{b.classList.toggle('on',i===S.open);b.classList.toggle('done',!!S.done[i]&&i!==S.open)});$('#fpHero').innerHTML=heroHTML()}
 function go(i){S.open=Math.max(0,Math.min(11,i));renderSec(S.open);paint();const el=$(`.fp-sec[data-i="${S.open}"]`);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 function ageUpd(){const e=$('#fpAge');if(!e)return;const a=age(S.dob);e.style.display=a===null?'none':'inline-block';e.textContent='Age: '+a+' years'}
-function toast(t){const d=document.createElement('div');d.className='fp-toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
+function toast(t,ok){const d=document.createElement('div');d.className='fp-toast';d.innerHTML=(ok?ic('check',14):'')+esc(t);document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 /* validation */
 function check(el){const r=el.dataset.v,v=el.value.trim();let m='';
  if(r==='req'&&!v)m='This field is required.';
@@ -158,7 +184,7 @@ document.addEventListener('input',e=>{const t=e.target;if(!t.closest||!t.closest
  if(t.matches('.fp-ms input')){msOpen(t.closest('.fp-ms'),t.value);return}
  const k=t.dataset.k;if(!k||t.type==='radio'||t.type==='checkbox')return;set(k,t.value);
  if(k==='dob'){ageUpd();if(t.value.length===2||t.value.length===5){}}
- if(k==='pin'&&/^\d{6}$/.test(t.value)){const p=PIN[t.value];if(p){['state','district','city','area'].forEach((f,i)=>set(f,p[i]));$$('[data-k="state"],[data-k="district"],[data-k="city"],[data-k="area"]').forEach((x,i)=>{x.value=p[i]});$('#fpPinMsg').textContent='✓ Location auto-filled — you can edit any value.'}else $('#fpPinMsg').textContent='PIN not in demo list — please enter location manually.'}
+ if(k==='pin'&&/^\d{6}$/.test(t.value)){const p=PIN[t.value];if(p){['state','district','city','area'].forEach((f,i)=>set(f,p[i]));$$('[data-k="state"],[data-k="district"],[data-k="city"],[data-k="area"]').forEach((x,i)=>{x.value=p[i]});$('#fpPinMsg').innerHTML=ic('check',12)+' Location auto-filled — you can edit any value.'}else $('#fpPinMsg').textContent='PIN not in demo list — please enter location manually.'}
  clearTimeout(window._fh);window._fh=setTimeout(()=>{$('#fpHero').innerHTML=heroHTML()},250)});
 document.addEventListener('focusout',e=>{const t=e.target;if(t.dataset&&t.dataset.v&&t.closest('#fpRoot'))check(t)});
 document.addEventListener('change',e=>{const t=e.target;if(!t.closest||!t.closest('#fpRoot'))return;
@@ -176,9 +202,9 @@ function upload(inp){const p=inp.dataset.p,f=inp.files[0];const box=$(`.fp-up[da
  S.files[p]={name:f.name,size:mb.toFixed(1)};box.classList.remove('bad');box.classList.add('has');box.innerHTML=UPin(p);paint()}
 function msOpen(box,q){let dd=$('.fp-dd',box);if(!dd){dd=document.createElement('div');dd.className='fp-dd';box.appendChild(dd)}
  const p=box.dataset.ms,sel=get(p)||[],all=OPT[box.dataset.opts];q=(q||'').toLowerCase();const l=all.filter(x=>x.toLowerCase().includes(q));
- dd.innerHTML=l.length?l.map(x=>`<div data-opt="${esc(x)}" class="${sel.includes(x)?'sel':''}">${sel.includes(x)?'✓ ':''}${esc(x)}</div>`).join(''):`<em>No match</em>`}
+ dd.innerHTML=l.length?l.map(x=>`<div data-opt="${esc(x)}" class="${sel.includes(x)?'sel':''}">${sel.includes(x)?ic('check',12):''}${esc(x)}</div>`).join(''):`<em>No match</em>`}
 function msRefresh(box){const p=box.dataset.ms;const n=document.createElement('div');n.innerHTML=MS(p,box.dataset.opts);box.replaceWith(n.firstChild);}
-document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;const root=t.closest('#fpRoot');
+document.addEventListener('click',e=>{const t0=e.target;if(!t0.closest)return;const t=t0.closest('[data-opt],[data-rm],[data-pick],[data-del],[data-act],[data-next],[data-back],[data-go]')||t0;const root=t.closest('#fpRoot');
  if(!root){$$('.fp-dd').forEach(d=>d.remove());return}
  const box=t.closest('.fp-ms');
  if(t.dataset.opt!==undefined&&box){const p=box.dataset.ms,a=get(p)||[],v=t.dataset.opt;set(p,a.includes(v)?a.filter(x=>x!==v):[...a,v]);msRefresh(box);const nb=$(`.fp-ms[data-ms="${p}"]`);if(p==='levels'){renderSec(4);}paint();$('input',nb).focus();return}
@@ -191,12 +217,12 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;cons
  if(t.dataset.del){delete S.files[t.dataset.del];const bx=$(`.fp-up[data-up="${t.dataset.del}"]`);bx.classList.remove('has');bx.innerHTML=UPin(t.dataset.del);paint();return}
  const a=t.dataset.act;if(!a)return;const [x,y]=a.split(':');
  if(x==='draft'){toast('Draft saved');return}
- if(x==='save'){if(!checkSec()){toast('Please fix the highlighted fields');return}S.done[S.open]=1;toast('Section saved ✓');go(S.open+1);return}
+ if(x==='save'){if(!checkSec()){toast('Please fix the highlighted fields');return}S.done[S.open]=1;toast('Section saved',1);go(S.open+1);return}
  if(x==='addjob'){S.jobs.push({org:'',desig:'',dept:'',type:'',level:'',subs:[],start:'',end:'',cur:false,docs:{}});$('#fpJobs').innerHTML=jobsHTML();return}
  if(x==='rmjob'){S.jobs.splice(+y,1);$('#fpJobs').innerHTML=jobsHTML();paint();return}
  if(x==='addtq'){const v=$('#fpTqSel').value;if(!v)return;S.tq.push({name:v});$('#fpTq').innerHTML=S.tq.map(tqCard).join('');return}
  if(x==='rmtq'){S.tq.splice(+y,1);renderSec(4);return}
- if(x==='addlink'){const u=$('#fpLu');u.dataset.v='url';const bad=!u.value.trim()?(u.classList.add('bad'),u.nextElementSibling.textContent='This field is required.',1):!check(u);if(bad)return;S.links.push({t:$('#fpLt').value,u:u.value.trim()});$('#fpLinks').innerHTML=linksHTML();u.value='';paint();toast('Link added ✓');return}
+ if(x==='addlink'){const u=$('#fpLu');u.dataset.v='url';const bad=!u.value.trim()?(u.classList.add('bad'),u.nextElementSibling.textContent='This field is required.',1):!check(u);if(bad)return;S.links.push({t:$('#fpLt').value,u:u.value.trim()});$('#fpLinks').innerHTML=linksHTML();u.value='';paint();toast('Link added',1);return}
  if(x==='rmlink'){S.links.splice(+y,1);$('#fpLinks').innerHTML=linksHTML();paint();return}
  if(x==='editlink'){const l=S.links.splice(+y,1)[0];$('#fpLinks').innerHTML=linksHTML();$('#fpLt').value=l.t;$('#fpLu').value=l.u;$('#fpLu').focus();paint();return}
  if(x==='ver'){S.ver[y]='pend';renderSec(10);paint();toast('Submitted — status: Pending')}
