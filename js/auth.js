@@ -351,6 +351,7 @@
       const av = document.getElementById('navAvatarImg'); if(av) av.src = currentUser.avatar;
       if(document.getElementById('miniPanel')) refreshMiniProfile();
     }
+    const navEl = document.querySelector('.nav'); if(navEl) navEl.classList.toggle('logged-in', isLoggedIn);
     const isSeeker = isLoggedIn && currentRole !== 'company';
     const isCompany = isLoggedIn && currentRole === 'company';
 
