@@ -33,6 +33,7 @@
   function initAuthPage(mode){
     if(isLoggedIn){ goTo(dashboardPageForRole()); return; }   // already signed in
     const roleParam = getParam('role');
+    if(mode==='register' && roleParam==='company' && !getParam('type')){ goTo('network', {start:'type'}); return; }   // Company / Institution: choose Main vs Sub-Branch first
     if(roleParam !== 'company' && roleParam !== 'seeker'){
       // No role chosen yet — show the picker first, form stays hidden.
       document.getElementById('authCard').style.display = 'none';
@@ -230,7 +231,7 @@
     document.getElementById('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
     document.getElementById('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
     document.getElementById('popupRoleSeekerDesc').textContent = isLogin ? 'Faculty account' : 'Find faculty roles';
-    document.getElementById('popupRoleCompanyDesc').textContent = isLogin ? 'Institution account' : 'Hire faculty';
+    document.getElementById('popupRoleCompanyDesc').textContent = isLogin ? 'Institution account' : 'Company, college, university or school';
     document.getElementById('rolePopupOverlay').classList.add('open');
   }
   function closeRolePopup(){
@@ -244,6 +245,7 @@
       const url = new URL(window.location.href);
       url.searchParams.set('role', role);
       history.replaceState(null, '', url);
+      if(popupMode==='register' && role==='company'){ goTo('network', {start:'type'}); return; }
       startAuthPage(popupMode, role);
     } else {
       goTo(popupMode === 'login' ? 'login' : 'register', { role });
