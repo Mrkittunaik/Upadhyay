@@ -99,33 +99,61 @@
 
         <div id="dashPostTab" style="display:none;">
           <div id="jobPostForm">
-            <h3>Add a job</h3>
-            <div class="dash-form-row">
-              <input type="text" id="jbTitle" placeholder="Job title — e.g. Assistant Professor, CSE" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
-              <select id="jbCategory" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
-                <option value="">Category</option>
-                <option>Schools</option>
-                <option>Intermediate</option>
-                <option>Higher Education</option>
-              </select>
+            <div class="in-head"><h3>Post a job</h3><p>Fill in the role details so the right candidates can find and apply. Fields marked Required must be completed.</p></div>
+            <div class="in-note in-ok" id="jbOk" style="display:none;" role="status"></div>
+
+            <div class="in-card">
+              <h4>Job details</h4><p class="sub2">What is the role and where does it sit in your institution?</p>
+              <div class="in-grid">
+                <div class="in-f in-full" id="jf-title"><label>Job title<i>Required</i></label><input type="text" id="jbTitle" placeholder="e.g. Assistant Professor, Computer Science" oninput="jbClear('title')"><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-role"><label>Role / designation<i>Required</i></label><select id="jbRole" onchange="jbClear('role')"><option value="">Select role</option><option>Professor</option><option>Associate Professor</option><option>Assistant Professor</option><option>Lecturer</option><option>Head of Department</option><option>Dean</option><option>Principal</option><option>Vice Principal</option><option>PGT</option><option>TGT</option><option>PRT</option><option>Lab Assistant</option><option>Librarian</option><option>Other</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-category"><label>Category<i>Required</i></label><select id="jbCategory" onchange="jbClear('category')"><option value="">Select category</option><option>Schools</option><option>Intermediate</option><option>Higher Education</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-dept"><label>Department / subject<i>Required</i></label><input type="text" id="jbDept" placeholder="e.g. Mathematics" oninput="jbClear('dept')"><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-type"><label>Employment type<i>Required</i></label><select id="jbType" onchange="jbClear('type')"><option value="">Select type</option><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Visiting faculty</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-vac"><label>Number of vacancies<i>Optional</i></label><input type="number" id="jbVac" min="1" placeholder="1"></div>
+              </div>
             </div>
-            <div class="dash-form-row">
-              <select id="jbQualification" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
-                <option value="">Qualification needed</option>
-                <option>UG</option>
-                <option>PG</option>
-                <option>PhD</option>
-              </select>
-              <input type="text" id="jbLocation" placeholder="Location" style="border:1px solid var(--line); border-radius:var(--radius); padding:10px 12px; font-family:inherit;">
+
+            <div class="in-card">
+              <h4>Requirements</h4><p class="sub2">Qualification, experience and how soon the candidate can join.</p>
+              <div class="in-grid">
+                <div class="in-f" id="jf-qual"><label>Qualification needed<i>Required</i></label><select id="jbQualification" onchange="jbClear('qual')"><option value="">Select qualification</option><option>UG</option><option>PG</option><option>PhD</option><option>PG + NET / SET</option><option>PhD + NET / SET</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-notice"><label>Notice period accepted<i>Required</i></label><select id="jbNotice" onchange="jbClear('notice')"><option value="">Select notice period</option><option>Immediate joiner</option><option>Up to 15 days</option><option>Up to 30 days</option><option>Up to 60 days</option><option>Up to 90 days</option><option>Any notice period</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-exp"><label>Minimum experience (years)<i>Required</i></label><input type="number" id="jbExpMin" min="0" max="50" placeholder="0 for freshers" oninput="jbClear('exp')"><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-expmax"><label>Maximum experience (years)<i>Optional</i></label><input type="number" id="jbExpMax" min="0" max="50" placeholder="Leave empty for no limit" oninput="jbClear('expmax')"><div class="in-err" role="alert"></div></div>
+              </div>
             </div>
-            <div class="in-card" style="margin-bottom:16px;">
-              <h4>Job location</h4>
-              <div class="in-grid" style="margin-top:12px;">
+
+            <div class="in-card">
+              <h4>Salary</h4><p class="sub2">Clear pay details get more applications.</p>
+              <div class="in-row3">
+                <div class="in-f" id="jf-salmin"><label>Minimum salary<i>Required</i></label><div class="in-pre"><span>₹</span><input type="number" id="jbSalMin" min="0" placeholder="e.g. 45000" oninput="jbClear('salmin')"></div><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-salmax"><label>Maximum salary<i>Required</i></label><div class="in-pre"><span>₹</span><input type="number" id="jbSalMax" min="0" placeholder="e.g. 70000" oninput="jbClear('salmax')"></div><div class="in-err" role="alert"></div></div>
+                <div class="in-f"><label>Paid<i>Required</i></label><select id="jbSalPeriod"><option value="month">Per month</option><option value="year">Per year</option></select></div>
+              </div>
+              <label class="in-chk"><input type="checkbox" id="jbSalNeg"> Salary is negotiable based on experience</label>
+              <label class="in-chk"><input type="checkbox" id="jbSalNorms"> Pay as per UGC / AICTE norms</label>
+            </div>
+
+            <div class="in-card">
+              <h4>Job location</h4><p class="sub2">Choose the campus this job belongs to.</p>
+              <div class="in-grid">
                 <div class="in-f"><label>Institution</label><div id="jbInst" style="font-weight:700;color:var(--blue-900);padding:10px 0;">—</div></div>
-                <div class="in-f"><label>Campus / branch<i>Required</i></label><select id="jbCampus" onchange="instCampusChange()"><option value="">Select campus</option></select></div>
+                <div class="in-f" id="jf-campus"><label>Campus / branch<i>Required</i></label><select id="jbCampus" onchange="instCampusChange(); jbClear('campus')"><option value="">Select campus</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f in-full"><label>City / location<i>Optional</i></label><input type="text" id="jbLocation" placeholder="Filled from the campus if left empty"></div>
               </div>
               <div class="in-note" id="jbCampusNote" style="display:none;">This job is available across all listed campuses.</div>
             </div>
+
+            <div class="in-card">
+              <h4>Description</h4><p class="sub2">Tell candidates what the role involves.</p>
+              <div class="in-grid">
+                <div class="in-f in-full"><label>Job description<i>Optional</i></label><textarea id="jbDesc" placeholder="Responsibilities, teaching load, research expectations and benefits"></textarea></div>
+                <div class="in-f"><label>Key skills<i>Optional</i></label><input type="text" id="jbSkills" placeholder="e.g. Python, Machine Learning, Research"></div>
+                <div class="in-f"><label>Apply before<i>Optional</i></label><input type="date" id="jbDeadline"></div>
+              </div>
+            </div>
+
             <button class="btn btn-primary btn-sm" onclick="addJob(event)">+ Post job — free</button>
 
             <div id="jobList" style="margin-top:18px;"></div>
@@ -136,6 +164,7 @@
             <div id="apJobInst" style="margin-bottom:8px;"></div>
             <h3 id="apJobTitle" style="margin-bottom:2px;"></h3>
             <p class="sub" id="apJobMeta" style="margin-top:0; margin-bottom:0;"></p>
+            <p class="sub" id="apJobExtra" style="margin-top:4px; margin-bottom:0;"></p>
           </div>
         </div>
 
