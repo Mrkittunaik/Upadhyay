@@ -189,6 +189,10 @@ function mountChrome(opts){
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 12H20" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4 17H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         Posted jobs
       </a>
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('network');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V9M12 9L5 15M12 9L19 15M5 15V21M19 15V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Branches
+      </a>
       <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('employer', {tab:'candidates'});">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
         Browse candidates
