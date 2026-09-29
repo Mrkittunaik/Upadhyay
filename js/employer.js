@@ -345,6 +345,7 @@
     if(which==='candidates') renderCandidates();
     if(which==='post'){ renderPostedJobs(); if(typeof instFillCampuses==='function') instFillCampuses(); }
     if(which==='company' && typeof instRender==='function') instRender();
+    if(typeof instHeader==='function') instHeader();
     if(which==='myjobs') renderMyJobsCards();
   }
 
@@ -372,7 +373,7 @@
       <div class="job-card" onclick="openApplicantsView('${id}')" style="cursor:pointer;">
         <div class="job-card-top">
           <div class="job-logo" style="width:34px; height:34px; border-radius:8px; ${companyLogoStyle()}"></div>
-          <div><p class="jc-title">${job.title}</p><p class="jc-org">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'}</p>${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
+          <div><p class="jc-title">${job.title}</p><p class="jc-org">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'}</p>${jobExtra(job) ? `<p class="jc-org" style="white-space:normal; margin-top:3px;">${jbEsc(jobExtra(job))}</p>` : ''}${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
           <span class="badge-live">Live</span>
         </div>
         <div class="jc-foot">
@@ -543,30 +544,102 @@
   const jobsData = postedJobs; // persisted in store.js: id -> {title, category, qualification, location, applicantIds}
   const allCandidateIds = Object.keys(facultyProfiles);
 
+  // ---------- Post a job: helpers ----------
+  function jbEsc(x){ return String(x==null?'':x).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function jbClear(k){ const f = document.getElementById('jf-'+k); if(f) f.classList.remove('err'); }
+  function jbErr(k, m){ const f = document.getElementById('jf-'+k); if(!f) return; f.classList.add('err'); const e = f.querySelector('.in-err'); if(e) e.textContent = m; }
+  function jbMoney(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
+  // One-line summary of the new job fields (role, experience, salary, notice period). Plain text.
+  function jobExtra(job){
+    const parts = [];
+    if(job.role) parts.push(job.role);
+    if(job.expMin !== undefined && job.expMin !== ''){
+      parts.push(job.expMin + ((job.expMax !== undefined && job.expMax !== '') ? '–' + job.expMax : '+') + ' yrs experience');
+    }
+    if(job.salMin){
+      parts.push(jbMoney(job.salMin) + '–' + jbMoney(job.salMax) + ' / ' + (job.salPeriod === 'year' ? 'year' : 'month') + (job.salNeg ? ' (negotiable)' : ''));
+    } else if(job.salNorms){
+      parts.push('Pay as per UGC / AICTE norms');
+    } else if(job.salNeg){
+      parts.push('Salary negotiable');
+    }
+    if(job.notice) parts.push('Notice: ' + job.notice);
+    return parts.join(' · ');
+  }
+
   function addJob(e){
-    e.preventDefault();
-    const title = document.getElementById('jbTitle').value || 'Untitled role';
-    const category = document.getElementById('jbCategory').value;
-    const qualification = document.getElementById('jbQualification').value;
+    if(e && e.preventDefault) e.preventDefault();
+    const v = id => (document.getElementById(id).value || '').trim();
+    const chk = id => !!document.getElementById(id).checked;
+    ['title','role','category','dept','type','qual','notice','exp','expmax','salmin','salmax','campus'].forEach(jbClear);
+
+    const title = v('jbTitle'), role = v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
+    const qualification = v('jbQualification'), notice = v('jbNotice');
+    const expMin = v('jbExpMin'), expMax = v('jbExpMax');
+    const salMin = v('jbSalMin'), salMax = v('jbSalMax'), salPeriod = v('jbSalPeriod') || 'month';
+    const salNeg = chk('jbSalNeg'), salNorms = chk('jbSalNorms');
+    const campusVal = v('jbCampus');
+
+    let first = null;
+    const bad = (k, m) => { jbErr(k, m); if(!first) first = k; };
+    if(!title) bad('title', 'Enter the job title');
+    if(!role) bad('role', 'Select the role');
+    if(!category) bad('category', 'Select a category');
+    if(!dept) bad('dept', 'Enter the department or subject');
+    if(!type) bad('type', 'Select the employment type');
+    if(!qualification) bad('qual', 'Select the qualification needed');
+    if(!notice) bad('notice', 'Select the notice period you accept');
+    if(expMin === '') bad('exp', 'Enter minimum experience. Use 0 for freshers');
+    else if(!(Number(expMin) >= 0 && Number(expMin) <= 50)) bad('exp', 'Enter a number between 0 and 50');
+    if(expMax !== '' && Number(expMax) < Number(expMin || 0)) bad('expmax', 'Maximum cannot be lower than minimum');
+    if(!salNorms){
+      if(salMin === '' || !(Number(salMin) > 0)) bad('salmin', 'Enter the minimum salary');
+      if(salMax === '' || !(Number(salMax) > 0)) bad('salmax', 'Enter the maximum salary');
+      else if(salMin !== '' && Number(salMax) < Number(salMin)) bad('salmax', 'Maximum cannot be lower than minimum');
+    }
+    if(!campusVal) bad('campus', 'Select the campus for this job');
+
+    if(first){
+      const el = document.querySelector('#jf-'+first+' input, #jf-'+first+' select');
+      if(el){ el.scrollIntoView({block:'center'}); el.focus(); }
+      return;
+    }
+
     let campus = '', campusLoc = '';
-    const campusSel = document.getElementById('jbCampus');
-    if(campusSel && campusSel.value && typeof instCampusOptions==='function'){
-      const opt = instCampusOptions().find(o => o.v === campusSel.value);
+    if(typeof instCampusOptions === 'function'){
+      const opt = instCampusOptions().find(o => o.v === campusVal);
       if(opt){ campus = opt.n; campusLoc = opt.loc; }
     }
-    const location = document.getElementById('jbLocation').value || campusLoc;
+    const location = v('jbLocation') || campusLoc;
     postedJobCount++;
     const jobCount = postedJobCount;
     const id = 'job' + jobCount;
     // demo: attach a rotating slice of the candidate pool as applicants
     const applicantIds = allCandidateIds.filter((_,i)=> i % ((jobCount % 3)+1) === 0);
-    jobsData[id] = { title, category, qualification, location, campus, campusLoc, applicantIds: applicantIds.length ? applicantIds : allCandidateIds };
+    jobsData[id] = {
+      title, role, dept, type, category, qualification, notice,
+      vacancies: v('jbVac'), expMin, expMax, salMin, salMax, salPeriod, salNeg, salNorms,
+      campus, campusLoc, location, desc: v('jbDesc'), skills: v('jbSkills'), deadline: v('jbDeadline'),
+      applicantIds: applicantIds.length ? applicantIds : allCandidateIds
+    };
 
     saveState();
     renderPostedJobs();
     pushNotif(`Job posted: ${title}.`);
-    document.getElementById('jbTitle').value = '';
-    document.getElementById('jbLocation').value = '';
+
+    // reset the form and confirm
+    ['jbTitle','jbRole','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    document.getElementById('jbSalPeriod').value = 'month';
+    document.getElementById('jbSalNeg').checked = false;
+    document.getElementById('jbSalNorms').checked = false;
+    if(typeof instCampusChange === 'function') instCampusChange();
+    const ok = document.getElementById('jbOk');
+    if(ok){
+      ok.innerHTML = '<b>Job posted.</b> ' + jbEsc(title) + (campus ? ' · ' + jbEsc(campus) : '') + ' is now live. Find it under Posted jobs.';
+      ok.style.display = 'block';
+      ok.scrollIntoView({block:'center'});
+      setTimeout(()=>{ ok.style.display = 'none'; }, 7000);
+    }
   }
 
   // Rebuilds the "your posted jobs" list from saved data (so it survives page loads)
@@ -584,7 +657,7 @@
       item.onclick = ()=> openApplicantsView(id);
       item.innerHTML = `
         <div class="job-logo" style="width:34px; height:34px; border-radius:8px; margin-right:10px; ${companyLogoStyle()}"></div>
-        <div style="flex:1;"><div class="jt">${job.title}</div><div class="jm">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'} · ${job.applicantIds.length} applicants</div>${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
+        <div style="flex:1;"><div class="jt">${job.title}</div><div class="jm">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'} · ${job.applicantIds.length} applicants</div>${jobExtra(job) ? `<div class="jm">${jbEsc(jobExtra(job))}</div>` : ''}${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
         <span class="badge-live">Live</span>`;
       list.prepend(item);
     });
@@ -601,6 +674,8 @@
     const job = jobsData[jobId];
     document.getElementById('apJobTitle').textContent = job.title;
     document.getElementById('apJobMeta').textContent = [job.category, job.qualification, job.location].filter(Boolean).join(' · ');
+    const apExtra = document.getElementById('apJobExtra');
+    if(apExtra) apExtra.textContent = jobExtra(job);
     const apInst = document.getElementById('apJobInst');
     if(apInst && typeof instJobHeader==='function') apInst.innerHTML = instJobHeader(job);
     renderApplicants(jobId);
