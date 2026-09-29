@@ -343,7 +343,8 @@
     $('candidateListWrap').style.display = which==='candidates' ? 'block' : 'none';
     if(which!=='post') $('apListWrap').style.display = 'none';
     if(which==='candidates') renderCandidates();
-    if(which==='post') renderPostedJobs();
+    if(which==='post'){ renderPostedJobs(); if(typeof instFillCampuses==='function') instFillCampuses(); }
+    if(which==='company' && typeof instRender==='function') instRender();
     if(which==='myjobs') renderMyJobsCards();
   }
 
@@ -371,7 +372,7 @@
       <div class="job-card" onclick="openApplicantsView('${id}')" style="cursor:pointer;">
         <div class="job-card-top">
           <div class="job-logo" style="width:34px; height:34px; border-radius:8px; ${companyLogoStyle()}"></div>
-          <div><p class="jc-title">${job.title}</p><p class="jc-org">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'}</p></div>
+          <div><p class="jc-title">${job.title}</p><p class="jc-org">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'}</p>${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
           <span class="badge-live">Live</span>
         </div>
         <div class="jc-foot">
@@ -547,13 +548,19 @@
     const title = document.getElementById('jbTitle').value || 'Untitled role';
     const category = document.getElementById('jbCategory').value;
     const qualification = document.getElementById('jbQualification').value;
-    const location = document.getElementById('jbLocation').value;
+    let campus = '', campusLoc = '';
+    const campusSel = document.getElementById('jbCampus');
+    if(campusSel && campusSel.value && typeof instCampusOptions==='function'){
+      const opt = instCampusOptions().find(o => o.v === campusSel.value);
+      if(opt){ campus = opt.n; campusLoc = opt.loc; }
+    }
+    const location = document.getElementById('jbLocation').value || campusLoc;
     postedJobCount++;
     const jobCount = postedJobCount;
     const id = 'job' + jobCount;
     // demo: attach a rotating slice of the candidate pool as applicants
     const applicantIds = allCandidateIds.filter((_,i)=> i % ((jobCount % 3)+1) === 0);
-    jobsData[id] = { title, category, qualification, location, applicantIds: applicantIds.length ? applicantIds : allCandidateIds };
+    jobsData[id] = { title, category, qualification, location, campus, campusLoc, applicantIds: applicantIds.length ? applicantIds : allCandidateIds };
 
     saveState();
     renderPostedJobs();
@@ -577,7 +584,7 @@
       item.onclick = ()=> openApplicantsView(id);
       item.innerHTML = `
         <div class="job-logo" style="width:34px; height:34px; border-radius:8px; margin-right:10px; ${companyLogoStyle()}"></div>
-        <div style="flex:1;"><div class="jt">${job.title}</div><div class="jm">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'} · ${job.applicantIds.length} applicants</div></div>
+        <div style="flex:1;"><div class="jt">${job.title}</div><div class="jm">${[job.category,job.qualification,job.location].filter(Boolean).join(' · ') || 'Posted just now'} · ${job.applicantIds.length} applicants</div>${typeof instJobMeta==='function' ? instJobMeta(job) : ''}</div>
         <span class="badge-live">Live</span>`;
       list.prepend(item);
     });
@@ -594,6 +601,8 @@
     const job = jobsData[jobId];
     document.getElementById('apJobTitle').textContent = job.title;
     document.getElementById('apJobMeta').textContent = [job.category, job.qualification, job.location].filter(Boolean).join(' · ');
+    const apInst = document.getElementById('apJobInst');
+    if(apInst && typeof instJobHeader==='function') apInst.innerHTML = instJobHeader(job);
     renderApplicants(jobId);
   }
   function closeApplicantsView(){
