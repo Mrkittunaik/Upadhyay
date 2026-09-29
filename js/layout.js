@@ -44,16 +44,16 @@ function mountNav(active){
           </div>
         </div>
         <a href="${PAGES.home}#how">How it works</a>
+        <a href="${PAGES.jobs}" id="navBrowseJobsLink">Browse jobs</a>
+        <a href="#" id="navPostJobLink" onclick="goTo('employer',{tab:'post'}); return false;" style="display:none;">Post a job</a>
+        <a href="#" id="navBrowseCandidatesLink" onclick="goTo('employer',{tab:'candidates'}); return false;" style="display:none;">Browse candidates</a>
+        <a href="#" id="navDashLink">Dashboard</a>
       </div>
       <div class="nav-cta" id="navCta">
         <a class="btn btn-ghost btn-sm" href="${PAGES.login}" style="padding:7px 12px; font-size:12.5px; color:var(--ink-faint); border-color:var(--line); text-decoration:none;">Log in</a>
         <a class="btn btn-primary btn-sm" href="${PAGES.register}" style="text-decoration:none;">Register free</a>
       </div>
       <div class="nav-user" id="navUser" style="display:none;">
-        <a href="${PAGES.jobs}" id="navBrowseJobsLink" style="font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Browse jobs</a>
-        <a href="#" id="navPostJobLink" onclick="goTo('employer',{tab:'post'}); return false;" style="display:none; font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Post a job</a>
-        <a href="#" id="navBrowseCandidatesLink" onclick="goTo('employer',{tab:'candidates'}); return false;" style="display:none; font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Browse candidates</a>
-        <a href="#" id="navDashLink" style="font-size:13.5px; font-weight:600; color:var(--ink-soft); margin-right:4px;">Dashboard</a>
         <span id="navRoleBadge" style="display:none; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--blue-700); background:var(--blue-50); padding:3px 8px; border-radius:var(--radius); margin-right:8px;"></span>
         <button class="nav-bell" onclick="openNotifPanel()">
           ${BELL_SVG}
