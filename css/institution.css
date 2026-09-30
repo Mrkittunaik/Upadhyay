@@ -87,3 +87,45 @@
 .in-pre span{display:flex;align-items:center;padding:0 12px;border:1px solid var(--line);border-right:0;background:var(--blue-50);color:var(--ink-soft);font-size:14px;border-radius:var(--radius) 0 0 var(--radius)}
 .in-pre input{border-radius:0 var(--radius) var(--radius) 0!important}
 @media(max-width:640px){.in-row3{grid-template-columns:1fr}}
+
+/* ===== Compact employer/institution dashboard (UI-only density pass) ===== */
+.dash-inner-wide#dashInnerWide{max-width:1560px;width:100%;padding:18px 28px 28px;box-sizing:border-box}
+#dashInnerWide .dash-head{gap:12px;margin-bottom:14px}
+#dashInnerWide .dash-avatar{width:44px;height:44px;font-size:16px}
+#dashInnerWide .dash-head h2{font-size:18px;margin:0 0 2px}
+#dashInnerWide .dash-head p{font-size:12.5px}
+#dashInnerWide .dash-tabs{margin-bottom:14px;padding:3px;top:56px}
+#dashInnerWide .dash-subtab{padding:8px 12px;font-size:13px}
+#dashInnerWide .dash-panel h3{margin:0 0 10px;font-size:15px}
+#dashInnerWide .in-head h3{font-size:18px;margin:0 0 2px}
+#dashInnerWide .in-head p{margin:0 0 10px;font-size:13px}
+#dashInnerWide .in-steps{margin:0 0 12px}
+#dashInnerWide .in-step{padding:6px 8px;font-size:12px}
+#dashInnerWide .in-card{padding:14px 16px;margin-bottom:10px}
+#dashInnerWide .in-card h4{font-size:15px}
+#dashInnerWide .in-card .sub2{margin:0 0 10px;font-size:12.5px}
+#dashInnerWide .in-grid{gap:10px 14px;margin-bottom:4px}
+#dashInnerWide .in-row3{gap:10px 14px}
+#dashInnerWide .in-f label{margin-bottom:3px;font-size:12px}
+#dashInnerWide .in-f input,#dashInnerWide .in-f select,#dashInnerWide .in-f textarea{padding:7px 10px;font-size:13.5px}
+#dashInnerWide .in-f textarea{min-height:60px}
+#dashInnerWide .in-note{padding:8px 10px;margin:8px 0;font-size:12.5px}
+#dashInnerWide .in-actions{margin-top:6px}
+#dashInnerWide .in-logo-box{width:64px;height:64px}
+#dashInnerWide .in-thumb{width:42px;height:42px;font-size:13px}
+#dashInnerWide .in-camp{padding:10px 12px;margin-bottom:8px}
+#dashInnerWide .in-method{padding:12px}
+#dashInnerWide .in-acc>button{padding:10px 14px}
+#dashInnerWide .in-status{padding:16px 12px}
+#dashInnerWide .in-nav{margin:0 0 10px}
+#dashInnerWide .in-nav button{padding:6px 12px}
+/* shared dashboard form/section spacing (scoped to this page) */
+#dashInnerWide .pf-section{margin-bottom:8px}
+#dashInnerWide .pf-section-head{padding:9px 14px}
+#dashInnerWide .pf-section-body{padding:12px 14px 14px}
+#dashInnerWide .dash-form-row{gap:10px 14px;margin-bottom:10px}
+#dashInnerWide .pf-input,#dashInnerWide .dash-form-row input,#dashInnerWide .dash-form-row select{padding:8px 11px}
+#dashInnerWide .pf-repeat-item{padding:12px 14px}
+#dashInnerWide .pf-section-savebar{padding-top:8px}
+@media(min-width:1100px){#dashInnerWide .in-grid{grid-template-columns:repeat(3,1fr)}#dashInnerWide .in-grid .in-full{grid-column:1/-1}}
+@media(max-width:640px){.dash-inner-wide#dashInnerWide{padding:12px 12px 20px}}
