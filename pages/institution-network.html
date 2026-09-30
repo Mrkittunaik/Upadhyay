@@ -60,6 +60,10 @@ const MAINS=[
  {n:'Sri Chaitanya Academic Society',c:'Vijayawada, Andhra Pradesh',t:'Education Society',code:'44019',d:'Junior colleges and coaching centres.'},
  {n:'Narayana Vidya Foundation',c:'Nellore, Andhra Pradesh',t:'Foundation',code:'55630',d:'K-12 and professional colleges.'},
  {n:'Osmania Heritage Trust',c:'Hyderabad, Telangana',t:'Education Trust',code:'67744',d:'Heritage degree colleges.'},
+ {n:'St. Joseph Educational Society',c:'Warangal, Telangana',t:'Education Society',code:'81236',d:'Degree and pharmacy colleges in Warangal.'},
+ {n:'St. Joseph Group of Institutions',c:'Bengaluru, Karnataka',t:'College Group',code:'82347',d:'Engineering and management campuses.'},
+ {n:"St. Joseph's Academy Trust",c:'Chennai, Tamil Nadu',t:'Education Trust',code:'83458',d:'Schools and junior colleges.'},
+ {n:'St. Joseph Vidya Samstha',c:'Vijayawada, Andhra Pradesh',t:'Education Society',code:'84569',d:'K-12 and degree colleges.'},
  {n:'Stanley Group of Colleges',c:'Hyderabad, Telangana',t:'College Group',code:'78123',d:'Engineering and pharmacy colleges.'}];
 const SUB={n:'St. Joseph College of Engineering',c:'Hyderabad, Telangana',t:'Engineering College',by:'Dr. Kittu Kumar',em:'principal@sjce.edu',ph:'+91 98765 43210',d:'AICTE-approved engineering college offering B.Tech and M.Tech programmes.',date:'29 Sep 2026'};
 let reqs=[{...SUB,id:1,s:'Pending'},{n:'St. Joseph Polytechnic',c:'Warangal, Telangana',t:'Polytechnic',by:'Ms. Anita Rao',em:'head@sjp.edu',ph:'+91 90000 11111',d:'Diploma programmes in engineering.',date:'27 Sep 2026',id:2,s:'Pending'}];
@@ -216,12 +220,17 @@ function pfSendOtp(){grabStep();S.otp=true;render()}
 function pfVerifyOtp(){const v=(document.getElementById('pf_otp')||{}).value;if(v=='123456'){P.ver.em=true;S.otp=false;S.perr='';saveP();render()}else{S.perr='Wrong OTP. Demo OTP is 123456.';render()}}
 function pfDoc(inp){const f=inp.files&&inp.files[0];if(f){P.ver.doc=f.name;saveP();render()}}
 let SG=[];
-function pfMatches(v){const q=v.trim().toLowerCase();if(!q)return [];if(/^\d+$/.test(q))return MAINS.filter(m=>m.code.startsWith(q));return MAINS.filter(m=>(m.n+' '+m.c).toLowerCase().includes(q))}
-function pfSuggest(v){const box=document.getElementById('pf_sug');if(!box)return;SG=pfMatches(v).slice(0,6);
- if(!v.trim()){box.style.display='none';return}
- if(/^\d{5}$/.test(v.trim())&&SG.length==1){pfPick(0);return}
+function pfMatches(v){const t=v.toLowerCase().split(/[\s,]+/).filter(Boolean);if(!t.length)return [];return MAINS.filter(m=>{const h=(m.n+' '+m.c+' '+m.t+' '+m.code).toLowerCase();return t.every(x=>h.includes(x))})}
+let SGQ='',SGALL=false,SGN=0;
+function pfRenderSug(){const box=document.getElementById('pf_sug');if(!box)return;
+ if(!SGQ.trim()){box.style.display='none';return}
  box.style.display='block';
- box.innerHTML=SG.length?SG.map((m,i)=>`<div class="sg" onclick="pfPick(${i})">${lg(m.n)}<div class="grow"><b>${esc(m.n)}</b> <span class="mut">— ${esc(m.c)}</span></div><span class="mut">Code <b style="color:#17753A">${esc(m.code)}</b></span></div>`).join(''):`<div class="sg mut">No main institution found for "${esc(v)}". Check the code or try the name.</div>`}
+ const all=pfMatches(SGQ);SGN=all.length;SG=SGALL?all:all.slice(0,4);
+ if(!all.length){box.innerHTML=`<div class="sg" style="display:block"><b>Not found</b><div class="mut">No Main / Normal institution matches "${esc(SGQ)}". Check the code, name or location.</div><p style="margin:8px 0 2px"><button class="btn btn-primary btn-sm" onclick="goTo('register',{role:'company',type:'main'})">Not available? Create a Main / Normal college account</button></p></div>`;return}
+ box.innerHTML=SG.map((m,i)=>`<div class="sg" onclick="pfPick(${i})">${lg(m.n)}<div class="grow"><b>${esc(m.n)}</b> ${B(1)}<div class="mut">📍 ${esc(m.c)} · ${esc(m.t)}</div></div><span class="mut">Code <b style="color:#17753A">${esc(m.code)}</b></span></div>`).join('')
+ +(!SGALL&&all.length>4?`<div class="sg" style="justify-content:center"><button class="btn btn-light btn-sm" onclick="SGALL=true;pfRenderSug()">See more (${all.length-4} more)</button></div>`:'')
+ +`<div class="sg mut" style="display:block;border-top:1px solid var(--line);font-size:12.5px">Can't find yours? <a href="#" onclick="goTo('register',{role:'company',type:'main'});return false">Create a Main / Normal college account</a></div>`}
+function pfSuggest(v){SGQ=v;SGALL=false;pfRenderSug()}
 function pfPick(i){const m=SG[i];if(!m)return;S.main=m;LSS('nwSub',{sub:SUB,mainCode:m.code,st:'approved'});S.perr='';render()}
 function pfKey(e){if(e.key=='Enter'){e.preventDefault();pfPick(0)}}
 function pfSubmit(){grabStep();const d=P.d;if(d.name)SUB.n=d.name;SUB.c=[d.city,d.state].filter(Boolean).join(', ')||SUB.c;if(d.type)SUB.t=d.type;if(d.about)SUB.d=d.about;if(d.rname)SUB.by=d.rname;if(d.rem)SUB.em=d.rem;if(d.rph)SUB.ph=d.rph;
@@ -234,9 +243,9 @@ function pfBody(){const s=P.step,d=P.d;
  if(s<3)return `<div class="g g2">${PFLD[s].map(pfField).join('')}</div>${s==0?`<div class="row" style="margin-top:12px">${lg(pv('name')||SUB.n,'big')}<div><b>Logo</b><div class="mut">Upload your own (under 500 KB) or keep the free default crest.</div><input type="file" accept="image/*" onchange="readLogo(this)"></div></div>`:''}`;
  if(s==3){const okE=P.ver.em;return `<h3>Verify your institution</h3><div class="g g2"><div class="c"><b>1. Official email</b><div class="mut">${esc(pv('rem'))||'Add the official email in step 3'}</div>${okE?'<p><span class="st g">✓ Email verified</span></p>':(S.otp?`<p class="row"><input id="pf_otp" class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px" maxlength="6" placeholder="Enter 6-digit OTP"><button class="btn btn-primary btn-sm" onclick="pfVerifyOtp()">Verify</button></p><p class="mut">Demo OTP: 123456</p>`:`<p><button class="btn btn-primary btn-sm" onclick="pfSendOtp()">Send OTP</button></p>`)}</div>
  <div class="c"><b>2. Affiliation / registration document</b><div class="mut">AICTE / UGC / university affiliation letter (optional for demo).</div><p><input type="file" onchange="pfDoc(this)"></p>${P.ver.doc?`<span class="st g">✓ ${esc(P.ver.doc)}</span>`:'<span class="st n">No document uploaded</span>'}</div></div>`}
- if(s==4){const m=S.main;return `<h3>Connect to your Main Institution</h3><p class="mut">Type the 5-digit institution code or the institution name. Matching institutions appear as you type.</p>
+ if(s==4){const m=S.main;return `<h3>Connect to your Main Institution</h3><p class="mut">Type the 5-digit institution code, the name, or the location. Matching institutions appear as you type — top 4 first, use See more for the rest.</p>
  <div class="c row wrap" style="margin-bottom:12px;border-color:#17753A">${lg(m.n,'big')}<div class="grow"><div class="mut">Connected to</div><b>${esc(m.n)}</b> ${B(1)}<div class="mut">📍 ${esc(m.c)} · Code <b>${esc(m.code)}</b></div></div><span class="st g">✓ Connected</span></div>
- <div style="position:relative;max-width:640px"><label class="fld">Change main institution<input id="pf_mq" autocomplete="off" placeholder="Enter 5-digit code or institution name" oninput="pfSuggest(this.value)" onkeydown="pfKey(event)"></label><div id="pf_sug" class="sug" style="display:none"></div></div>`}
+ <div style="position:relative;max-width:640px"><label class="fld">Change main institution<input id="pf_mq" autocomplete="off" placeholder="Type code, name or location — e.g. St. Joseph Hyderabad" oninput="pfSuggest(this.value)" onkeydown="pfKey(event)"></label><div id="pf_sug" class="sug" style="display:none"></div></div>`}
  const cs=campusSel();return `<h3>Review your profile</h3><div class="g g2"><div class="c"><b>${esc(pv('name'))}</b> ${B(0)}<div class="mut">${esc(pv('type'))} · Est. ${esc(pv('year')||'—')}</div><div class="mut">📍 ${esc([pv('addr'),pv('city'),pv('state'),pv('pin')].filter(Boolean).join(', '))}</div><p>${esc(pv('about'))}</p></div>
  <div class="c"><div><b>Representative:</b> ${esc(pv('rname'))} ${pv('rdes')?'('+esc(pv('rdes'))+')':''}</div><div class="mut">${esc(pv('rem'))} · ${esc(pv('rph'))}</div><div style="margin-top:8px"><b>Verification:</b> ${P.ver.em?'✓ Email verified':'Email not verified'} · ${P.ver.doc?'✓ Document uploaded':'No document'}</div><div><b>Main Institution:</b> ${esc(S.main.n)} (Code ${esc(S.main.code)})</div></div></div>`}
 function vProfile(){
