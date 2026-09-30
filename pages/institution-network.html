@@ -6,16 +6,16 @@
 <title>Institution Network — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
 <style>
-.nw{max-width:1100px;margin:0 auto;padding:28px 20px 80px}
-.nw h1{font-size:26px;margin:0 0 6px}.nw h2{font-size:19px;margin:0 0 10px}.nw h3{font-size:15px;margin:0 0 8px}
+.nw{max-width:1400px;margin:0 auto;padding:16px 24px 60px}
+.nw h1{font-size:20px;margin:0 0 4px}.nw h2{font-size:16px;margin:0 0 8px}.nw h3{font-size:15px;margin:0 0 8px}
 .nw p.sub{color:var(--ink-faint);margin:0 0 20px;font-size:14px}
-.nw-demo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--blue-50);border:1px dashed var(--blue-500);border-radius:var(--radius);padding:10px 12px;margin-bottom:22px;font-size:12.5px}
+.nw-demo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--blue-50);border:1px dashed var(--blue-500);border-radius:var(--radius);padding:8px 10px;margin-bottom:12px;font-size:12.5px}
 .nw-demo b{margin-right:4px}.nw-demo .btn.on{background:var(--blue-700);color:#fff;border-color:var(--blue-700)}
-.c{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px}
+.c{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:12px 14px}
 .g{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
 .pick{cursor:pointer;border:2px solid var(--line);transition:.15s}.pick:hover{border-color:var(--blue-500)}.pick.sel{border-color:var(--blue-700);background:var(--blue-50)}
 .lg{width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex-shrink:0}
-.lg.big{width:64px;height:64px;font-size:22px}
+.lg.big{width:48px;height:48px;font-size:17px}
 .row{display:flex;gap:12px;align-items:center}.row.top{align-items:flex-start}.wrap{flex-wrap:wrap}.sp{justify-content:space-between}.grow{flex:1;min-width:0}
 .bd{font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:2px 8px;border-radius:20px;display:inline-block}
 .bd.m{background:#EFE7FB;color:#5B2AA8}.bd.s{background:#E3EEFF;color:#1B4FBF}
@@ -27,7 +27,7 @@
 .fld.err input{border-color:#B3261E}
 .res{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:#fff}.res:hover{border-color:var(--blue-500);background:var(--blue-50)}
 .sk{height:58px;border-radius:6px;background:linear-gradient(90deg,#eef1f6,#f7f8fb,#eef1f6);background-size:200% 100%;animation:sk 1s infinite}@keyframes sk{to{background-position:-200% 0}}
-.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin:18px 0}.tabs button{background:none;border:0;padding:10px 14px;font:inherit;font-weight:600;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}.tabs button.on{color:var(--blue-700);border-color:var(--blue-700)}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin:12px 0}.tabs button{background:none;border:0;padding:10px 14px;font:inherit;font-weight:600;color:var(--ink-faint);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}.tabs button.on{color:var(--blue-700);border-color:var(--blue-700)}
 .num{font-size:26px;font-weight:700;color:var(--blue-900)}
 .mod{position:fixed;inset:0;background:rgba(10,20,50,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
 .mod>.c{max-width:520px;width:100%;max-height:90vh;overflow:auto}
@@ -126,15 +126,64 @@ function vReview(){return `<h1>Review Your Institution</h1><p>Registration Type:
 function vDone(){return `<div class="c" style="text-align:center;max-width:560px;margin:0 auto"><div class="chk">✓</div><h1>Profile Created Successfully</h1><p>Your Sub-Branch profile has been created. Your request has been sent to: <b>${S.main.n}</b></p>${stB('pending')}<div class="steps" style="text-align:left;margin:20px auto;max-width:300px">${[['d','✓','Profile Created'],['d','✓','Verification Request Sent'],['p','…','Main Institution Review'],['','4','Approved'],['','5','Institution Connected']].map(([c,i,t])=>`<div><span class="dot ${c}">${i}</span>${t}</div>`).join('')}</div>
 <button class="btn btn-primary" onclick="S.role='sub';S.st='pending';render()">Go to Dashboard</button></div>`}
 /* sub dashboard */
-function vSub(){const k=S.st;return `<div class="c row wrap"><div class="grow row wrap">${lg(SUB.n,'big')}<div><h1 style="margin:0">${SUB.n}</h1>${B(0)} ${k=='approved'?'<div style="margin-top:4px"><b>Part of '+S.main.n+'</b> · <a href="#" onclick="S.role=\'main\';render();return false">Main Institution Profile</a></div>':''}<div class="mut">${SUB.c}</div></div></div>${stB(k)}</div>
+function vSub0(){const k=S.st;return `<div class="c row wrap"><div class="grow row wrap">${lg(SUB.n,'big')}<div><h1 style="margin:0">${SUB.n}</h1>${B(0)} ${k=='approved'?'<div style="margin-top:4px"><b>Part of '+S.main.n+'</b> · <a href="#" onclick="S.role=\'main\';render();return false">Main Institution Profile</a></div>':''}<div class="mut">${SUB.c}</div></div></div>${stB(k)}</div>
 <h2 style="margin-top:18px">Connected Main Institution</h2>${mainCard(S.main,stB(k))}
 ${k=='pending'?'<p class="mut">Your institution is waiting for approval from the Main Institution. <button class="btn btn-light btn-sm" onclick="set(\'st\',\'withdrawn\')">Withdraw request</button></p>':''}
 ${k=='rejected'?'<div class="c" style="margin-top:14px;border-color:#B3261E"><b>Rejection reason:</b> Affiliation documents are incomplete. Please re-apply with valid proof.<p><button class="btn btn-primary btn-sm" onclick="S.role=\'reg\';S.v=\'code\';render()">Choose Another Main Institution</button></p></div>':''}
 ${k=='withdrawn'?'<div class="c" style="margin-top:14px"><b>Request withdrawn.</b> You can send a new request any time.<p><button class="btn btn-primary btn-sm" onclick="S.role=\'reg\';S.v=\'code\';render()">Choose Main Institution</button></p></div>':''}
 ${k=='approved'?'<h2 style="margin-top:18px">Institution Hierarchy</h2>'+tree():''}
-<div class="mut" style="margin-top:18px">Menu: Dashboard · Institution Profile · Main Institution · Jobs · Faculty · Applications · Documents · Verification · Settings</div>`}
+`}
 const tree=()=>`<div class="c"><div class="row">${lg(S.main.n)}<div><b>${S.main.n}</b> ${B(1)}</div></div><div class="mut" style="margin:8px 0 0 12px">↓ Connected Institutions</div><div class="tree">${['St. Joseph College of Engineering','St. Joseph College of Arts','St. Joseph School'].map(n=>`<div class="row" style="margin:10px 0">${lg(n)}<div><b>${n}</b> ${B(0)}</div></div>`).join('')}</div></div>`;
 const _old=()=>`<div class="c"><div class="row">${lg(S.main.n)}<div><b>${S.main.n}</b> ${B(1)}</div></div><div class="tree"><div class="row" style="margin:12px 0">${lg(SUB.n)}<div><b>${SUB.n}</b> ${B(0)}</div></div><div class="tree mut">Computer Science · Mechanical · Electronics · Civil</div></div></div>`;
+/* ---------- sub-branch dashboard after approval (jobs + candidates, localStorage) ---------- */
+const LSG=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const LSS=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let JOBS=LSG('nwJobs',[]),CREQ=LSG('nwCandReq',[]);
+const CANDS=[{id:1,n:'Dr. Ravi Teja',r:'Professor',s:'Physics',e:'12 yrs',c:'Hyderabad, Telangana'},{id:2,n:'Ms. Sunita Rao',r:'Assistant Professor',s:'Computer Science',e:'6 yrs',c:'Warangal, Telangana'},{id:3,n:'Mr. Imran Khan',r:'Lecturer',s:'Mathematics',e:'3 yrs',c:'Secunderabad, Telangana'},{id:4,n:'Dr. Anjali Sharma',r:'Associate Professor',s:'Electronics',e:'9 yrs',c:'Hyderabad, Telangana'}];
+S.sd='profile';S.jf='all';
+const SD=[['profile','Institution Profile'],['post','Post a Job'],['jobs','Posted Jobs'],['cands','Browse Candidates'],['reqs','Requests']];
+const lockedTab=()=>alert('Locked until the Main Institution approves your connection.');
+const myJobs=()=>JOBS.filter(j=>j.mainCode==S.main.code&&j.branchName==SUB.n);
+const myReqs=()=>CREQ.filter(r=>r.mainCode==S.main.code&&r.branchName==SUB.n);
+const subNav=k=>{const ok=k=='approved';return `<div class="tabs">${SD.map(([t,l])=>t=='profile'||ok?`<button class="${S.sd==t?'on':''}" onclick="set('sd','${t}')">${l}${t=='jobs'&&myJobs().length?' ('+myJobs().length+')':''}${t=='reqs'&&myReqs().length?' ('+myReqs().length+')':''}</button>`:`<button style="opacity:.55" onclick="lockedTab()">🔒 ${l}</button>`).join('')}</div>`};
+const opt=a=>a.map(x=>`<option>${x}</option>`).join('');
+const jobCard=j=>`<div class="c"><div class="row wrap sp"><b>${esc(j.title)}</b><span class="st g">Active</span></div><div class="mut">${esc(j.role)} · ${esc(j.dept)} · ${esc(j.type)} · ${esc(j.vac)} vacancy</div><div class="mut">₹${esc(j.salMin)} – ₹${esc(j.salMax)} per ${esc(j.period)} · Exp ${esc(j.expMin)}+ yrs · ${esc(j.qual)}</div><div style="margin-top:6px"><b>${esc(j.branchName)}</b> ${B(0)}<div class="mut">Part of ${esc(j.mainName)} (Code ${esc(j.mainCode)}) · 📍 ${esc(j.loc)} · Posted ${esc(j.date)}</div></div></div>`;
+function vPost(){return `<h2>Post a Job</h2><div class="c row wrap" style="margin-bottom:12px"><div class="grow"><div class="mut">Main Institution</div><b>${S.main.n}</b> <span class="mut">· Code ${S.main.code}</span></div><div class="grow"><div class="mut">Sub-Branch</div><b>${SUB.n}</b></div><div class="grow"><div class="mut">Location</div><b>${SUB.c}</b></div></div><p class="mut" style="margin:-4px 0 12px">These details are added to the job automatically.</p>
+<div class="c"><div id="njErr" class="st r" style="display:none;margin-bottom:10px"></div><div class="g g3">
+<label class="fld" style="grid-column:1/-1">Job title *<input id="njTitle" placeholder="e.g. Assistant Professor, Computer Science"></label>
+<label class="fld">Role / designation *<select id="njRole"><option value="">Select role</option>${opt(['Professor','Associate Professor','Assistant Professor','Lecturer','Head of Department'])}</select></label>
+<label class="fld">Category *<select id="njCat"><option value="">Select category</option>${opt(['Schools','Intermediate','Higher Education'])}</select></label>
+<label class="fld">Department / subject *<input id="njDept" placeholder="e.g. Mathematics"></label>
+<label class="fld">Employment type *<select id="njType"><option value="">Select type</option>${opt(['Full-time','Part-time','Contract','Visiting faculty'])}</select></label>
+<label class="fld">Number of vacancies<input id="njVac" type="number" min="1" placeholder="1"></label>
+<label class="fld">Qualification *<select id="njQual"><option value="">Select qualification</option>${opt(['UG','PG','PhD','PG + NET / SET','PhD + NET / SET'])}</select></label>
+<label class="fld">Notice period accepted *<select id="njNotice"><option value="">Select notice period</option>${opt(['Immediate joiner','Up to 15 days','Up to 30 days','Up to 60 days'])}</select></label>
+<label class="fld">Minimum experience (yrs) *<input id="njExp" type="number" min="0" placeholder="0 for freshers"></label>
+<label class="fld">Minimum salary (₹) *<input id="njSalMin" type="number" min="0" placeholder="45000"></label>
+<label class="fld">Maximum salary (₹) *<input id="njSalMax" type="number" min="0" placeholder="70000"></label>
+<label class="fld">Paid<select id="njPer"><option value="month">Per month</option><option value="year">Per year</option></select></label>
+<label class="fld">Key skills<input id="njSkills" placeholder="e.g. Python, Research"></label>
+<label class="fld">Apply before<input id="njDead" type="date"></label>
+<label class="fld" style="grid-column:1/-1">Job description<textarea id="njDesc" rows="3" placeholder="Responsibilities, teaching load, benefits"></textarea></label>
+</div><p style="margin:12px 0 0"><button class="btn btn-primary btn-sm" onclick="postJob()">+ Post job — free</button></p></div>`}
+function postJob(){const v=id=>document.getElementById(id).value.trim();
+ const need=[['njTitle','Job title'],['njRole','Role'],['njCat','Category'],['njDept','Department'],['njType','Employment type'],['njQual','Qualification'],['njNotice','Notice period'],['njExp','Experience'],['njSalMin','Minimum salary'],['njSalMax','Maximum salary']].filter(([i])=>!v(i));
+ const e=document.getElementById('njErr');
+ if(need.length){e.style.display='inline-block';e.textContent='Please fill: '+need.map(x=>x[1]).join(', ');return}
+ JOBS.push({id:Date.now(),title:v('njTitle'),role:v('njRole'),cat:v('njCat'),dept:v('njDept'),type:v('njType'),vac:v('njVac')||'1',qual:v('njQual'),notice:v('njNotice'),expMin:v('njExp'),salMin:v('njSalMin'),salMax:v('njSalMax'),period:v('njPer'),skills:v('njSkills'),deadline:v('njDead'),desc:v('njDesc'),mainName:S.main.n,mainCode:S.main.code,branchName:SUB.n,branchLoc:SUB.c,loc:SUB.c,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
+ LSS('nwJobs',JOBS);S.sd='jobs';render();scrollTo(0,0)}
+function vPosted(){const a=myJobs();return `<h2>Posted Jobs</h2>${a.length?`<div class="g g2">${a.map(jobCard).join('')}</div>`:empty('No jobs posted yet','Use Post a Job to create your first job.')}`}
+function vCands(){const a=myJobs();return `<h2>Browse Candidates</h2>${a.length?'':'<p class="mut">Post a job first to send candidate requests.</p>'}<div class="g g2">${CANDS.map(c=>{const sent=myReqs().filter(r=>r.candId==c.id).length;return `<div class="c"><div class="row top">${lg(c.n)}<div class="grow"><b>${c.n}</b><div class="mut">${c.r} · ${c.s} · ${c.e}</div><div class="mut">📍 ${c.c}</div></div>${sent?`<span class="st g">${sent} sent</span>`:''}</div><div class="row wrap" style="margin-top:10px"><select id="cj${c.id}" class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px;flex:1;min-width:150px">${a.length?a.map(j=>`<option value="${j.id}">${esc(j.title)}</option>`).join(''):'<option value="">No jobs posted</option>'}</select><button class="btn btn-primary btn-sm" onclick="sendReq(${c.id})">Send Request</button></div></div>`}).join('')}</div>`}
+function sendReq(cid){const s=document.getElementById('cj'+cid),j=JOBS.find(x=>x.id==s.value),c=CANDS.find(x=>x.id==cid);
+ if(!j){alert('Post a job first, then send the request against it.');return}
+ if(myReqs().some(r=>r.candId==cid&&r.jobId==j.id)){alert('Request already sent for this job.');return}
+ CREQ.push({id:Date.now(),mainInstitutionId:S.main.code,mainCode:S.main.code,mainName:S.main.n,subBranchId:SUB.n,branchName:SUB.n,jobId:j.id,jobTitle:j.title,candId:c.id,candName:c.n,requestStatus:'Pending',requestDate:new Date().toLocaleDateString('en-GB')});
+ LSS('nwCandReq',CREQ);render()}
+function vReqs(){const a=myReqs();return `<h2>Requests</h2>${a.length?`<div class="g">${a.map(r=>`<div class="c row wrap sp"><div><b>${esc(r.candName)}</b> → <b>${esc(r.jobTitle)}</b><div class="mut">${esc(r.branchName)} · Part of ${esc(r.mainName)} (Code ${esc(r.mainCode)}) · Sent ${esc(r.requestDate)}</div></div><span class="st y">${esc(r.requestStatus)}</span></div>`).join('')}</div>`:empty('No requests yet','Candidate requests you send appear here.')}`}
+const subPanel=()=>({post:vPost,jobs:vPosted,cands:vCands,reqs:vReqs}[S.sd]||vPosted)();
+function vSub(){const k=S.st,ok=k=='approved';if(!ok)S.sd='profile';return subNav(k)+(ok&&S.sd!='profile'?subPanel():vSub0())}
+const mainJobsHtml=(bn)=>JOBS.filter(j=>j.mainCode==S.main.code&&(!bn||j.branchName==bn)).map(jobCard).join('');
 /* main dashboard */
 const TABS=[['overview','Overview'],['branches','Connected Branches'],['requests','Pending Requests'],['jobs','Jobs'],['faculty','Faculty'],['activity','Activity']];
 const brs=()=>S.empty?[]:[...BR,...reqs.filter(r=>r.s=='Approved').map(r=>({n:r.n,c:r.c,j:24,f:86,a:142,l:'Just now'}))];
@@ -143,7 +192,7 @@ const codeCard=()=>`<div class="c row wrap sp"><div><div class="mut">Your Instit
 const empty=(t,d)=>`<div class="c" style="text-align:center"><div style="font-size:30px">📭</div><h3>${t}</h3><p class="mut">${d}</p></div>`;
 function vBranch(){const b=brs()[S.bv],T=['overview','jobs','faculty','applications','activity'];
  const body={overview:()=>`<div class="c"><h3>Institution Overview</h3><p class="mut">${SUB.d}<br>${b.c} · Departments: CSE, ME, ECE, Civil · Affiliation: JNTUH</p><p><b>Jobs ${b.j}</b> · <b>Faculty ${b.f}</b> · <b>Applications ${b.a}</b></p></div>`,
- jobs:()=>`<div class="g g2">${['Assistant Professor - CSE','Lecturer - Physics'].map(t=>`<div class="c"><b>${t}</b><div class="mut">${b.n} · Applications: 18</div><span class="st g">Active</span></div>`).join('')}</div>`,
+ jobs:()=>`<div class="g g2">${mainJobsHtml(b.n)}${['Assistant Professor - CSE','Lecturer - Physics'].map(t=>`<div class="c"><b>${t}</b><div class="mut">${b.n} · Applications: 18</div><span class="st g">Active</span></div>`).join('')}</div>`,
  faculty:()=>`<div class="g g3">${['Dr. Ravi Teja','Ms. Sunita Rao'].map(n=>`<div class="c row top">${lg(n)}<div><b>${n}</b><div class="mut">Asst. Professor</div><span class="st g">Verified</span></div></div>`).join('')}</div>`,
  applications:()=>`<div class="c"><b>${b.a} applications</b><div class="mut">Latest: Assistant Professor - CSE (18), Lecturer - Physics (11)</div></div>`,
  activity:()=>`<div class="c">Posted a new faculty position · 2 hours ago<br><span class="mut">Updated branch profile · 3 days ago</span></div>`}[S.bt]();
@@ -155,7 +204,7 @@ function vMain(){
   branches:()=>`<h2>Connected Institutions</h2>${brs().length?`<div class="g g2">${brs().map((b,i)=>`<div class="c"><div class="row wrap">${lg(b.n)}<div class="grow"><b>${b.n}</b> ${B(0)}<div class="mut">📍 ${b.c}</div></div><span class="st g">🟢 Connected</span></div><p class="mut">Jobs: <b>${b.j}</b> · Faculty: <b>${b.f}</b> · Applications: <b>${b.a}</b> · Last activity ${b.l}</p><button class="btn btn-light btn-sm" onclick="S.bv=${i};S.bt='overview';render()">View Institution</button></div>`).join('')}</div>`:empty('No connected branches yet','Share your 5-digit code 10245 so branches can request to join.')}`,
   requests:()=>`<h2>Sub-Branch Requests</h2>${list.length?`<div class="g">${list.map(r=>`<div class="c"><div class="row wrap">${lg(r.n)}<div class="grow"><b>${r.n}</b> <span class="bd s">SUB-BRANCH REQUEST</span><div class="mut">📍 ${r.c} · ${r.t} · Submitted ${r.date}</div><div class="mut">${r.by} · ${r.em}</div><div>${r.d}</div></div><span class="st ${r.s=='Pending'?'y':r.s=='Approved'?'g':'r'}">${r.s=='Pending'?'🟡 Pending Review':r.s=='Approved'?'🟢 Connected':'🔴 Request Rejected'}</span></div>
   <p class="btns row wrap" style="margin:12px 0 0"><button class="btn btn-light btn-sm" onclick="detail(${r.id})">View Profile</button>${r.s=='Pending'?`<button class="btn btn-primary btn-sm" onclick="dlg('a',${r.id})">Approve</button><button class="btn btn-ghost btn-sm" onclick="dlg('r',${r.id})">Reject</button>`:''}</p></div>`).join('')}</div>`:empty('No pending requests','New Sub-Branch requests will appear here.')}`,
-  jobs:()=>`<h2>Jobs across branches</h2>${filters(['Branch','Department','Job type','Status','Date'])}<div class="g g2">${[['Assistant Professor - Computer Science',BR[0].n,18],['Lecturer - Mathematics',BR[1].n,9],['Associate Professor - ECE',SUB.n,12]].map(([t,b,a])=>`<div class="c"><b>${t}</b><div class="mut">Posted by:</div><div><b>${b}</b> ${B(0)}</div><div class="mut">📍 Hyderabad, Telangana · Applications: ${a}</div><span class="st g">Active</span></div>`).join('')}</div>`,
+  jobs:()=>`<h2>Jobs across branches</h2><div class="row wrap" style="margin-bottom:14px"><select class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px" onchange="S.jf=this.value;render()"><option value="all">All Branches</option>${[SUB.n,...BR.map(b=>b.n)].map(n=>`<option ${S.jf==n?'selected':''}>${n}</option>`).join('')}</select></div><div class="g g2">${mainJobsHtml(S.jf=='all'?'':S.jf)}${[['Assistant Professor - Computer Science',BR[0].n,18],['Lecturer - Mathematics',BR[1].n,9],['Associate Professor - ECE',SUB.n,12]].map(([t,b,a])=>`<div class="c"><b>${t}</b><div class="mut">Posted by:</div><div><b>${b}</b> ${B(0)}</div><div class="mut">📍 Hyderabad, Telangana · Applications: ${a}</div><span class="st g">Active</span></div>`).join('')}</div>`,
   faculty:()=>`<h2>Faculty Across Institutions</h2>${filters(['Branch','Department','Subject','Experience'])}<div class="g g3">${[['Dr. Ravi Teja','Professor','Physics',BR[0].n,'12 yrs','Verified'],['Ms. Sunita Rao','Asst. Professor','Computer Science',BR[1].n,'6 yrs','Verified'],['Mr. Imran Khan','Lecturer','Mathematics',BR[0].n,'3 yrs','Pending']].map(([n,d,s,b,e,v])=>`<div class="c row top">${lg(n)}<div><b>${n}</b><div class="mut">${d} · ${s}</div><div class="mut">${b} · ${e}</div><span class="st ${v=='Verified'?'g':'y'}">${v}</span></div></div>`).join('')}</div>`,
   activity:()=>`<h2>Branch Activity</h2><div class="g">${[['Posted a new faculty position','Assistant Professor - Computer Science','2 hours ago',BR[0].n],['Faculty profile created','Dr. Ravi Teja','5 hours ago',BR[1].n],['Faculty application received','Lecturer - Mathematics','Yesterday',BR[1].n],['New document uploaded','Affiliation certificate','2 days ago',SUB.n]].map(([a,b,t,n])=>`<div class="c row">${lg(n)}<div class="grow"><b>${n}</b><div>${a}</div><div class="mut">${b}</div></div><span class="mut">${t}</span></div>`).join('')}</div>`}[S.tab]();
   return `<div class="c row wrap">${lg(S.main.n,'big')}<div class="grow"><h1 style="margin:0">${S.main.n}</h1>${B(1)} <span class="st g">🟢 Active</span><div class="mut">${S.main.c} · Code <b>10245</b></div><b>${conn} Connected Institutions</b></div><button class="btn btn-primary btn-sm" onclick="set('tab','branches')">View Branches</button></div>
