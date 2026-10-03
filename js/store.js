@@ -174,7 +174,8 @@ const PAGES = {
   faculty:   SITE_ROOT + 'pages/faculty-dashboard.html',
   employer:  SITE_ROOT + 'pages/employer-dashboard.html',
   profile:   SITE_ROOT + 'pages/profile.html',
-  network:   SITE_ROOT + 'pages/institution-network.html'
+  network:   SITE_ROOT + 'pages/institution-network.html',
+  subauth:   SITE_ROOT + 'pages/subbranch-auth.html'
 };
 function goTo(page, params){
   const qs = params ? '?' + new URLSearchParams(params).toString() : '';
