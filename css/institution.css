@@ -129,3 +129,55 @@
 #dashInnerWide .pf-section-savebar{padding-top:8px}
 @media(min-width:1100px){#dashInnerWide .in-grid{grid-template-columns:repeat(3,1fr)}#dashInnerWide .in-grid .in-full{grid-column:1/-1}}
 @media(max-width:640px){.dash-inner-wide#dashInnerWide{padding:12px 12px 20px}}
+
+
+/* ===== v4: left step menu + right card panel, compact, 2px edges ===== */
+#dashInnerWide{--radius:2px;--radius-sm:2px}
+#dashInnerWide .in-card,#dashInnerWide .in-method,#dashInnerWide .in-camp,#dashInnerWide .in-acc,#dashInnerWide .in-file,#dashInnerWide .in-note,#dashInnerWide .in-side,#dashInnerWide .in-f input,#dashInnerWide .in-f select,#dashInnerWide .in-f textarea,#dashInnerWide .in-logo-box,#dashInnerWide .in-thumb,#dashInnerWide .in-map,#dashInnerWide .in-step,#dashInnerWide .in-tag,#dashInnerWide .in-vbadge,#dashInnerWide .in-modal>div,#dashInnerWide .btn,#dashInnerWide .dash-tabs,#dashInnerWide .dash-subtab{border-radius:2px}
+#dashInnerWide .in-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start}
+#dashInnerWide .in-side{position:sticky;top:64px;background:#fff;border:1px solid var(--line);padding:8px}
+#dashInnerWide .in-steps{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;overflow:visible}
+#dashInnerWide .in-step{display:flex;align-items:center;gap:9px;width:100%;min-width:0;flex:none;padding:8px 9px;border:0;border-left:3px solid transparent;font-size:12.5px;line-height:1.25;color:var(--ink-soft);background:none;text-align:left;cursor:pointer}
+#dashInnerWide .in-step:hover{background:var(--blue-50)}
+#dashInnerWide .in-step-n{width:20px;height:20px;flex-shrink:0;border-radius:50%;background:var(--line);color:var(--ink-soft);font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+#dashInnerWide .in-step.done{border-left-color:var(--green)}
+#dashInnerWide .in-step.done .in-step-n{background:var(--green);color:#fff}
+#dashInnerWide .in-step.on{background:var(--blue-50);border-left-color:var(--blue-700);color:var(--blue-900);font-weight:700}
+#dashInnerWide .in-step.on .in-step-n{background:var(--blue-700);color:#fff}
+#dashInnerWide .in-side-foot{border-top:1px solid var(--line);margin-top:8px;padding-top:8px;display:grid;gap:6px;font-size:11.5px;color:var(--ink-soft)}
+#dashInnerWide .in-side-foot .in-bar{margin:0;height:5px}
+#dashInnerWide .in-side-foot .btn{width:100%;font-size:12px;padding:6px 8px;min-height:0}
+#dashInnerWide .in-main{min-width:0}
+#dashInnerWide .in-main>.in-card:first-of-type{margin-top:0}
+#dashInnerWide .in-head h3{font-size:16px}
+#dashInnerWide .in-head p{font-size:12px;margin:0 0 8px}
+#dashInnerWide .in-card{padding:12px 14px;margin-bottom:8px;box-shadow:none}
+#dashInnerWide .in-card h4{font-size:13.5px;margin:0 0 2px}
+#dashInnerWide .in-card .sub2{font-size:12px;margin:0 0 8px}
+#dashInnerWide .in-grid{grid-template-columns:1fr 1fr;gap:8px 12px}
+#dashInnerWide .in-grid .in-full{grid-column:1/-1}
+#dashInnerWide .in-f label{font-size:11.5px;margin-bottom:2px}
+#dashInnerWide .in-f input,#dashInnerWide .in-f select,#dashInnerWide .in-f textarea{padding:6px 9px;font-size:12.5px}
+#dashInnerWide .in-f textarea{min-height:50px}
+#dashInnerWide .in-note{padding:6px 9px;margin:6px 0;font-size:11.5px}
+#dashInnerWide .in-method{padding:10px 12px}
+#dashInnerWide .in-method h5{font-size:13px}
+#dashInnerWide .in-acc>button{padding:8px 12px;font-size:13px}
+#dashInnerWide .in-acc .body{font-size:12.5px;line-height:1.55;padding:0 12px 10px}
+#dashInnerWide .in-camp{padding:8px 10px}
+#dashInnerWide .in-camp b{font-size:13px}
+#dashInnerWide .in-radio,#dashInnerWide .in-check,#dashInnerWide .in-chk{font-size:12.5px;padding:5px 0;margin:6px 0}
+#dashInnerWide .in-actions{margin-top:4px;padding:8px 12px;background:#fff;border:1px solid var(--line);border-radius:2px;position:sticky;bottom:0;z-index:5}
+#dashInnerWide .in-stepof{font-size:12px;color:var(--ink-faint);font-weight:600}
+#dashInnerWide .in-actions .btn{font-size:12.5px;padding:7px 16px;min-height:0}
+#dashInnerWide .in-demo{margin-top:8px;font-size:11px}
+@media(max-width:860px){
+ #dashInnerWide .in-layout{grid-template-columns:1fr}
+ #dashInnerWide .in-side{position:static}
+ #dashInnerWide .in-steps{flex-direction:row;overflow-x:auto;gap:4px}
+ #dashInnerWide .in-step{width:auto;flex:0 0 auto;border-left:0;border-bottom:3px solid transparent;white-space:nowrap}
+ #dashInnerWide .in-step.done{border-bottom-color:var(--green)}
+ #dashInnerWide .in-step.on{border-bottom-color:var(--blue-700)}
+ #dashInnerWide .in-side-foot{display:none}
+ #dashInnerWide .in-grid{grid-template-columns:1fr}
+}
