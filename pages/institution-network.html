@@ -40,6 +40,10 @@
 @media(max-width:640px){.mod{align-items:flex-end;padding:0}.mod>.c{border-radius:14px 14px 0 0}.btns .btn{flex:1}}
 
 .nw-stack{max-width:880px;margin:0 auto}
+.nw-big{padding:26px 28px;border-width:2px;border-color:var(--blue-700)}
+.nw-big h3{font-size:20px;margin-bottom:12px}
+.nw-sm{padding:12px 16px}
+.nw-sm h3{font-size:14px;margin-bottom:6px}
 .nw-lg a{color:var(--blue-700);text-decoration:underline;font-weight:600}
 .nw-stack>.pick:first-child{padding:26px 28px}
 .nw-or{display:flex;align-items:center;gap:14px;color:var(--ink-faint);margin:14px 0}
@@ -121,12 +125,13 @@ function vFind(){
   const digits=S.code.replace(/\D/g,''),bad=S.code&&!/^\d{5}$/.test(S.code);
   const q=S.q.trim().toLowerCase(),hits=q?MAINS.filter(m=>(m.n+m.c).toLowerCase().includes(q)):[];
   const shown=S.all?hits:hits.slice(0,6);
-  return `<h1>Find Your Main Institution</h1><p class="sub">Your Sub-Branch must be connected to an existing Main Institution.</p>
-<div class="g g2"><div class="c"><h3>Option A · Main Institution Code</h3>
+  return `<div class="nw-stack"><h1>Find Your Main Institution</h1><p class="sub">Your Sub-Branch must be connected to an existing Main Institution.</p>
+<div class="c nw-big"><h3>Main Institution Code</h3>
 <label class="fld ${bad?'err':''}">Main Institution Code<input id="code" maxlength="5" inputmode="numeric" placeholder="Enter 5-digit code, e.g. 10245" value="${S.code}" oninput="S.code=this.value;const b=document.getElementById('cb');b.disabled=!/^\\d{5}$/.test(this.value);this.parentNode.classList.toggle('err',this.value&&b.disabled)"></label>
 <p class="mut" id="ce">${bad?'Code must be exactly 5 digits.':'Demo codes: 10245, 20871, 31502'}</p>
-<button id="cb" class="btn btn-primary btn-sm" ${/^\d{5}$/.test(S.code)?'':'disabled'} onclick="const m=MAINS.find(x=>x.code==S.code);m?(S.main=m,go('confirm')):(S.code='',S.q='zzz',render())">Find Institution</button></div>
-<div class="c"><h3>OR · Search by Institution Name</h3>
+<button id="cb" class="btn btn-primary" ${/^\d{5}$/.test(S.code)?'':'disabled'} onclick="const m=MAINS.find(x=>x.code==S.code);m?(S.main=m,go('confirm')):(S.code='',S.q='zzz',render())">Find Institution</button></div>
+<div class="nw-or">or</div>
+<div class="c nw-sm"><h3>Search by Institution Name</h3>
 <label class="fld">Institution name<input id="q" placeholder="Search institution name..." value="${S.q}" oninput="liveQ(this.value)" autofocus></label>
 <div id="hits" class="g" style="margin-top:12px">${hitsHtml(q,shown,hits.length)}</div></div></div>`}
 function hitsHtml(q,shown,total){
