@@ -269,3 +269,14 @@
 /* the open step card and the action row read as one card */
 #dashInnerWide #jobPostForm .jb-step.on{margin-bottom:0;border-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
 #dashInnerWide #jobPostForm .in-actions{position:static;margin-top:0;padding:8px 12px;border-top:1px solid var(--line);border-radius:0 0 2px 2px;box-shadow:none}
+
+/* ===== v9: Post a job, smaller inputs, narrower centred card, always-clickable side steps ===== */
+#dashInnerWide #jobPostForm .in-layout{grid-template-columns:210px minmax(0,720px);justify-content:center;gap:12px}
+#dashInnerWide #jobPostForm .in-main{max-width:720px}
+#dashInnerWide #jobPostForm .in-grid{grid-template-columns:1fr 1fr}
+#dashInnerWide #jobPostForm .in-row3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#dashInnerWide #jobPostForm .in-f input,#dashInnerWide #jobPostForm .in-f select,#dashInnerWide #jobPostForm .in-f textarea{padding:4px 8px;font-size:12px;height:28px;min-height:0}
+#dashInnerWide #jobPostForm .in-f textarea{height:auto;min-height:56px}
+#dashInnerWide #jobPostForm .in-f label{font-size:11px}
+#dashInnerWide #jobPostForm .in-step{cursor:pointer;pointer-events:auto}
+@media(max-width:860px){#dashInnerWide #jobPostForm .in-layout{grid-template-columns:1fr}#dashInnerWide #jobPostForm .in-main{max-width:none}}
