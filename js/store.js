@@ -133,6 +133,18 @@ function clearSession(){
   isLoggedIn = false;
   currentRole = null;
   saveState();
+  // sub-branch login keeps its own marker too — clear it so logout is complete
+  try{ localStorage.removeItem('upaadhyay_session'); }catch(e){}
+}
+/* Sub-branch login/registration: make the shared nav treat the branch as signed in
+   (avatar, role badge, dashboard link, Log out). */
+function setBranchSession(id, name){
+  isLoggedIn = true;
+  currentRole = 'branch';
+  if(name) currentUser.name = name;
+  if(id && String(id).indexOf('@') > -1) currentUser.email = id;
+  saveState();
+  try{ localStorage.setItem('upaadhyay_session', JSON.stringify({role:'branch', id:id})); }catch(e){}
 }
 function ensureCandidateId(){
   if(!currentUser.candidateId){
@@ -173,6 +185,7 @@ function getParam(name){
 }
 /* Where a logged-in user should land */
 function dashboardPageForRole(){
+  if(currentRole === 'branch') return 'network';
   return currentRole === 'company' ? 'employer' : 'faculty';
 }
 /* Redirect helper used by protected pages */
