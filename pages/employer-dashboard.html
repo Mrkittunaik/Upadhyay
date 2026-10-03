@@ -6,6 +6,7 @@
 <title>Employer Dashboard — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css?v=3">
 <link rel="stylesheet" href="../css/institution.css?v=12">
+<style>#dashInnerWide{visibility:hidden}#dashInnerWide.ready{visibility:visible}</style>
 </head>
 <body class="page">
   <div id="siteNav"></div>
@@ -54,7 +55,7 @@
           <button class="dash-subtab" id="subtabMyJobs" onclick="switchEmployerTab('myjobs')">Posted jobs</button>
           <button class="dash-subtab" id="subtabCandidates" onclick="switchEmployerTab('candidates')">Browse candidates</button>
         </div>
-        <p class="sub" id="employerSetupNote" style="margin:0 0 18px;">Create your institution account with these basic details. Once saved, you'll get your full poster panel — jobs, candidates, invites and messages.</p>
+        <p class="sub" id="employerSetupNote" style="margin:0 0 18px; display:none;">Create your institution account with these basic details. Once saved, you'll get your full poster panel — jobs, candidates, invites and messages.</p>
 
         <div id="dashCompanyTab">
           <div id="instRoot"></div>
@@ -271,6 +272,14 @@ if(requireLogin('company')){
   if(_t==='candidates' || _t==='company' || _t==='myjobs' || _t==='post') switchEmployerTab(_t);
   window.scrollTo(0,0);
 }
+</script>
+<script>
+/* Reveal the panel only after every script has built it, so the setup note / empty layout never flashes on reload. */
+(function(){
+  function show(){ var d=document.getElementById('dashInnerWide'); if(d) d.classList.add('ready'); }
+  document.addEventListener('DOMContentLoaded',function(){ requestAnimationFrame(function(){ requestAnimationFrame(show); }); });
+  setTimeout(show,2000);
+})();
 </script>
 </body>
 </html>
