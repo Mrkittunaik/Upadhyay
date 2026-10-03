@@ -17,6 +17,14 @@ const ROLES=['HR Representative','Recruitment Consultant','Placement Agency','Ad
 const BTYPES=['Campus','Branch','Extension centre','Study centre','Other'];
 const PINS={'500072':['Telangana','Hyderabad','Hyderabad','Kukatpally'],'506002':['Telangana','Warangal','Warangal','Hanamkonda'],'500003':['Telangana','Hyderabad','Secunderabad','Secunderabad'],'560001':['Karnataka','Bengaluru Urban','Bengaluru','MG Road']};
 const ACAD=['University','College','School','Institute'];
+const REGR=['Director / Principal / Owner','HR / Recruitment','Administration','Placement','Authorized Representative'];
+const XTYPES=['Registration','Accreditation','Affiliation','Authorization Letter','Institution ID','Other'];
+const EIDF={k:'eid',l:'Employee ID',ph:'If available'};
+const DOCC=[
+ {k:'reg',t:'Institution Registration / Recognition Proof',d:'Government registration, trust or society certificate, or recognition order.',req:1},
+ {k:'rep',t:'Authorized Representative Proof',d:'Authorization letter, appointment letter or staff ID card of the representative.',req:1},
+ {k:'idp',t:'Institution Identity Proof',d:'Official letterhead, institution ID, PAN or GST certificate in the institution name.',req:1},
+ {k:'aff',t:'Affiliation / Accreditation Document',d:'University affiliation, UGC, AICTE, NAAC or board recognition.',sh:d=>ACAD.includes(d.type)}];
 const F0=[
  {k:'name',l:'Institution / college name',req:1,full:1,ph:'Full official name'},
  {k:'type',l:'Institution type',req:1,t:'select',o:TYPES},
@@ -55,7 +63,9 @@ const MSG={email:'Enter a valid email address, e.g. name@example.edu',url:'Enter
 let I=load(), BR={}, BRi=-1, welcome=!I.sub&&(I.step>0||!!I.d.name);
 function load(){
   let r=null; try{ r=JSON.parse(localStorage.getItem(KEY)); }catch(e){}
-  r=Object.assign({step:0,max:0,view:'wizard',vs:'pending',d:{country:'India'},branches:[],em:'idle',web:false,doc:null,docType:'',auth:'',role:'',c1:false,c2:false,sec:'profile',sub:false},r||{});
+  r=Object.assign({step:0,max:0,view:'wizard',vs:'pending',d:{country:'India'},branches:[],em:'idle',web:false,doc:null,docType:'',docs:{},extra:[],regRole:'',auth:'',role:'',c1:false,c2:false,sec:'profile',sub:false},r||{});
+  r.docs=r.docs||{}; r.extra=r.extra||[]; if(r.doc&&!r.docs.reg) r.docs.reg=r.doc; r.doc=null;
+  Object.keys(r.docs).forEach(k=>{ if(!r.docs[k]||r.docs[k].st!=='ok') delete r.docs[k]; }); r.extra=r.extra.filter(x=>x&&x.st==='ok');
   try{
     if(!r.d.name&&typeof currentCompany!=='undefined'&&currentCompany.name){
       const c=currentCompany; Object.assign(r.d,{name:c.name,website:c.website,about2:c.desc,city:c.city,rname:c.contactName,remail:c.email,rphone:c.phone,logo:c.logo});
@@ -110,16 +120,129 @@ function pinLook(sc,val){
   },450);
 }
 
+/* ---------- verification helpers (documents, role, status) ---------- */
+const PUB=/@(gmail|googlemail|yahoo|ymail|rocketmail|outlook|hotmail|live|msn|rediffmail|icloud|aol|proton|protonmail|gmx)\.[a-z.]+$/i;
+const isPub=e=>PUB.test((e||'').trim());
+const sm=(s,n)=>s.replace('width="24" height="24"','width="'+n+'" height="'+n+'" style="vertical-align:-2px"');
+const CLKs=sm(CLK,13), BANGs=sm(BANG,13), CLKd=sm(CLK,11), BANGd=sm(BANG,11);
+const FILES={}; let ERR={}, XOPEN=false, XT='Registration';
+const fsz=n=>n<1048576?Math.max(1,Math.round(n/1024))+' KB':(n/1048576).toFixed(1)+' MB';
+const DOCR=()=>DOCC.filter(c=>!c.sh||c.sh(I.d));
+const okDoc=k=>I.docs[k]&&I.docs[k].st==='ok';
+const anyDoc=()=>Object.keys(I.docs).some(okDoc)||I.extra.some(x=>x.st==='ok');
+const missing=()=>DOCR().filter(c=>c.req&&!okDoc(c.k));
+const pubMail=()=>isPub(I.d.email);
+const instOk=()=>F0.concat(F1).filter(f=>f.req).every(f=>(I.d[f.k]||'').trim());
+const repOk=()=>F2.filter(f=>f.req).every(f=>(I.d[f.k]||'').trim())&&!!I.regRole;
+const dot=(c,i)=>`<span class="in-dot${c?' '+c:''}">${i||''}</span>`;
+const rowIc=c=>c==='ok'?ck(11):c==='warn'?BANGd:'';
+const kvs=l=>`<div class="inv-kv">${l.map(x=>`<div${x[2]?' class="inv-full"':''}><span>${x[0]}</span><b>${x[1]||'<em>Not added</em>'}</b></div>`).join('')}</div>`;
+const lnk=u=>{ u=(u||'').trim(); if(!u) return ''; const h=/^https?:\/\//i.test(u)?u:'https://'+u; return `<a href="${esc(h)}" target="_blank" rel="noopener" class="inv-link">${esc(u)}</a>`; };
+const remH=()=>I.d.remail?esc(I.d.remail)+(isPub(I.d.remail)?' <span class="in-tag y">Public email</span>':''):'';
+function docsLine(){
+  const n=DOCC.filter(c=>okDoc(c.k)).length+I.extra.filter(x=>x.st==='ok').length, m=missing();
+  return n?ck(12)+' '+n+(n===1?' document':' documents')+' uploaded'+(m.length?' · missing: '+m.map(c=>esc(c.t)).join(', '):''):'No documents uploaded';
+}
+
+/* ---------- document upload ---------- */
+function upload(k,f){
+  delete ERR[k];
+  if(!/\.(pdf|jpe?g|png)$/i.test(f.name)){ ERR[k]='Unsupported file. Upload a PDF, JPG or PNG.'; render(); return; }
+  if(!f.size){ ERR[k]='This file is empty. Choose another file.'; render(); return; }
+  if(f.size>5*1048576){ ERR[k]='File is larger than 5 MB. Upload a smaller file.'; render(); return; }
+  let id=k, rec={name:f.name,size:fsz(f.size),st:'up'};
+  if(k==='new'){ id='x'+Date.now(); rec.id=id; rec.type=XT; I.extra.push(rec); XOPEN=false; } else I.docs[k]=rec;
+  if(FILES[id]) URL.revokeObjectURL(FILES[id].u);
+  FILES[id]={u:URL.createObjectURL(f),t:f.type||''};
+  render();
+  setTimeout(()=>{ rec.st='ok'; save(); render(); },700);
+}
+function preview(k){
+  const u=FILES[k], n=k[0]==='x'?I.extra.find(x=>x.id===k):I.docs[k];
+  if(!u||!n){ toast('Preview is only available for files uploaded in this session. Replace the file to preview it.'); return; }
+  const img=/^image\//.test(u.t);
+  modal(`<h4 style="margin:0 0 12px;font-size:16px;overflow-wrap:anywhere">${esc(n.name)}</h4>${img?`<img src="${u.u}" alt="Preview of ${esc(n.name)}" style="max-width:100%;display:block;margin:0 auto">`:`<iframe src="${u.u}" title="Preview of ${esc(n.name)}" style="width:100%;height:60vh;border:1px solid var(--line)"></iframe>`}<div class="in-actions" style="margin-top:12px"><span></span><div class="r"><button class="btn btn-primary btn-sm" onclick="IN.closeM()">Close</button></div></div>`);
+}
+const dz=k=>`<label class="inv-drop" for="inF-${k}" ondragover="event.preventDefault();this.classList.add('on')" ondragleave="this.classList.remove('on')" ondrop="event.preventDefault();this.classList.remove('on');IN.drop('${k}',event)"><input type="file" id="inF-${k}" accept=".pdf,.jpg,.jpeg,.png" onchange="IN.pick('${k}',event)"><span><b>Drag &amp; drop</b> a file here or <u>Browse files</u></span><small>PDF, JPG or PNG · up to 5 MB</small></label>`;
+const frow=(k,f,lbl)=>`<div class="inv-file">${f.st==='up'?`<span class="inv-fn"><span class="in-load"></span>Uploading…<small>${esc(f.name)}</small></span>`:`<span class="inv-fn"><span class="inv-up">${ck(12)} Uploaded</span>${lbl?' · '+esc(lbl):''}<b>${esc(f.name)}</b><small>${esc(f.size)}</small></span><span class="inv-fa"><button class="btn btn-ghost btn-sm" onclick="IN.prev('${k}')">Preview</button><button class="btn btn-ghost btn-sm" onclick="document.getElementById('inF-${k}').click()">Replace</button><button class="btn btn-ghost btn-sm" onclick="IN.rm('${k}')">Remove</button><input type="file" id="inF-${k}" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="IN.pick('${k}',event)"></span>`}</div>`;
+const errH=k=>ERR[k]?`<div class="in-err" role="alert" style="display:block">${esc(ERR[k])}</div>`:'';
+function upCard(c){
+  const f=I.docs[c.k], ok=okDoc(c.k);
+  return `<div class="inv-doc${ok?' ok':''}${ERR[c.k]?' bad':''}"><div class="inv-doc-h"><b>${c.t}</b>${ok?`<span class="in-tag g">${ck(10)} Uploaded</span>`:c.req?'<span class="in-tag y">Required</span>':'<span class="in-tag">Where applicable</span>'}</div><p class="sub2">${c.d}</p>${f?frow(c.k,f):dz(c.k)}${errH(c.k)}</div>`;
+}
+function extraBlock(){
+  return (I.extra.length?`<div class="inv-extra">${I.extra.map(x=>frow(x.id,x,x.type)).join('')}</div>`:'')
+   +(XOPEN?`<div class="inv-add"><div class="in-f"><label>Document type<i>Required</i></label><select onchange="IN.xt(this.value)">${XTYPES.map(t=>`<option${XT===t?' selected':''}>${t}</option>`).join('')}</select></div>${dz('new')}${errH('new')}<div><button class="btn btn-ghost btn-sm" onclick="IN.xopen(0)">Cancel</button></div></div>`:`<div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="IN.xopen(1)">+ Add another document</button></div>`);
+}
+
+/* ---------- step 4 sections ---------- */
+function regCard(){
+  return card('Who is registering','Select your role at the institution.',`<div class="inv-roles" role="radiogroup" aria-label="Registration role">${REGR.map(r=>`<button type="button" class="inv-role${I.regRole===r?' on':''}" role="radio" aria-checked="${I.regRole===r}" data-v="${esc(r)}" onclick="IN.regRole(this.dataset.v)">${I.regRole===r?ck(12)+' ':''}${r}</button>`).join('')}</div>`);
+}
+function repCard(){
+  const d=I.d;
+  return card('Representative verification','Details of the person registering this institution.',kvs([['Name',esc(d.rname)],['Designation',esc(d.rdes)],['Department',esc(d.rdep)],['Official email',remH()],['Phone',esc(d.rphone)]])
+   +`<div class="in-grid">${fld(EIDF,'d')}</div>`
+   +(isPub(d.remail)?note(`<b>${BANGs} Public email detected — additional verification required</b><br>Upload representative proof below.`,'in-warn'):'')
+   +`<a href="#" class="inv-link" onclick="IN.go(2);return false">Edit representative details</a>`);
+}
+function docsCard(){
+  return card('Verification documents','Upload clear PDF, JPG or PNG files, up to 5 MB each. You can submit now and upload any missing document later.',
+   (pubMail()?note('<b>Stronger verification needed</b><br>Your institution email is a public email, so the three required documents must be uploaded.','in-warn'):'')
+   +`<div class="inv-docs">${DOCR().map(upCard).join('')}</div>${extraBlock()}`);
+}
+
+/* ---------- verification status ---------- */
+function vState(){ if(I.vs==='verified') return 'verified'; if(I.vs==='changes'||missing().length) return 'info'; return 'pending'; }
+function vRows(){
+  const em=I.em==='ok', m=!missing().length;
+  return [
+   em?(pubMail()?['warn','Public email, stronger documents required']:['ok','Email verified']):['','Email not verified'],
+   [I.web?'ok':'',I.web?'Website confirmed':'Website not confirmed'],
+   [instOk()?'ok':'','Institution details'],
+   [repOk()?'ok':'','Representative details'],
+   [m?'ok':'warn',m?'Documents uploaded':'Documents missing']];
+}
+function missPanel(){
+  const m=missing(); if(!m.length) return '';
+  return note(`<b>Missing ${m.length===1?'document':'documents'}</b><br>Upload ${m.length===1?'it':'them'} here. You do not need to restart registration.`,'in-warn')
+   +m.map(c=>`<div class="inv-miss"><span>${BANGd.replace('<svg','<svg class="inv-warn-ic"')} ${c.t}</span><span><input type="file" id="inM-${c.k}" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="IN.pick('${c.k}',event)"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('inM-${c.k}').click()">Upload</button></span></div>${errH(c.k)}`).join('');
+}
+function vCard(){
+  const s=vState(), L=s==='verified'?['ok',ck(11),'Verified Institution']:s==='info'?['warn',BANGd,'Additional information required']:['wait',CLKd,'Admin review pending'];
+  return `<div class="in-card"><div class="inv-stat-h"><h4>Verification</h4>${vBadge()}</div><ul class="in-list">${vRows().map(x=>`<li>${dot(x[0],rowIc(x[0]))}${x[1]}</li>`).join('')}<li>${dot(L[0],L[1])}<b>${L[2]}</b></li></ul>${missPanel()}</div>`;
+}
+function vBanner(){
+  const v=I.vs==='verified', m=missing().length, ch=I.vs==='changes';
+  const sub=v?'This institution has been reviewed and verified.':ch?'Additional information required. Open the Verification tab to update your documents.':m?`Additional information required: ${m} ${m===1?'document is':'documents are'} missing.`:'Your institution is awaiting admin review.';
+  return `<div class="inv-ban ${v?'ok':'wait'}">${v?ck(16):CLKs}<div><b>${v?'Verified Institution':'Verification Pending'}</b><span>${sub}</span></div>${!v&&(m||ch)?'<button class="btn btn-ghost btn-sm" onclick="IN.sec(\'verify\')">Add information</button>':''}</div>`;
+}
+
+/* ---------- company profile (dashboard) ---------- */
+function profileBody(){
+  const d=I.d, pub=isPub(d.email);
+  const addr=[d.address,d.area,d.city,d.state,d.pin].filter(Boolean).map(esc).join(', ');
+  const ems=d.email?esc(d.email)+(I.em==='ok'?(pub?' <span class="in-tag y">Public email</span>':' <span class="in-tag g">Verified</span>'):''):'';
+  const web=d.website?lnk(d.website)+(I.web?' <span class="in-tag g">Confirmed</span>':''):'';
+  const ed=n=>`<button class="btn btn-ghost btn-sm" onclick="IN.edit(${n})">Edit</button>`;
+  const camps=[{name:d.name||'Main campus',img:d.logo,loc:locStr(d),t:'Main campus'}].concat(I.branches.map(b=>({name:b.name,img:b.img,loc:locStr(b),t:b.type}))).map(b=>`<div class="in-camp"><div class="lft">${thumb(b)}<div><b>${esc(b.name)}</b><span>${esc(b.loc)||'Location not added'}${b.t?' · '+esc(b.t):''}</span></div></div></div>`).join('');
+  const about=(d.about1||d.about2)?(d.about1?`<p style="margin:0 0 6px;font-weight:600;font-size:13.5px">${esc(d.about1)}</p>`:'')+(d.about2?`<p style="margin:0;font-size:13px;color:var(--ink-soft);line-height:1.6">${esc(d.about2)}</p>`:''):'<p style="margin:0;font-size:13px;color:var(--ink-faint)">No description added yet.</p>';
+  return card('Institution details','',kvs([['Institution name',esc(d.name)],['Institution type',esc(d.type)],['Year established',esc(d.year)],['Official website',web],['Official email',ems],['Phone',esc(d.phone)],['University / board affiliation',esc(d.affil)],['Registration / recognition no.',esc(d.reg)],['Accreditation',esc(d.accred)],['Full address',addr,1]])+ed(0))
+   +card('About institution','',about+'<div style="margin-top:10px">'+ed(0)+'</div>')
+   +card('Authorized representative','The person responsible for managing this institution profile.',kvs([['Name',esc(d.rname)],['Designation',esc(d.rdes)],['Registration role',esc(I.regRole)],['Department',esc(d.rdep)],['Official email',remH()],['Phone',esc(d.rphone)],['Employee ID',esc(d.eid)]])+ed(2))
+   +card('Branches / campuses','',camps+`<button class="btn btn-ghost btn-sm" onclick="IN.sec('branches')">Manage campuses</button>`);
+}
+
 /* ---------- completion + badges ---------- */
 function pct(){
   const d=I.d, ks=F0.concat(F1,F2).filter(f=>!f.sh||f.sh(d)).map(f=>f.k);
-  const n=ks.filter(k=>d[k]).length+(d.logo?1:0)+(I.em==='ok'?1:0)+(I.doc&&I.doc.st==='ok'?1:0)+(I.branches.length?1:0);
+  const n=ks.filter(k=>d[k]).length+(d.logo?1:0)+(I.em==='ok'?1:0)+(anyDoc()?1:0)+(I.branches.length?1:0);
   return Math.min(100,Math.round(n/(ks.length+4)*100));
 }
 function vBadge(){
   if(I.vs==='verified') return `<span class="in-vbadge">${ck(12)} Verified Institution</span>`;
   if(I.vs==='changes') return '<span class="in-vbadge r">Changes required</span>';
-  return '<span class="in-vbadge p">Verification pending</span>';
+  return `<span class="in-vbadge p">${CLKs} Verification Pending</span>`;
 }
 const locStr=o=>[o.city,o.state].filter(Boolean).join(', ');
 const thumb=(o,n)=>`<div class="in-thumb" style="width:52px;height:52px;overflow:hidden">${o.img?`<img src="${o.img}" alt="${esc(o.name)}" style="width:100%;height:100%;object-fit:cover">`:esc((o.name||n||'').slice(0,2).toUpperCase())}</div>`;
@@ -162,7 +285,7 @@ function s2(){
 }
 function emailInner(){
   const e=I.em, d=I.d;
-  if(e==='ok') return note(`<b>${ck(13)} Official email verified</b><br>${esc(d.email)}`,'in-ok');
+  if(e==='ok') return isPub(d.email)?note(`<b>${BANGs} Public email detected — additional verification required</b><br>${esc(d.email)}<br>This email is accepted. Upload the documents below to complete verification.`,'in-warn'):note(`<b>${ck(13)} Official email verified</b><br>${esc(d.email)}`,'in-ok');
   if(e==='sent') return note(`<b>Check your email</b><br>We sent a verification code to ${esc(d.email)}`)+
    `<div class="in-otp">${[0,1,2,3,4,5].map(i=>`<input maxlength="1" inputmode="numeric" aria-label="Digit ${i+1}" oninput="IN.otp(this,${i})" onkeydown="IN.otpKey(event,${i})">`).join('')}</div>
    <div class="in-err" id="otpErr" style="display:none"></div>
@@ -172,23 +295,19 @@ function emailInner(){
    <p style="font-size:13px;color:var(--ink-soft);margin:12px 0 0">Don't have an official institution email? <a href="#" onclick="IN.go(3);return false" style="color:var(--blue-700);font-weight:600">Choose another verification method</a></p>`;
 }
 function s3(){
-  const dc=I.doc;
   return card('Verify your institution','Provide official information that helps us confirm that this institution exists and that you are authorized to represent it.',`<div class="in-methods">
-  <div class="in-method rec"><h5>Official institution email <span class="in-tag g">Recommended</span>${I.em==='ok'?'<span class="in-tag g">Verified</span>':''}</h5><p class="sub2">Verify using your institution's official email address.</p>${emailInner()}</div>
+  <div class="in-method rec"><h5>Official institution email <span class="in-tag g">Recommended</span>${I.em==='ok'?(isPub(I.d.email)?'<span class="in-tag y">Public email</span>':'<span class="in-tag g">Verified</span>'):''}</h5><p class="sub2">Verify using your institution's official email address.</p>${emailInner()}</div>
   <div class="in-method"><h5>Official website${I.web?'<span class="in-tag g">Confirmed</span>':''}</h5><p class="sub2">Confirm the institution's official website.</p><div class="in-grid">${fld(WEBF,'d')}</div>
    ${note('Your website should clearly represent the same institution name.')}<button class="btn btn-ghost btn-sm" onclick="IN.web()">Confirm website</button></div>
-  <div class="in-method"><h5>Official institution document${dc&&dc.st==='ok'?'<span class="in-tag g">Uploaded</span>':''}</h5><p class="sub2">Upload an official document that identifies the institution.</p>
-   <div class="in-f"><label>Document type<i>Optional</i></label><select onchange="IN.docType(this.value)"><option value="">Select</option>${DOCS.map(x=>`<option${I.docType===x?' selected':''}>${x}</option>`).join('')}</select></div>
-   <input type="file" id="inDoc" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="IN.doc(event)">
-   ${dc?`<div class="in-file"><span>${dc.st==='up'?'<span class="in-load"></span>Uploading…':ck(13)} ${esc(dc.name)}<br><small style="color:var(--ink-faint)">${dc.size}</small></span><span><button class="btn btn-ghost btn-sm" onclick="document.getElementById('inDoc').click()">Replace</button> <button class="btn btn-ghost btn-sm" onclick="IN.rmDoc()">Remove</button></span></div>`:'<div style="margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="document.getElementById(\'inDoc\').click()">Upload document</button></div>'}
-   <div class="in-err" id="docErr" style="display:block"></div><p class="sub2" style="margin:8px 0 0">Accepted: PDF, JPG, JPEG, PNG. Up to 5 MB.</p>${note('Your document will be reviewed before the institution is marked as verified.')}</div></div>
-   <div class="in-note in-bad" id="vErr" style="display:none"></div>`)
+</div>`)
+  + regCard() + repCard() + docsCard() + vCard()
   + card('Your connection with this institution','Are you authorized to create and manage this institution profile?',`
    <label class="in-radio"><input type="radio" name="auth"${I.auth==='self'?' checked':''} onchange="IN.auth('self')"> Yes, I am authorized to represent this institution</label>
    <label class="in-radio"><input type="radio" name="auth"${I.auth==='behalf'?' checked':''} onchange="IN.auth('behalf')"> I am creating this profile on behalf of the institution</label>
    ${I.auth==='behalf'?`<div class="in-grid"><div class="in-f"><label>Relationship / role<i>Required</i></label><select onchange="IN.role(this.value)"><option value="">Select</option>${ROLES.map(x=>`<option${I.role===x?' selected':''}>${x}</option>`).join('')}</select></div></div>`:''}
    ${note('Only create a profile for an institution you are authorized to represent.','in-warn')}
-   <label class="in-check"><input type="checkbox"${I.c1?' checked':''} onchange="IN.c1(this.checked)"> I confirm that the information provided is accurate and that I am authorized to represent this institution.</label>`);
+   <label class="in-check"><input type="checkbox"${I.c1?' checked':''} onchange="IN.c1(this.checked)"> I confirm that the information provided is accurate and that I am authorized to represent this institution.</label>
+   <div class="in-note in-bad" id="vErr" style="display:none"></div>`);
 }
 function s4(){ return branchMgr(); }
 function s5(){
@@ -196,8 +315,8 @@ function s5(){
   const S=[
    ['Institution details',0,`<b>${esc(d.name)}</b><br>${r('Type',d.type)}${r('Website',d.website)}${r('Email',d.email)}${r('Phone',d.phone)}`],
    ['Location',1,`${esc(locStr(d))}<br>${r('PIN code',d.pin)}${r('Area',d.area)}${r('Address',d.address)}`],
-   ['Representative details',2,`<b>${esc(d.rname)}</b><br>${esc(d.rdes)}${d.rdep?', '+esc(d.rdep):''}<br>${esc(d.remail)}<br>${I.em==='ok'?ck(12)+' Email verified':'Email not verified yet'}`],
-   ['Verification',3,`${I.em==='ok'?ck(12)+' Official email verified':'Official email not verified'}<br>${I.doc?ck(12)+' Document uploaded ('+esc(I.doc.name)+')':'No document uploaded'}<br>Review pending after submission`],
+   ['Representative details',2,`<b>${esc(d.rname)}</b><br>${esc(d.rdes)}${d.rdep?', '+esc(d.rdep):''}<br>${esc(d.remail)}<br>${r('Registration role',I.regRole)}${I.em==='ok'?ck(12)+' Email verified':'Email not verified yet'}`],
+   ['Verification',3,`${I.em==='ok'?ck(12)+' Official email verified':'Official email not verified'}<br>${docsLine()}<br>Review pending after submission`],
    ['Branches / campuses',4,`${I.branches.length+1} ${I.branches.length?'campuses':'campus'}<br>Main: ${esc(d.name)}<br>${I.branches.map(b=>(b.img?`<img class="in-mini" src="${b.img}" alt="">`:'')+esc(b.name)).join('<br>')}`]];
   return card('Review your institution profile','Check everything before you submit.',S.map((x,i)=>`<div class="in-acc${i===0?' open':''}"><button onclick="this.parentNode.classList.toggle('open')"><span>${x[0]}</span><span><a href="#" onclick="event.stopPropagation();IN.edit(${x[1]});return false" style="color:var(--blue-700);font-size:13px">Edit</a></span></button><div class="body">${x[2]}</div></div>`).join('')
    +`<label class="in-check"><input type="checkbox" id="finalChk"${I.c2?' checked':''} onchange="IN.c2(this.checked)"> I confirm that the information provided is accurate.</label><div class="in-err" id="finalErr" style="display:none;margin-bottom:8px">Confirm that the information is accurate before submitting.</div>`);
@@ -224,17 +343,18 @@ function bForm(){
 
 /* ---------- status + dashboard ---------- */
 function statusBody(){
-  const d=I.d, ok=I.doc&&I.doc.st==='ok';
+  const d=I.d, ok=anyDoc();
   if(I.vs==='verified') return `<div class="in-status"><div class="big" style="background:var(--green)">${ck(26)}</div><h3 style="margin:0 0 4px">Verified institution</h3><p style="font-size:18px;font-weight:700;color:var(--blue-900);margin:0 0 6px">${esc((d.name||'').toUpperCase())}</p>${vBadge()}</div>
    <ul class="in-list">${[['Official email',I.em==='ok'?'Verified':'Not provided'],['Institution information','Confirmed'],['Institution document',ok?'Reviewed':'Not provided'],['Representative','Confirmed']].map(x=>`<li><span class="in-dot ${x[1]==='Not provided'?'':'ok'}">${x[1]==='Not provided'?'':ck(11)}</span><b>${x[0]}</b> ${x[1]}</li>`).join('')}</ul>`;
   if(I.vs==='changes') return `<div class="in-status"><div class="big" style="background:#B3261E">${BANG}</div><h3 style="margin:0 0 6px">Additional information required</h3><p style="color:var(--ink-soft);margin:0">We need some additional information before we can complete your institution verification.</p></div>
    ${note('<b>Reason</b><br>The uploaded document does not clearly match the institution name.','in-bad')}
+   ${missPanel()}
    <div class="in-actions" style="justify-content:flex-start"><button class="btn btn-primary btn-sm" onclick="IN.edit(0)">Update information</button><button class="btn btn-ghost btn-sm" onclick="IN.edit(3)">Replace document</button></div>
    <p class="sub2" style="margin-top:12px">Your profile information has not been deleted. You can update the required details and resubmit.</p>`;
-  const L=[['Institution details submitted',1],[I.em==='ok'?'Official email verified':'Official email not verified',I.em==='ok'],['Institution location added',!!d.city],['Representative details added',!!d.rname],[ok?'Verification document uploaded':'No verification document uploaded',ok]];
-  return `<div class="in-status"><div class="big" style="background:#C77700">${CLK}</div><h3 style="margin:0 0 6px">Verification pending</h3><p style="color:var(--ink-soft);margin:0">Your institution profile has been submitted for review.</p></div>
-   <ul class="in-list">${L.map(x=>`<li><span class="in-dot${x[1]?' ok':''}">${x[1]?ck(11):''}</span>${x[0]}</li>`).join('')}<li><span class="in-dot wait">${CLK.replace('width="24" height="24"','width="12" height="12"')}</span>Institution review pending</li></ul>
-   ${note('We\'ll show your institution as verified after the submitted information has been reviewed.')}`;
+  const m=missing().length;
+  return `<div class="in-status"><div class="big" style="background:${m?'#B3261E':'#C77700'}">${m?BANG:CLK}</div><h3 style="margin:0 0 6px">${m?'Additional information required':'Verification pending'}</h3><p style="color:var(--ink-soft);margin:0">${m?'Your institution profile has been submitted. Upload the missing documents below to continue the review.':'Your institution profile has been submitted for review.'}</p></div>
+   <ul class="in-list">${vRows().map(x=>`<li>${dot(x[0],rowIc(x[0]))}${x[1]}</li>`).join('')}<li>${dot('wait',CLKd)}Admin review pending</li></ul>
+   ${missPanel()}${m?'':note('We\'ll show your institution as verified after the submitted information has been reviewed.')}`;
 }
 const demoBar=()=>`<div class="in-demo">Demo: preview a state <button onclick="IN.vs('pending')">Pending</button><button onclick="IN.vs('verified')">Verified</button><button onclick="IN.vs('changes')">Changes required</button></div>`;
 function statusPage(){
@@ -245,13 +365,13 @@ function dash(){
   const d=I.d, p=pct(), sc=I.sec;
   const nav=[['profile','Institution profile'],['branches','Branches & campuses'],['verify','Verification'],['rep','Representative'],['jobs','Posted jobs']].map(x=>`<button class="${sc===x[0]?'on':''}" onclick="IN.sec('${x[0]}')">${x[1]}</button>`).join('');
   let body='';
-  if(sc==='profile') body=card('Institution profile','',rows([['Name',d.name],['Type',d.type],['Website',d.website],['Email',d.email],['Phone',d.phone],['Established',d.year],['Affiliation',d.affil],['Accreditation',d.accred],['Location',locStr(d)],['Address',d.address]])+`<button class="btn btn-ghost btn-sm" onclick="IN.edit(0)">Edit profile</button>`);
+  if(sc==='profile') body=profileBody();
   if(sc==='branches') body=branchMgr();
-  if(sc==='verify') body=`<div class="in-card">${statusBody()}</div>${demoBar()}`;
-  if(sc==='rep') body=card('Representative','The person responsible for managing this institution profile.',rows([['Name',d.rname],['Designation',d.rdes],['Department',d.rdep],['Work email',d.remail+(I.em==='ok'?' (verified)':'')],['Work phone',d.rphone],['Connection',I.auth==='behalf'?'On behalf: '+I.role:'Authorized to represent']])+`<button class="btn btn-ghost btn-sm" onclick="IN.edit(2)">Edit details</button>`);
+  if(sc==='verify') body=`<div class="in-card">${statusBody()}</div>${docsCard()}${demoBar()}`;
+  if(sc==='rep') body=card('Representative','The person responsible for managing this institution profile.',rows([['Name',d.rname],['Designation',d.rdes],['Registration role',I.regRole],['Department',d.rdep],['Employee ID',d.eid],['Work email',d.remail+(I.em==='ok'?' (verified)':'')],['Work phone',d.rphone],['Connection',I.auth==='behalf'?'On behalf: '+I.role:'Authorized to represent']])+`<button class="btn btn-ghost btn-sm" onclick="IN.edit(2)">Edit details</button>`);
   if(sc==='jobs'){ const n=typeof postedJobs!=='undefined'?Object.keys(postedJobs).length:0;
     body=card('Posted jobs',n?`${n} ${n===1?'job':'jobs'} posted from this institution.`:'',n?'<button class="btn btn-primary btn-sm" onclick="IN.tab(\'myjobs\')">View posted jobs</button> <button class="btn btn-ghost btn-sm" onclick="IN.tab(\'post\')">Post another job</button>':'<div class="empty-state"><h4>No jobs posted yet</h4><p>Post your first faculty opening and choose which campus it belongs to.</p></div><button class="btn btn-primary btn-sm" onclick="IN.tab(\'post\')">Post a job</button>'); }
-  return `<div class="in-wrap"><div class="in-card"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">${logoBox(64)}<div style="flex:1;min-width:200px"><h3 style="margin:0;font-size:20px;color:var(--blue-900)">${esc((d.name||'').toUpperCase())}</h3><div style="margin:5px 0">${vBadge()}</div><span style="font-size:13px;color:var(--ink-soft)">${PIN_IC} ${esc(locStr(d))}</span></div></div>
+  return `<div class="in-wrap">${vBanner()}<div class="in-card"><div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">${logoBox(64)}<div style="flex:1;min-width:200px"><h3 style="margin:0;font-size:20px;color:var(--blue-900)">${esc((d.name||'').toUpperCase())}</h3><div style="margin:5px 0;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${vBadge()}${d.type?`<span class="in-tag">${esc(d.type)}</span>`:''}</div><span style="font-size:13px;color:var(--ink-soft)">${PIN_IC} ${esc(locStr(d))}</span></div></div>
   <div style="margin-top:16px"><b style="font-size:13.5px">Profile completion: ${p}%</b><div class="in-bar" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100"><div style="width:${p}%"></div></div>
   <p style="font-size:13px;color:var(--ink-soft);margin:0 0 10px">Complete your profile to improve your institution's visibility.</p><button class="btn btn-primary btn-sm" onclick="IN.edit(0)">Complete profile</button></div></div>
   <div class="in-nav">${nav}</div>${body}</div>`;
@@ -294,7 +414,9 @@ window.IN={
     if(s===0) ok=valid(F0,'d'); else if(s===1) ok=valid(F1,'d'); else if(s===2) ok=valid(F2,'d');
     else if(s===3){
       const e=$('vErr'); let m='';
-      if(I.em!=='ok'&&!(I.doc&&I.doc.st==='ok')) m='Complete at least one verification method: verify your official email or upload an official document.';
+      if(!I.regRole) m='Select who is registering this institution.';
+      else if(I.em!=='ok'&&!anyDoc()) m='Complete at least one verification method: verify your official email or upload an official document.';
+      else if(pubMail()&&missing().length) m='Public email detected: upload '+missing().map(c=>c.t).join(', ')+' to continue.';
       else if(!I.auth) m='Tell us whether you are authorized to represent this institution.';
       else if(I.auth==='behalf'&&!I.role) m='Select your relationship to the institution.';
       else if(!I.c1) m='Confirm the statement at the bottom of this step to continue.';
@@ -320,13 +442,13 @@ window.IN={
     if(!/^\d{6}$/.test(c)){ e.textContent='Enter the 6-digit code we sent to your email.'; e.style.display='block'; return; }
     I.em='ok'; save(); render(); toast('Official email verified'); },
   web(){ const m=chk(WEBF,I.d.website); mark('d',WEBF,m); if(m) return; I.web=true; save(); render(); toast('Website confirmed'); },
-  docType(v){ I.docType=v; save(); },
-  doc(e){ const f=e.target.files[0]; if(!f) return; const er=$('docErr');
-    if(!/\.(pdf|jpe?g|png)$/i.test(f.name)){ er.textContent='Unsupported file. Upload a PDF, JPG, JPEG or PNG.'; return; }
-    if(f.size>5*1048576){ er.textContent='File is larger than 5 MB. Upload a smaller file.'; return; }
-    I.doc={name:f.name,size:(f.size/1048576).toFixed(1)+' MB',st:'up'}; render();
-    setTimeout(()=>{ I.doc.st='ok'; save(); render(); },800); },
-  rmDoc(){ I.doc=null; save(); render(); },
+  regRole(v){ I.regRole=v; save(); render(); },
+  pick(k,e){ const f=e.target.files[0]; e.target.value=''; if(f) upload(k,f); },
+  drop(k,e){ const f=e.dataTransfer&&e.dataTransfer.files[0]; if(f) upload(k,f); },
+  prev(k){ preview(k); },
+  rm(k){ if(k[0]==='x') I.extra=I.extra.filter(x=>x.id!==k); else delete I.docs[k]; delete FILES[k]; delete ERR[k]; save(); render(); },
+  xopen(v){ XOPEN=!!v; delete ERR['new']; render(); },
+  xt(v){ XT=v; },
   auth(v){ I.auth=v; save(); render(); }, role(v){ I.role=v; save(); }, c1(v){ I.c1=v; save(); }, c2(v){ I.c2=v; save(); },
   vs(v){ I.vs=v; save(); render(); },
   dash(){ I.view='dash'; save(); render(); top(); },
@@ -345,7 +467,7 @@ window.IN={
   sample(){
     Object.assign(I.d,{name:'Upaadhyay University',type:'University',short:'Upaadhyay Univ.',website:'https://www.upaadhyay.edu.in',email:'placement@upaadhyay.edu.in',phone:'9876543210',year:'1998',reg:'TS/UNI/1998/0142',affil:'UGC recognised',accred:'NAAC A, AICTE approved',about1:'A multidisciplinary university in Hyderabad.',about2:'Upaadhyay University offers undergraduate, postgraduate and doctoral programmes across engineering, sciences and management.',country:'India',pin:'500072',state:'Telangana',district:'Hyderabad',city:'Hyderabad',area:'Kukatpally',address:'Plot 12, University Road, Kukatpally',rname:'K Kittu',rdes:'Placement Officer',rdep:'Placement / Training & Placement',remail:'placement@upaadhyay.edu.in',rphone:'9876543210'});
     I.branches=[{name:'Warangal Campus',type:'Campus',code:'WGL-01',pin:'506002',state:'Telangana',district:'Warangal',city:'Warangal',area:'Hanamkonda',address:'NH 163, Hanamkonda',cname:'S Rao',cdes:'Campus Director',email:'warangal@upaadhyay.edu.in',phone:'9123456780',desc:'Engineering and sciences campus.'},{name:'Secunderabad Campus',type:'Campus',code:'SEC-01',pin:'500003',state:'Telangana',district:'Hyderabad',city:'Secunderabad',area:'Secunderabad',address:'Sardar Patel Road',cname:'A Devi',cdes:'Dean',email:'sec@upaadhyay.edu.in',phone:'9123456781',desc:'Management and commerce campus.'}];
-    I.em='ok'; I.web=true; I.doc={name:'affiliation-certificate.pdf',size:'2.4 MB',st:'ok'}; I.docType=DOCS[1]; I.auth='self'; I.c1=true; I.max=5; save(); render(); toast('Sample data loaded'); },
+    I.em='ok'; I.web=true; I.d.eid='UU-2041'; I.regRole='Placement'; I.docs={reg:{name:'registration-certificate.pdf',size:'1.2 MB',st:'ok'},rep:{name:'authorization-letter.pdf',size:'320 KB',st:'ok'},idp:{name:'institution-id.png',size:'480 KB',st:'ok'},aff:{name:'affiliation-certificate.pdf',size:'2.4 MB',st:'ok'}}; I.auth='self'; I.c1=true; I.max=5; save(); render(); toast('Sample data loaded'); },
   reset(){ if(!confirm('Clear everything in this institution profile form?')) return; localStorage.removeItem(KEY); I=load(); I.d={country:'India'}; welcome=false; render(); }
 };
 
