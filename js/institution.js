@@ -128,14 +128,21 @@ const logoBox=(s)=>`<div class="in-logo-box" style="width:${s}px;height:${s}px">
 /* ---------- wizard ---------- */
 function wiz(){
   const s=I.step;
-  const steps=STEPS.map((t,i)=>`<button class="in-step${i===s?' on':i<=I.max?' done':''}" onclick="IN.jump(${i})">${i+1}. ${t}</button>`).join('');
+  const steps=STEPS.map((t,i)=>`<button class="in-step${i===s?' on':i<=I.max?' done':''}" role="tab" aria-selected="${i===s}" onclick="IN.jump(${i})"><span class="in-step-n">${i+1}</span><span class="in-step-t">${t}</span></button>`).join('');
+  const last=s===STEPS.length-1;
   return `<div class="in-wrap"><div class="in-head"><h3>${I.sub?'Edit your institution profile':'Create your institution profile'}</h3><p>Add your official institution details so candidates can identify and trust your organization.</p></div>
-  <div class="in-steps" role="tablist">${steps}</div>
-  ${welcome?note('<b>Welcome back.</b> Your saved progress is loaded. Carry on from where you stopped.','in-ok'):''}
-  ${[s0,s1,s2,s3,s4,s5][s]()}
-  <div class="in-actions"><button class="btn btn-ghost btn-sm" onclick="IN.later()">Save and continue later</button>
-  <div class="r">${s>0?'<button class="btn btn-ghost btn-sm" onclick="IN.back()">Back</button>':''}<button class="btn btn-primary btn-sm" id="nextBtn" onclick="IN.next()">${s===5?(I.sub?'Save changes and resubmit':'Submit institution profile'):'Continue'}</button></div></div>
-  <div class="in-demo">Demo helper: <button onclick="IN.sample()">Fill with sample data</button><button onclick="IN.reset()">Start over</button></div></div>`;
+  <div class="in-layout">
+    <aside class="in-side"><div class="in-steps" role="tablist" aria-orientation="vertical">${steps}</div>
+      <div class="in-side-foot"><div class="in-bar"><div style="width:${pct()}%"></div></div><span>${pct()}% complete</span>
+      <button class="btn btn-ghost btn-sm" onclick="IN.later()">Save and continue later</button></div></aside>
+    <section class="in-main">
+      ${welcome?note('<b>Welcome back.</b> Your saved progress is loaded. Carry on from where you stopped.','in-ok'):''}
+      ${[s0,s1,s2,s3,s4,s5][s]()}
+      <div class="in-actions"><span class="in-stepof">Step ${s+1} of ${STEPS.length}</span>
+      <div class="r">${s>0?'<button class="btn btn-ghost btn-sm" onclick="IN.back()">Back</button>':''}<button class="btn btn-primary btn-sm" id="nextBtn" onclick="IN.next()">${last?(I.sub?'Save changes and resubmit':'Submit institution profile'):'Next'}</button></div></div>
+      <div class="in-demo">Demo helper: <button onclick="IN.sample()">Fill with sample data</button><button onclick="IN.reset()">Start over</button></div>
+    </section>
+  </div></div>`;
 }
 function s0(){
   return card('Institution logo','Candidates see this next to your name.',`<div class="in-logo">${logoBox(84)}<div>
