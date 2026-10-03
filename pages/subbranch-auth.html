@@ -10,7 +10,7 @@
 <body class="page page-auth">
 <div class="auth-page" id="authOverlay">
   <div class="auth-card" id="authCard">
-    <button class="ap-close" onclick="location.href='institution-network.html?start=type'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <button class="ap-close" onclick="closeSub()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
     <button class="ap-step-back" id="authStepBack" onclick="back()" style="display:none;" type="button" aria-label="Back">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
@@ -67,7 +67,7 @@
 var Q=new URLSearchParams(location.search),mode=Q.get('mode')==='login'?'login':'register',method='email',step=1;
 function $(i){return document.getElementById(i)}
 function order(){return mode==='register'?[1,2,3,4]:[1,2,4]}
-function err(m){var e=document.querySelectorAll('.err');e.forEach(function(x){x.style.display='none'});if(m){var cur=document.querySelector('#authStep'+step+' .err');cur.textContent=m;cur.style.display='block'}}
+function err(m){var e=document.querySelectorAll('.err');e.forEach(function(x){x.style.display='none'});if(m){var cur=document.querySelector('#authStep'+step+' .err')||$('authError');cur.textContent=m;cur.style.display='block'}}
 function view(){
   document.querySelectorAll('.auth-step').forEach(function(e){e.style.display='none'});
   $('authStep'+step).style.display='block';
@@ -80,6 +80,7 @@ function view(){
   $('swMode').innerHTML=r?'<a href="#" onclick="setMode(\'login\');return false" style="font-size:13px;font-weight:600;">Already have an account? Log in</a>':'<a href="#" onclick="setMode(\'register\');return false" style="font-size:13px;font-weight:600;">New sub-branch? Create an account</a>';
   err('');
 }
+function closeSub(){location.href=(mode==='login'?'login.html':'register.html')+'?role=company'}
 function setMode(m){mode=m;step=1;view()}
 function setMethod(m){method=m;$('methodEmail').classList.toggle('active',m==='email');$('methodPhone').classList.toggle('active',m==='phone');$('emailF').style.display=m==='email'?'block':'none';$('phoneF').style.display=m==='phone'?'block':'none'}
 function sendOtp(){if(!/^\d{10}$/.test($('ph').value.trim())){err('Enter a valid 10-digit mobile number.');return}err('');$('otpF').style.display='block'}
