@@ -354,7 +354,8 @@
       if(document.getElementById('miniPanel')) refreshMiniProfile();
     }
     const navEl = document.querySelector('.nav'); if(navEl) navEl.classList.toggle('logged-in', isLoggedIn);
-    const isSeeker = isLoggedIn && currentRole !== 'company';
+    const isBranch = isLoggedIn && currentRole === 'branch';
+    const isSeeker = isLoggedIn && currentRole !== 'company' && !isBranch;
     const isCompany = isLoggedIn && currentRole === 'company';
 
     // Marketing/home nav links (For Faculty, For Employers, jobs-by-type dropdown,
@@ -380,14 +381,15 @@
     const dashLink = document.getElementById('navDashLink');
     if(dashLink){
       dashLink.href = PAGES[dashboardPageForRole()];
-      dashLink.textContent = isCompany ? 'Employer dashboard' : 'My dashboard';
+      dashLink.textContent = isBranch ? 'Branch dashboard' : (isCompany ? 'Employer dashboard' : 'My dashboard');
       dashLink.style.display = isLoggedIn ? 'inline' : 'none';
     }
     const roleBadge = document.getElementById('navRoleBadge');
     if(roleBadge){
       roleBadge.style.display = isLoggedIn ? 'inline' : 'none';
-      roleBadge.textContent = isCompany ? 'Employer' : 'Faculty';
+      roleBadge.textContent = isBranch ? 'Sub-branch' : (isCompany ? 'Employer' : 'Faculty');
     }
+    const logoutBtn = document.getElementById('navLogoutBtn'); if(logoutBtn) logoutBtn.style.display = isLoggedIn ? '' : 'none';
     const miniLink = document.getElementById('miniBrowseJobsLink');
     if(miniLink) miniLink.style.display = isSeeker ? 'flex' : 'none';
   }
@@ -459,18 +461,22 @@
   }
   function refreshMiniProfile(){
     document.getElementById('miniAvatar').src = currentRole==='company' ? (currentCompany.logo || currentUser.avatar) : currentUser.avatar;
+    const isBranch = currentRole==='branch';
     const isCompany = currentRole==='company';
-    document.getElementById('miniName').textContent = isCompany
+    document.getElementById('miniName').textContent = isBranch ? (currentUser.name || 'Your sub-branch') : isCompany
       ? (currentCompany.name || 'Your institution')
       : (currentUser.name || 'Your name');
-    document.getElementById('miniDegree').textContent = isCompany
+    document.getElementById('miniDegree').textContent = isBranch ? 'Sub-branch account' : isCompany
       ? 'Company account'
       : (currentUser.qualification ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}` : 'Add your qualification');
 
     const linksFaculty = document.getElementById('miniLinksFaculty');
     const linksCompany = document.getElementById('miniLinksCompany');
-    if(linksFaculty) linksFaculty.style.display = isCompany ? 'none' : 'flex';
+    const linksBranch = document.getElementById('miniLinksBranch');
+    if(linksFaculty) linksFaculty.style.display = (isCompany || isBranch) ? 'none' : 'flex';
     if(linksCompany) linksCompany.style.display = isCompany ? 'flex' : 'none';
+    if(linksBranch) linksBranch.style.display = isBranch ? 'flex' : 'none';
+    ['miniStatsSection','miniPrefSection'].forEach(function(id){ const el=document.getElementById(id); if(el) el.style.display = isBranch ? 'none' : ''; });
 
     const statsHeading = document.getElementById('miniStatsHeading');
     const stat1Num = document.getElementById('miniStat1Num'), stat1Label = document.getElementById('miniStat1Label');
