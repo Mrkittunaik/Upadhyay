@@ -388,17 +388,20 @@
   function previewLogo(e){
     const file = e.target.files[0];
     if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      currentCompany.logo = ev.target.result;
+    const input = e.target;
+    const apply = function(url){
+      currentCompany.logo = url;
       saveState();
       refreshDashTopAccount();
+      if(typeof updateNavForLogin === 'function') updateNavForLogin();
       const img = document.getElementById('logoPreview');
-      img.src = currentCompany.logo;
-      img.style.display = 'block';
-      document.getElementById('logoPlaceholder').style.display = 'none';
+      if(img){ img.src = url; img.style.display = 'block'; }
+      const ph = document.getElementById('logoPlaceholder'); if(ph) ph.style.display = 'none';
+      if(window.IN && IN.setLogo) IN.setLogo(url);
     };
-    reader.readAsDataURL(file);
+    if(window.LogoCrop){ LogoCrop.open(file, apply); }
+    else { const reader = new FileReader(); reader.onload = function(ev){ apply(ev.target.result); }; reader.readAsDataURL(file); }
+    input.value = '';
   }
 
   // ---------- Company profile ----------
