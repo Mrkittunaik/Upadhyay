@@ -197,3 +197,50 @@
 @media(max-width:860px){
  #dashInnerWide .in-step.done,#dashInnerWide .in-step.on{border-bottom-width:1px}
 }
+
+/* ===== v6: verification step + company profile (inv-* classes, scoped to .in-wrap) ===== */
+.in-wrap .in-dot.warn{background:#B3261E}
+.in-wrap .inv-roles{display:flex;flex-wrap:wrap;gap:6px}
+.in-wrap .inv-role{padding:7px 12px;border:1px solid var(--line);background:#fff;font:600 12.5px inherit;font-family:inherit;color:var(--ink-soft);cursor:pointer;border-radius:2px}
+.in-wrap .inv-role:hover{background:var(--blue-50)}
+.in-wrap .inv-role.on{background:var(--blue-900);border-color:var(--blue-900);color:#fff}
+.in-wrap .inv-kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 16px;margin-bottom:10px}
+.in-wrap .inv-kv>div{min-width:0}
+.in-wrap .inv-kv .inv-full{grid-column:1/-1}
+.in-wrap .inv-kv span{display:block;font-size:11.5px;font-weight:600;color:var(--ink-faint);margin-bottom:2px}
+.in-wrap .inv-kv b{display:block;font-size:13.5px;font-weight:600;color:var(--ink);overflow-wrap:anywhere}
+.in-wrap .inv-kv em{font-style:normal;font-weight:400;color:var(--ink-faint)}
+.in-wrap .inv-link{color:var(--blue-700);font-weight:600;font-size:13px;text-decoration:none}
+.in-wrap .inv-link:hover{text-decoration:underline}
+.in-wrap .inv-docs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.in-wrap .inv-doc{border:1px solid var(--line);padding:10px 12px;background:#fff;border-radius:2px;min-width:0}
+.in-wrap .inv-doc.ok{border-color:#BFE3D2;background:#FAFDFB}
+.in-wrap .inv-doc.bad{border-color:#E8B4B0}
+.in-wrap .inv-doc-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px}
+.in-wrap .inv-doc-h b{font-size:13px;color:var(--ink)}
+.in-wrap .inv-doc .sub2{margin:0 0 8px;font-size:12px}
+.in-wrap .inv-drop{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;padding:14px 10px;border:1px dashed var(--ink-faint);background:var(--blue-50);cursor:pointer;font-size:12.5px;color:var(--ink-soft);border-radius:2px}
+.in-wrap .inv-drop:hover,.in-wrap .inv-drop.on{border-color:var(--blue-700);background:#fff}
+.in-wrap .inv-drop input{display:none}
+.in-wrap .inv-drop u{color:var(--blue-700);font-weight:600;text-decoration:none}
+.in-wrap .inv-drop small{font-size:11px;color:var(--ink-faint)}
+.in-wrap .inv-file{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border:1px solid var(--line);padding:8px 10px;background:#fff;border-radius:2px}
+.in-wrap .inv-fn{min-width:0;font-size:12.5px;line-height:1.45}
+.in-wrap .inv-fn b{display:block;overflow-wrap:anywhere;color:var(--ink)}
+.in-wrap .inv-fn small{display:block;color:var(--ink-faint);font-size:11.5px}
+.in-wrap .inv-up{color:var(--green);font-weight:700}
+.in-wrap .inv-fa{display:flex;gap:6px;flex-wrap:wrap}
+.in-wrap .inv-extra{display:grid;gap:8px;margin-top:10px}
+.in-wrap .inv-add{border:1px dashed var(--line);padding:10px 12px;margin-top:10px;display:grid;gap:8px;border-radius:2px}
+.in-wrap .inv-miss{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}
+.in-wrap .inv-warn-ic{color:#B3261E}
+.in-wrap .inv-stat-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.in-wrap .inv-ban{display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;border:1px solid var(--line);border-radius:2px;font-size:13px}
+.in-wrap .inv-ban>div{flex:1;min-width:0}
+.in-wrap .inv-ban b{display:block;font-size:14px}
+.in-wrap .inv-ban span{display:block;font-size:12.5px}
+.in-wrap .inv-ban svg{flex-shrink:0}
+.in-wrap .inv-ban.ok{background:#E9F6F0;border-color:#BFE3D2;color:#125C3F}
+.in-wrap .inv-ban.wait{background:#FFF6E5;border-color:#F1D9A8;color:#7A4A00}
+@media(max-width:860px){.in-wrap .inv-kv{grid-template-columns:repeat(2,minmax(0,1fr))}.in-wrap .inv-docs{grid-template-columns:1fr}}
+@media(max-width:640px){.in-wrap .inv-kv{grid-template-columns:1fr}.in-wrap .inv-ban{flex-wrap:wrap}.in-wrap .inv-fa .btn{flex:1}}
