@@ -244,3 +244,7 @@
 .in-wrap .inv-ban.wait{background:#FFF6E5;border-color:#F1D9A8;color:#7A4A00}
 @media(max-width:860px){.in-wrap .inv-kv{grid-template-columns:repeat(2,minmax(0,1fr))}.in-wrap .inv-docs{grid-template-columns:1fr}}
 @media(max-width:640px){.in-wrap .inv-kv{grid-template-columns:1fr}.in-wrap .inv-ban{flex-wrap:wrap}.in-wrap .inv-fa .btn{flex:1}}
+
+/* ===== v7: Post a job uses the company-profile step layout ===== */
+#jobPostForm .jb-step{display:none}
+#jobPostForm .jb-step.on{display:block}
