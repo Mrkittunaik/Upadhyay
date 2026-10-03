@@ -560,6 +560,7 @@ function instHeader(){
     av.style.backgroundImage=''; av.style.backgroundColor=''; av.style.border=''; if(name) av.textContent=name.slice(0,2).toUpperCase();
   }
   try{ currentCompany.logo=d.logo||''; if(name) currentCompany.name=name; saveState(); refreshDashTopAccount(); }catch(e){}
+  try{ if(typeof updateNavForLogin==='function') updateNavForLogin(); if(document.getElementById('miniPanel')&&typeof refreshMiniProfile==='function') refreshMiniProfile(); }catch(e){}
 }
 window.instHeader=instHeader;
 function render(){ const r=$('instRoot'); if(!r) return; const y=window.scrollY; r.style.minHeight=r.offsetHeight+'px'; r.innerHTML=I.view==='wizard'?wiz():I.view==='status'?statusPage():dash(); instHeader(); window.scrollTo(0,y); r.style.minHeight=''; }
@@ -610,7 +611,11 @@ window.IN={
   logo(e){ const f=e.target.files[0]; if(!f) return; const er=$('logoErr');
     if(!/^image\/(png|jpeg)$/.test(f.type)){ er.textContent='Use a PNG or JPG image.'; return; }
     if(f.size>2*1048576){ er.textContent='Logo must be under 2 MB.'; return; }
-    const r=new FileReader(); r.onload=x=>{ I.d.logo=x.target.result; save(); render(); toast('Logo updated'); }; r.readAsDataURL(f); },
+    er.textContent=''; const inp=e.target;
+    if(window.LogoCrop){ LogoCrop.open(f,url=>{ I.d.logo=url; save(); render(); toast('Logo updated'); }); }
+    else { const r=new FileReader(); r.onload=x=>{ I.d.logo=x.target.result; save(); render(); toast('Logo updated'); }; r.readAsDataURL(f); }
+    inp.value=''; },
+  setLogo(url){ I.d.logo=url||''; save(); render(); },
   rmLogo(){ I.d.logo=''; save(); render(); },
   send(){ const m=chk(EMAILF,I.d.email); mark('d',EMAILF,m); if(m) return; I.em='sending'; render(); setTimeout(()=>{ I.em='sent'; save(); render(); },900); },
   resend(){ toast('A new code was sent to '+I.d.email); },
