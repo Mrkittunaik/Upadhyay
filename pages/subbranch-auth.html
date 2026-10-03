@@ -62,6 +62,7 @@
     <p class="ac-switch-role">Not a sub-branch? <a href="institution-network.html?start=type">Switch account type</a></p>
   </div>
 </div>
+<script src="../js/store.js"></script>
 <script>
 var Q=new URLSearchParams(location.search),mode=Q.get('mode')==='login'?'login':'register',method='email',step=1;
 function $(i){return document.getElementById(i)}
@@ -101,13 +102,13 @@ function submitAuth(e){
     if(pw.length<6){err('Password must be at least 6 characters.');return false}
     if(pw!==$('pw2').value){err('Passwords do not match.');return false}
     try{localStorage.setItem('nwSubAccount',JSON.stringify({id:id,pw:pw,branch:$('bn').value.trim(),contact:$('cp').value.trim()}))}catch(x){}
-    try{localStorage.setItem('upaadhyay_session',JSON.stringify({role:'branch',id:id}))}catch(x){}
+    setBranchSession(id,$('bn').value.trim());
     location.href='institution-network.html?start=code';return false;
   }
   var a=ls('nwSubAccount');
   if(!a){err('No sub-branch account found. Create an account first.');return false}
   if(a.id!==id||a.pw!==pw){err('Wrong email/phone or password.');return false}
-  try{localStorage.setItem('upaadhyay_session',JSON.stringify({role:'branch',id:id}))}catch(x){}
+  setBranchSession(id,a.branch);
   var d=ls('nwSub');
   location.href='institution-network.html?start='+(d&&d.st==='approved'?'dash':'code');
   return false;
