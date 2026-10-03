@@ -573,7 +573,7 @@
     const chk = id => !!document.getElementById(id).checked;
     ['title','role','category','dept','type','qual','notice','exp','expmax','salmin','salmax','campus'].forEach(jbClear);
 
-    const title = v('jbTitle'), role = v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
+    const title = v('jbTitle'), role = (v('jbRole') === 'Other' && v('jbRoleOther')) ? v('jbRoleOther') : v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
     const qualification = v('jbQualification'), notice = v('jbNotice');
     const expMin = v('jbExpMin'), expMax = v('jbExpMax');
     const salMin = v('jbSalMin'), salMax = v('jbSalMax'), salPeriod = v('jbSalPeriod') || 'month';
@@ -628,7 +628,8 @@
     pushNotif(`Job posted: ${title}.`);
 
     // reset the form and confirm
-    ['jbTitle','jbRole','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    ['jbTitle','jbRole','jbRoleOther','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    const roEl = document.getElementById('jbRoleOther'); if(roEl) roEl.style.display = 'none';
     document.getElementById('jbSalPeriod').value = 'month';
     document.getElementById('jbSalNeg').checked = false;
     document.getElementById('jbSalNorms').checked = false;
