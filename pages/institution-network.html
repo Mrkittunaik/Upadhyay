@@ -47,6 +47,12 @@
 .nw-mid{max-width:560px}
 .nw-selc>.c{padding:14px 18px}
 .nw-selc .lg.big{width:48px;height:48px}
+.nw-form{max-width:720px}
+.nw-steps{display:flex;gap:6px;margin:16px 0 0}
+.nw-steps span{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.nw-steps span.on{background:var(--blue-700)}
+.nw-conn{padding:12px 16px}
+.nw-conn .lg{width:40px;height:40px}
 .nw-lg a{color:var(--blue-700);text-decoration:underline;font-weight:600}
 .nw-stack>.pick:first-child{padding:26px 28px}
 .nw-or{display:flex;align-items:center;gap:14px;color:var(--ink-faint);margin:14px 0}
@@ -146,7 +152,7 @@ let tm;function liveQ(v){S.q=v;S.all=false;const h=document.getElementById('hits
 /* 3. confirm */
 function vConfirm(){return `<div class="nw-stack nw-mid"><h1>Selected Main Institution</h1><p class="sub">This sub-branch will be connected to the institution below.</p>
 <div class="nw-sm nw-selc">${mainCard(S.main,`<div><b>Institution Code: ${S.main.code}</b></div>`)}</div>
-<p class="btns row wrap"><button class="btn btn-primary" onclick="go('form')">Continue</button><button class="btn btn-light" onclick="go('code')">Change Institution</button></p></div>`}
+<p class="btns row wrap"><button class="btn btn-primary" onclick="S.fs=0;go('form')">Continue</button><button class="btn btn-light" onclick="go('code')">Change Institution</button></p></div>`}
 /* connection card */
 const conn=()=>`<div class="c"><div class="mut">Connected Main Institution</div><div class="row wrap" style="margin:8px 0">${lg(S.main.n)}<div class="grow"><b>${S.main.n}</b> ${B(1)}<div class="mut">${S.main.c} · Code <b>${S.main.code}</b></div></div><span class="st y"><svg width="10" height="10" viewBox="0 0 10 10" style="vertical-align:0;margin-right:2px" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="#C99A00"/></svg> Request will be sent on submit</span><button class="btn btn-light btn-sm" onclick="go('code')">Change Main Institution</button></div>
 <div class="mut">↓</div><div class="mut">MAIN INSTITUTION → YOUR SUB-BRANCH</div><div><b>${SUB.n}</b> ${B(0)}</div></div>`;
@@ -162,9 +168,16 @@ function applyForm(){const n=(FV['Sub-branch / College name']||'').trim(),c=(FV[
 function submitReg(){applyForm();if(S.logo){LOGOS[SUB.n]=S.logo;try{localStorage.setItem('nwLogos',JSON.stringify(LOGOS))}catch(e){}}
  reqs[0]={...reqs[0],...SUB,id:1,s:'Approved',mainInstitutionId:S.main.code,mainInstitutionCode:S.main.code,subBranchName:SUB.n,requestStatus:'Approved',requestDate:new Date().toISOString()};
  S.st='approved';try{localStorage.setItem('nwSub',JSON.stringify({sub:SUB,mainCode:S.main.code,st:'approved'}))}catch(e){}go('done')}
-function vForm(){return `<h1>Create Your Sub-Branch / College Profile</h1><p class="sub">You are joining <b>${S.main.n}</b> as a sub-branch. Complete your institution details below. Your profile will be sent to the Main Institution for verification.</p>${conn()}
-${Object.entries(F).map(([s,fs])=>`<div class="c" style="margin-top:14px"><h2>${s}</h2><div class="g g3">${fs.map(f=>{const[l,o]=f.split('|'),v=FV[l]||'',ev=String(v).replace(/"/g,'&quot;');return `<label class="fld">${l}${o=='area'?`<textarea rows="3" data-k="${l}" oninput="FV[this.dataset.k]=this.value">${v}</textarea>`:o=='file'?(l.startsWith('Logo')?`<span class="row"><span id="logoPv" class="lg big" style="background:#fff;border:1px dashed var(--line);overflow:hidden;padding:0">${S.logo?`<img src="${S.logo}" style="width:100%;height:100%;object-fit:cover">`:crest(SUB.n)}</span><input type="file" accept="image/*" onchange="readLogo(this)"></span><span class="mut" style="font-weight:400">Upload your own logo (under 500 KB). A free default crest is used if you skip this.</span>`:'<input type="file" accept="image/*">'):o?`<select data-k="${l}" onchange="FV[this.dataset.k]=this.value"><option value="">Select</option>${o.split(',').map(x=>`<option ${v==x?'selected':''}>${x}</option>`).join('')}</select>`:`<input data-k="${l}" value="${ev}" oninput="FV[this.dataset.k]=this.value">`}</label>`}).join('')}</div></div>`).join('')}
-<p class="btns row wrap"><button class="btn btn-light" onclick="go('confirm')">Back</button><button class="btn btn-primary" onclick="applyForm();go('review')">Review Profile</button></p>`}
+function fldH(f){const[l,o]=f.split('|'),v=FV[l]||'',ev=String(v).replace(/"/g,'&quot;');return `<label class="fld">${l}${o=='area'?`<textarea rows="3" data-k="${l}" oninput="FV[this.dataset.k]=this.value">${v}</textarea>`:o=='file'?(l.startsWith('Logo')?`<span class="row"><span id="logoPv" class="lg big" style="background:#fff;border:1px dashed var(--line);overflow:hidden;padding:0">${S.logo?`<img src="${S.logo}" style="width:100%;height:100%;object-fit:cover">`:crest(SUB.n)}</span><input type="file" accept="image/*" onchange="readLogo(this)"></span><span class="mut" style="font-weight:400">Upload your own logo (under 500 KB). A free default crest is used if you skip this.</span>`:'<input type="file" accept="image/*">'):o?`<select data-k="${l}" onchange="FV[this.dataset.k]=this.value"><option value="">Select</option>${o.split(',').map(x=>`<option ${v==x?'selected':''}>${x}</option>`).join('')}</select>`:`<input data-k="${l}" value="${ev}" oninput="FV[this.dataset.k]=this.value">`}</label>`}
+function vForm(){const ks=Object.keys(F),i=S.fs||0,k=ks[i],last=i==ks.length-1;
+return `<div class="nw-stack nw-form"><h1>Create Your Sub-Branch / College Profile</h1><p class="sub">You are joining <b>${S.main.n}</b> as a sub-branch. Your profile will be sent to the Main Institution for verification.</p>
+<div class="c nw-conn"><div class="row wrap">${lg(S.main.n)}<div class="grow"><div class="mut" style="font-size:12px">Connected Main Institution</div><b>${S.main.n}</b> ${B(1)}<div class="mut">${S.main.c} · Code <b>${S.main.code}</b></div></div><button class="btn btn-light btn-sm" onclick="go('code')">Change</button></div><div class="mut" style="margin-top:8px;font-size:12.5px">↓ Your sub-branch: <b>${(FV['Sub-branch / College name']||SUB.n)}</b> ${B(0)}</div></div>
+<div class="nw-steps">${ks.map((x,j)=>`<span class="${j<=i?'on':''}"></span>`).join('')}</div>
+<p class="mut" style="margin:6px 0 10px">Step ${i+1} of ${ks.length}</p>
+<div class="c"><h2>${k}</h2><div class="g g2">${F[k].map(fldH).join('')}</div></div>
+<p class="btns row wrap"><button class="btn btn-light" onclick="fsBack()">Back</button><button class="btn btn-primary" onclick="fsNext()">${last?'Review Profile':'Next'}</button></p></div>`}
+function fsNext(){const n=Object.keys(F).length;if((S.fs||0)>=n-1){applyForm();go('review')}else{S.fs=(S.fs||0)+1;render();scrollTo(0,0)}}
+function fsBack(){if((S.fs||0)>0){S.fs--;render();scrollTo(0,0)}else go('confirm')}
 /* 5. review */
 function vReview(){return `<h1>Review Your Institution</h1><p>Registration Type: <span class="bd s">SUB-BRANCH</span></p>
 <div class="g g2"><div><h3>Main Institution</h3>${mainCard(S.main,`<div>Code: <b>${S.main.code}</b></div>`)}<p><button class="btn btn-light btn-sm" onclick="go('code')">Edit Main Institution</button></p></div>
