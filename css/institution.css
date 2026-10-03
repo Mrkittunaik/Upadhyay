@@ -361,3 +361,7 @@
 #dashInnerWide #instRoot .in-main .in-demo{padding:8px 22px 12px}
 @media(max-width:1000px){#dashInnerWide #jobPostForm .in-layout,#dashInnerWide #instRoot .in-layout{grid-template-columns:215px minmax(0,1fr)}#dashInnerWide #jobPostForm .in-main,#dashInnerWide #instRoot .in-main{max-width:none}}
 @media(max-width:860px){#dashInnerWide #jobPostForm .in-layout,#dashInnerWide #instRoot .in-layout{grid-template-columns:1fr}#dashInnerWide #jobPostForm .in-card,#dashInnerWide #instRoot .in-main .in-card{padding:14px}}
+
+/* Employer page: header block removed, tabs sit directly under the nav */
+#dashInnerWide>.dash-head{display:none}
+#dashInnerWide .dash-tabs{margin-top:4px}
