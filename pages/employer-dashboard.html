@@ -110,7 +110,7 @@
               <h4>Job details</h4><p class="sub2">What is the role and where does it sit in your institution?</p>
               <div class="in-grid">
                 <div class="in-f in-full" id="jf-title"><label>Job title<i>Required</i></label><input type="text" id="jbTitle" placeholder="e.g. Assistant Professor, Computer Science" oninput="jbClear('title')"><div class="in-err" role="alert"></div></div>
-                <div class="in-f" id="jf-role"><label>Role / designation<i>Required</i></label><select id="jbRole" onchange="jbClear('role')"><option value="">Select role</option><option>Professor</option><option>Associate Professor</option><option>Assistant Professor</option><option>Lecturer</option><option>Head of Department</option><option>Dean</option><option>Principal</option><option>Vice Principal</option><option>PGT</option><option>TGT</option><option>PRT</option><option>Lab Assistant</option><option>Librarian</option><option>Other</option></select><div class="in-err" role="alert"></div></div>
+                <div class="in-f" id="jf-role"><label>Role / designation<i>Required</i></label><select id="jbRole" onchange="jbClear('role'); jbRoleOtherToggle()"><option value="">Select role</option><option>Professor</option><option>Associate Professor</option><option>Assistant Professor</option><option>Lecturer</option><option>Head of Department</option><option>Dean</option><option>Principal</option><option>Vice Principal</option><option>PGT</option><option>TGT</option><option>PRT</option><option>Lab Assistant</option><option>Librarian</option><option>Other</option></select><input type="text" id="jbRoleOther" placeholder="Type the role, or leave empty to show Other" style="display:none;margin-top:4px"><div class="in-err" role="alert"></div></div>
                 <div class="in-f" id="jf-category"><label>Category<i>Required</i></label><select id="jbCategory" onchange="jbClear('category')"><option value="">Select category</option><option>Schools</option><option>Intermediate</option><option>Higher Education</option></select><div class="in-err" role="alert"></div></div>
                 <div class="in-f" id="jf-dept"><label>Department / subject<i>Required</i></label><input type="text" id="jbDept" placeholder="e.g. Mathematics" oninput="jbClear('dept')"><div class="in-err" role="alert"></div></div>
                 <div class="in-f" id="jf-type"><label>Employment type<i>Required</i></label><select id="jbType" onchange="jbClear('type')"><option value="">Select type</option><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Visiting faculty</option></select><div class="in-err" role="alert"></div></div>
@@ -243,6 +243,7 @@
   }
   function go(i){ cur=i; max=Math.max(max,i); paint(); }
   function focusId(id){ var el=$(id); if(el){ try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } } }
+  window.jbRoleOtherToggle=function(){ var o=$('jbRoleOther'), on=$('jbRole').value==='Other'; o.style.display=on?'':'none'; if(on){ try{o.focus({preventScroll:true});}catch(e){o.focus();} } else o.value=''; };
   window.jbJump=function(i){ if(i>=0&&i<N) go(i); };
   window.jbBack=function(){ if(cur>0) go(cur-1); };
   window.jbNext=function(e){
