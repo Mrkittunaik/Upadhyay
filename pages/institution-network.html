@@ -44,6 +44,9 @@
 .nw-big h3{font-size:20px;margin-bottom:12px}
 .nw-sm{padding:12px 16px}
 .nw-sm h3{font-size:14px;margin-bottom:6px}
+.nw-mid{max-width:560px}
+.nw-selc>.c{padding:14px 18px}
+.nw-selc .lg.big{width:48px;height:48px}
 .nw-lg a{color:var(--blue-700);text-decoration:underline;font-weight:600}
 .nw-stack>.pick:first-child{padding:26px 28px}
 .nw-or{display:flex;align-items:center;gap:14px;color:var(--ink-faint);margin:14px 0}
@@ -141,9 +144,9 @@ function hitsHtml(q,shown,total){
 }
 let tm;function liveQ(v){S.q=v;S.all=false;const h=document.getElementById('hits');h.innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk"></div>';clearTimeout(tm);tm=setTimeout(()=>{const q=v.trim().toLowerCase(),hits=q?MAINS.filter(m=>(m.n+m.c).toLowerCase().includes(q)):[];h.innerHTML=hitsHtml(q,hits.slice(0,6),hits.length)},350)}
 /* 3. confirm */
-function vConfirm(){return `<h1>Selected Main Institution</h1><p class="sub">This sub-branch will be connected to the institution below.</p>
-${mainCard(S.main,`<div><b>Institution Code: ${S.main.code}</b></div>`)}
-<p class="btns row wrap"><button class="btn btn-primary" onclick="go('form')">Continue</button><button class="btn btn-light" onclick="go('code')">Change Institution</button></p>`}
+function vConfirm(){return `<div class="nw-stack nw-mid"><h1>Selected Main Institution</h1><p class="sub">This sub-branch will be connected to the institution below.</p>
+<div class="nw-sm nw-selc">${mainCard(S.main,`<div><b>Institution Code: ${S.main.code}</b></div>`)}</div>
+<p class="btns row wrap"><button class="btn btn-primary" onclick="go('form')">Continue</button><button class="btn btn-light" onclick="go('code')">Change Institution</button></p></div>`}
 /* connection card */
 const conn=()=>`<div class="c"><div class="mut">Connected Main Institution</div><div class="row wrap" style="margin:8px 0">${lg(S.main.n)}<div class="grow"><b>${S.main.n}</b> ${B(1)}<div class="mut">${S.main.c} · Code <b>${S.main.code}</b></div></div><span class="st y"><svg width="10" height="10" viewBox="0 0 10 10" style="vertical-align:0;margin-right:2px" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="#C99A00"/></svg> Request will be sent on submit</span><button class="btn btn-light btn-sm" onclick="go('code')">Change Main Institution</button></div>
 <div class="mut">↓</div><div class="mut">MAIN INSTITUTION → YOUR SUB-BRANCH</div><div><b>${SUB.n}</b> ${B(0)}</div></div>`;
