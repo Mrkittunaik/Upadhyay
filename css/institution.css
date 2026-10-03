@@ -248,3 +248,24 @@
 /* ===== v7: Post a job uses the company-profile step layout ===== */
 #jobPostForm .jb-step{display:none}
 #jobPostForm .jb-step.on{display:block}
+
+/* ===== v8: Post a job, compact, Back/Next sit inside the card ===== */
+#dashInnerWide #jobPostForm .in-head h3{font-size:15px;margin:0}
+#dashInnerWide #jobPostForm .in-head p{font-size:11.5px;margin:0 0 6px}
+#dashInnerWide #jobPostForm .in-layout{gap:10px}
+#dashInnerWide #jobPostForm .in-side{padding:6px}
+#dashInnerWide #jobPostForm .in-steps{gap:3px}
+#dashInnerWide #jobPostForm .in-step{padding:6px 8px;font-size:12px}
+#dashInnerWide #jobPostForm .in-side-foot{margin-top:6px;padding-top:6px;gap:4px}
+#dashInnerWide #jobPostForm .in-card{padding:10px 12px}
+#dashInnerWide #jobPostForm .in-card h4{margin:0}
+#dashInnerWide #jobPostForm .in-card .sub2{margin:0 0 6px;font-size:11.5px}
+#dashInnerWide #jobPostForm .in-grid,#dashInnerWide #jobPostForm .in-row3{gap:6px 10px;margin-bottom:0}
+#dashInnerWide #jobPostForm .in-f label{margin-bottom:1px;font-size:11.5px}
+#dashInnerWide #jobPostForm .in-f input,#dashInnerWide #jobPostForm .in-f select,#dashInnerWide #jobPostForm .in-f textarea{padding:5px 8px}
+#dashInnerWide #jobPostForm .in-f textarea{min-height:44px}
+#dashInnerWide #jobPostForm .in-chk{margin:4px 0 0;padding:0}
+#dashInnerWide #jobPostForm .in-note{margin:6px 0 0;padding:5px 8px}
+/* the open step card and the action row read as one card */
+#dashInnerWide #jobPostForm .jb-step.on{margin-bottom:0;border-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
+#dashInnerWide #jobPostForm .in-actions{position:static;margin-top:0;padding:8px 12px;border-top:1px solid var(--line);border-radius:0 0 2px 2px;box-shadow:none}
