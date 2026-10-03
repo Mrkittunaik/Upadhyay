@@ -143,6 +143,10 @@ function mountChrome(opts){
       </div>
     </div>
     <button class="btn btn-light btn-sm" style="width:100%; margin-bottom:4px;" onclick="openFullProfile()">Update profile</button>
+    <div class="mini-section" id="miniCompanySection" style="display:none">
+      <div class="mini-section-head"><h4>Institution details</h4></div>
+      <div id="miniCompanyInfo"></div>
+    </div>
     <div class="mini-section" id="miniStatsSection">
       <div class="mini-section-head">
         <h4 id="miniStatsHeading">Your profile performance</h4>
