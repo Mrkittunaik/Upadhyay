@@ -17,6 +17,7 @@ const ROLES=['HR Representative','Recruitment Consultant','Placement Agency','Ad
 const BTYPES=['Campus','Branch','Extension centre','Study centre','Other'];
 const PINS={'500072':['Telangana','Hyderabad','Hyderabad','Kukatpally'],'506002':['Telangana','Warangal','Warangal','Hanamkonda'],'500003':['Telangana','Hyderabad','Secunderabad','Secunderabad'],'560001':['Karnataka','Bengaluru Urban','Bengaluru','MG Road']};
 const ACAD=['University','College','School','Institute'];
+const LOC=window.UP_LOC||{countries:['India'],india:{}}, COUNTRIES=LOC.countries, INDIA=LOC.india;
 const REGR=['HR / Recruitment','Administration','Placement','Authorized Representative','Director / Principal / Owner'];
 const ADES=['Dean','Principal','Director','Registrar','Head of Institution','Other Authorized Head'];
 const XTYPES=['Registration','Accreditation','Affiliation','Authorization Letter','Institution ID','Other'];
@@ -40,9 +41,9 @@ const F0=[
  {k:'about1',l:'Short description',full:1,ph:'One line candidates see in search results'},
  {k:'about2',l:'Full description',t:'textarea',full:1,ph:'Departments, culture and what makes the institution a good place to work'}];
 const F1=[
- {k:'country',l:'Country',req:1,t:'select',o:['India','Other']},
- {k:'pin',l:'PIN code',req:1,v:'pin',ph:'Enter 6-digit PIN code',pin:1},
- {k:'state',l:'State',req:1},{k:'district',l:'District',req:1},{k:'city',l:'City',req:1},{k:'area',l:'Area / locality'},
+ {k:'country',l:'Country',req:1,t:'select',o:COUNTRIES,loc:1},
+ {k:'state',l:'State',req:1,loc:1},{k:'district',l:'District',req:1,loc:1},{k:'city',l:'City',req:1,loc:1},{k:'area',l:'Area / locality',loc:1},
+ {k:'pin',l:'PIN code',req:1,v:'pin',ph:'Auto-filled, or enter 6 digits',pin:1},
  {k:'address',l:'Full address',req:1,t:'textarea',full:1,ph:'Building, street, landmark'}];
 const F2=[
  {k:'rname',l:'Full name',req:1},{k:'rdes',l:'Designation',req:1,t:'select',o:DES},
@@ -56,8 +57,9 @@ const FB=[
  {k:'code',l:'Branch code',ph:'e.g. WGL-01'},{k:'desc',l:'Branch description',full:1,t:'textarea'},
  {k:'cname',l:'Branch contact person'},{k:'cdes',l:'Designation'},
  {k:'email',l:'Official branch email',v:'email'},{k:'phone',l:'Branch contact number',v:'phone'},
- {k:'pin',l:'Branch PIN code',req:1,v:'pin',ph:'Enter 6-digit PIN code',pin:1},{k:'state',l:'State',req:1},
- {k:'district',l:'District'},{k:'city',l:'City',req:1},{k:'area',l:'Area'},{k:'address',l:'Full address',req:1,t:'textarea',full:1}];
+ {k:'country',l:'Country',req:1,t:'select',o:COUNTRIES,loc:1},{k:'state',l:'State',req:1,loc:1},
+ {k:'district',l:'District',loc:1},{k:'city',l:'City',req:1,loc:1},{k:'area',l:'Area',loc:1},
+ {k:'pin',l:'Branch PIN code',req:1,v:'pin',ph:'Auto-filled, or enter 6 digits',pin:1},{k:'address',l:'Full address',req:1,t:'textarea',full:1}];
 const WEBF={k:'website',l:'Website',req:1,v:'url',ph:'https://example.edu'};
 const EMAILF={k:'email',l:'Official institution email',req:1,v:'email',ph:'example@college.edu'};
 const ALLF=F0.concat(F1,F2,F2A,FB);
@@ -102,8 +104,48 @@ function valid(list,sc){
 }
 
 /* ---------- field renderer ---------- */
+/* ---------- cascading location: Country > State > District > City > Area, PIN follows the area ---------- */
+const LORD=['country','state','district','city','area'], LPAR={state:'country',district:'state',city:'district',area:'city'};
+const cmpA=(a,b)=>String(a).localeCompare(String(b));
+function locOpts(S,k){
+  if(k==='country') return COUNTRIES.slice().sort(cmpA);
+  if((S.country||'India')!=='India') return null;
+  if(k==='state') return Object.keys(INDIA).sort(cmpA);
+  const st=INDIA[S.state]; if(k==='district') return st?Object.keys(st).sort(cmpA):null;
+  const di=st&&st[S.district]; if(k==='city') return di?Object.keys(di).sort(cmpA):null;
+  const ci=di&&di[S.city]; return ci?Object.keys(ci).sort(cmpA):null;
+}
+function lookupPin(S){ try{ return INDIA[S.state][S.district][S.city][S.area]||''; }catch(e){ return ''; } }
+let PINIDX=null;
+function pinIdx(){ if(PINIDX) return PINIDX; PINIDX={};
+  Object.keys(INDIA).forEach(st=>Object.keys(INDIA[st]).forEach(di=>Object.keys(INDIA[st][di]).forEach(ci=>Object.keys(INDIA[st][di][ci]).forEach(ar=>{ const p=INDIA[st][di][ci][ar]; if(!PINIDX[p]) PINIDX[p]=[st,di,ci,ar]; }))));
+  return PINIDX; }
+function locField(o,sc){
+  const S=sc==='d'?I.d:BR; if(!S.country) S.country='India';
+  const k=o.k, lst=locOpts(S,k), par=LPAR[k], nm=o.l.replace(' / locality','').toLowerCase();
+  const ev=`onblur="IN.blur('${sc}','${k}')"`;
+  let inp, extra='';
+  if(lst&&lst.length){
+    const cur=S[k]||'', all=cur&&!lst.includes(cur)?lst.concat(cur):lst, dis=par&&!S[par];
+    inp=`<select ${dis?'disabled ':''}onchange="IN.loc('${sc}','${k}',this.value)" ${ev}><option value="">${dis?'Select '+par+' first':'Select '+nm}</option>${all.map(x=>`<option${cur===x?' selected':''}>${esc(x)}</option>`).join('')}</select>`;
+  } else if(par&&(S.country||'India')==='India'&&!S[par]){
+    inp=`<select disabled><option value="">Select ${par} first</option></select>`;
+  } else {
+    inp=`<input type="text" value="${esc(S[k]||'')}" placeholder="Type the ${nm}" oninput="IN.set('${sc}','${k}',this.value)" ${ev}>`;
+  }
+  if(k==='country'&&S.country!=='India') extra='<div class="sub2" style="margin:4px 0 0;font-size:11.5px">Detailed lists are available for India right now. Type your state, district, city and area yourself.</div>';
+  return `<div class="in-f" id="f-${sc}-${k}"><label>${o.l}<i>${o.req?'Required':'Optional'}</i></label>${inp}<div class="in-err" role="alert"></div>${extra}</div>`;
+}
+function locRefresh(sc,from){
+  const L=sc==='b'?FB:F1;
+  LORD.slice(from).forEach(x=>{ const el=$('f-'+sc+'-'+x), o=L.find(f=>f.k===x); if(el&&o) el.outerHTML=locField(o,sc); });
+  const pe=$('f-'+sc+'-pin'), po=L.find(f=>f.k==='pin'); if(pe&&po){ const box=$('pin-'+sc), keep=box?box.innerHTML:''; pe.outerHTML=fld(po,sc); const nb=$('pin-'+sc); if(nb) nb.innerHTML=keep; }
+}
+function mapRefresh(sc){ if(sc!=='d') return; const m=document.querySelector('#locMap span'); if(m) m.innerHTML=I.d.city?PIN_IC+' '+esc(locStr(I.d)):'Map preview appears once you add a location'; }
+
 function fld(o,sc){
   if(o.sh&&!o.sh(I.d)) return '';
+  if(o.loc) return locField(o,sc);
   const S=sc==='d'?I.d:BR, v=esc(S[o.k]||''), h=`oninput="IN.set('${sc}','${o.k}',this.value)" onblur="IN.blur('${sc}','${o.k}')"`;
   let inp;
   if(o.t==='select') inp=`<select onchange="IN.set('${sc}','${o.k}',this.value,1)" onblur="IN.blur('${sc}','${o.k}')"><option value="">Select</option>${o.o.map(x=>`<option${S[o.k]===x?' selected':''}>${esc(x)}</option>`).join('')}</select>`;
@@ -120,10 +162,11 @@ function pinLook(sc,val){
   if(val.length!==6){ box.innerHTML=''; return; }
   box.innerHTML=note('<span class="in-load"></span>Looking up PIN code…');
   setTimeout(()=>{
-    const r=PINS[val], S=sc==='d'?I.d:BR;
-    if(!r){ box.innerHTML=note('We couldn\'t find this PIN code. Enter the location details below yourself. Demo PIN codes: 500072, 506002, 500003, 560001.','in-warn'); return; }
-    ['state','district','city','area'].forEach((k,i)=>{ S[k]=r[i]; const el=document.querySelector('#f-'+sc+'-'+k+' input'); if(el){ el.value=r[i]; mark(sc,{k:k},''); } });
-    box.innerHTML=note(`<b>${ck(13)} Location found</b><br>State: ${r[0]}<br>District: ${r[1]}<br>City: ${r[2]}<br>Area: ${r[3]}<br>You can still edit these fields.`,'in-ok'); save();
+    const r=pinIdx()[val]||PINS[val], S=sc==='d'?I.d:BR;
+    if(!r){ box.innerHTML=note('We couldn\'t find this PIN code in our list. Pick the state, district, city and area from the lists, or type them in yourself.','in-warn'); return; }
+    S.country='India'; ['state','district','city','area'].forEach((k,i)=>{ S[k]=r[i]; const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err'); });
+    locRefresh(sc,0); mapRefresh(sc);
+    box.innerHTML=note(`<b>${ck(13)} Location found</b><br>State: ${r[0]}<br>District: ${r[1]}<br>City: ${r[2]}<br>Area: ${r[3]}<br>You can still change these.`,'in-ok'); save();
   },450);
 }
 
@@ -319,7 +362,7 @@ function s0(){
 }
 function s1(){
   return card('Institution location','Where is your main campus?',grid(F1,'d')+note('Use the location of your institution\'s main campus.')+
-   `<div class="in-map">${I.d.city?`<span>${PIN_IC} ${esc(locStr(I.d))}</span>`:'<span>Map preview appears once you add a location</span>'}<button class="btn btn-ghost btn-sm" onclick="IN.focusPin()">Change location</button></div>`);
+   `<div class="in-map" id="locMap">${I.d.city?`<span>${PIN_IC} ${esc(locStr(I.d))}</span>`:'<span>Map preview appears once you add a location</span>'}<button class="btn btn-ghost btn-sm" onclick="IN.focusPin()">Change location</button></div>`);
 }
 function s2(){
   return card('Person Registering / Institution Representative','Your details as the person registering this institution.',grid(F2.concat(EIDF),'d')+roleSel()+note('This is the person creating and managing the institution account.'))
@@ -445,6 +488,10 @@ function setHeader(){
 
 /* ---------- actions (called from inline handlers) ---------- */
 window.IN={
+  loc(sc,k,v){ const S=sc==='d'?I.d:BR, i=LORD.indexOf(k); S[k]=v; LORD.slice(i+1).forEach(x=>{ S[x]=''; });
+    if(k==='area'){ const p=lookupPin(S); if(p) S.pin=p; } else S.pin='';
+    const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err');
+    save(); locRefresh(sc,k==='country'?0:i+1); mapRefresh(sc); const b=$('pin-'+sc); if(b) b.innerHTML=''; },
   set(sc,k,v,re){ (sc==='d'?I.d:BR)[k]=v; if(sc==='d'&&k==='aemail'&&I.aem!=='idle') I.aem='idle'; const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err'); if(k==='pin') pinLook(sc,v.trim()); if(re&&sc==='d'&&k==='type'){ save(); render(); } else if(sc==='d') save(); },
   blur(sc,k){ const o=ALLF.find(f=>f.k===k&&(sc==='b'?FB.includes(f):!FB.includes(f))); if(o) mark(sc,o,chk(o,(sc==='d'?I.d:BR)[k])); },
   jump(i){ if(i<=I.max||i<I.step){ I.step=i; welcome=false; save(); render(); top(); } },
