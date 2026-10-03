@@ -420,7 +420,7 @@
     const cta = document.getElementById('navCta'); if(cta) cta.style.display = isLoggedIn ? 'none' : 'flex';
     const usr = document.getElementById('navUser'); if(usr) usr.style.display = isLoggedIn ? 'flex' : 'none';
     if(isLoggedIn){
-      const av = document.getElementById('navAvatarImg'); if(av) av.src = currentUser.avatar;
+      const av = document.getElementById('navAvatarImg'); if(av) av.src = (currentRole==='company' && currentCompany && currentCompany.logo) ? currentCompany.logo : currentUser.avatar;
       if(document.getElementById('miniPanel')) refreshMiniProfile();
     }
     const navEl = document.querySelector('.nav'); if(navEl) navEl.classList.toggle('logged-in', isLoggedIn);
@@ -537,7 +537,7 @@
       ? (currentCompany.name || 'Your institution')
       : (currentUser.name || 'Your name');
     document.getElementById('miniDegree').textContent = isBranch ? 'Sub-branch account' : isCompany
-      ? 'Company account'
+      ? ([currentCompany.type, currentCompany.city].filter(Boolean).join(' · ') || 'Company account')
       : (currentUser.qualification ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}` : 'Add your qualification');
 
     const linksFaculty = document.getElementById('miniLinksFaculty');
@@ -546,7 +546,24 @@
     if(linksFaculty) linksFaculty.style.display = (isCompany || isBranch) ? 'none' : 'flex';
     if(linksCompany) linksCompany.style.display = isCompany ? 'flex' : 'none';
     if(linksBranch) linksBranch.style.display = isBranch ? 'flex' : 'none';
-    ['miniStatsSection','miniPrefSection'].forEach(function(id){ const el=document.getElementById(id); if(el) el.style.display = isBranch ? 'none' : ''; });
+    ['miniStatsSection','miniPrefSection'].forEach(function(id){ const el=document.getElementById(id); if(el) el.style.display = (isBranch || isCompany) ? 'none' : ''; });
+    const coSec = document.getElementById('miniCompanySection');
+    if(coSec){
+      coSec.style.display = isCompany ? '' : 'none';
+      if(isCompany){
+        const rows = [['Location', currentCompany.city], ['Type', currentCompany.type], ['Website', currentCompany.website],
+                      ['Contact', [currentCompany.contactName, currentCompany.designation].filter(Boolean).join(', ')],
+                      ['Email', currentCompany.email], ['Phone', currentCompany.phone]].filter(function(r){ return r[1]; });
+        const box = document.getElementById('miniCompanyInfo'); box.innerHTML = '';
+        if(!rows.length){ const p = document.createElement('p'); p.className = 'mini-co-empty'; p.textContent = 'Add your institution details on your company profile.'; box.appendChild(p); }
+        rows.forEach(function(r){
+          const row = document.createElement('div'); row.className = 'mini-co-row';
+          const k = document.createElement('span'); k.textContent = r[0];
+          const v = document.createElement('b'); v.textContent = r[1];
+          row.appendChild(k); row.appendChild(v); box.appendChild(row);
+        });
+      }
+    }
 
     const statsHeading = document.getElementById('miniStatsHeading');
     const stat1Num = document.getElementById('miniStat1Num'), stat1Label = document.getElementById('miniStat1Label');
