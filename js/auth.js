@@ -32,15 +32,30 @@
   //   role comes from ?role=seeker|company — if absent, ask via popup first.
   function initAuthPage(mode){
     if(isLoggedIn){ goTo(dashboardPageForRole()); return; }   // already signed in
+    popupMode = mode;
     const roleParam = getParam('role');
-    if(mode==='register' && roleParam==='company' && !getParam('type')){ goTo('network', {start:'type'}); return; }   // Company / Institution: choose Main vs Sub-Branch first
+    const typeParam = getParam('type');
+    // Step 1: Job Seeker or Institution?  (card stays hidden until chosen — no flash)
     if(roleParam !== 'company' && roleParam !== 'seeker'){
-      // No role chosen yet — show the picker first, form stays hidden.
       document.getElementById('authCard').style.display = 'none';
       openRolePopup(mode, /*forcedChoice*/ true);
       return;
     }
+    if(roleParam === 'company'){
+      // Step 2 (institutions only): Main institution or Sub-branch?
+      if(typeParam === 'sub'){ goTo('subauth', { mode: mode }); return; }
+      if(typeParam !== 'main'){
+        document.getElementById('authCard').style.display = 'none';
+        openRolePopup(mode, true);
+        setPopupStage('inst');
+        return;
+      }
+    }
     startAuthPage(mode, roleParam);
+  }
+  // Query params to carry when linking between login <-> register for the current role
+  function roleParams(){
+    return selectedRole === 'company' ? { role:'company', type:'main' } : { role: selectedRole || 'seeker' };
   }
 
   function startAuthPage(mode, role){
@@ -58,7 +73,7 @@
   function updateAuthLeftPanel(panel){
     const isCompany = panel === 'post';
     const tagEl = document.getElementById('apPageTag');
-    if(tagEl) tagEl.textContent = isCompany ? 'Employer account' : 'Faculty account';
+    if(tagEl) tagEl.textContent = isCompany ? 'Main institution account' : 'Faculty account';
     const switchEl = document.getElementById('acSwitchRole');
     if(switchEl) switchEl.firstChild.textContent = isCompany ? 'Not an institution? ' : 'Not a faculty member? ';
   }
@@ -199,14 +214,14 @@
     const switchLinkEl = document.getElementById('authSwitchModeLink');
     if(mode==='register'){
       backLinkEl.style.display = 'block';
-      backLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'login\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700); display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Already have an account? Log in</a>';
+      backLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'login\',roleParams())" style="font-size:13px; font-weight:600; color:var(--blue-700); display:inline-flex; align-items:center; gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M5 12L11 6M5 12L11 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Already have an account? Log in</a>';
       if(switchLinkEl){ switchLinkEl.style.display = 'none'; switchLinkEl.innerHTML = ''; }
     } else {
       backLinkEl.style.display = 'none';
       backLinkEl.innerHTML = '';
       if(switchLinkEl){
         switchLinkEl.style.display = 'block';
-        switchLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'register\',{role:selectedRole})" style="font-size:13px; font-weight:600; color:var(--blue-700);">New here? Create an account</a>';
+        switchLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="goTo(\'register\',roleParams())" style="font-size:13px; font-weight:600; color:var(--blue-700);">New here? Create an account</a>';
       }
     }
     const isCompany = selectedRole === 'company';
@@ -224,31 +239,86 @@
     document.getElementById('authError').style.display = 'none';
   }
 
+  let popupStage = 'role';   // 'role' = Job Seeker / Institution,  'inst' = Main institution / Sub-branch
+  const _ICON_MAIN = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10L12 4L21 10" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M5 10V18M9.5 10V18M14.5 10V18M19 10V18M3 20H21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  const _ICON_SUB = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V9M12 9L5 15M12 9L19 15M5 15V21M19 15V21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  let _roleIcons = null;
+
+  function setPopupStage(stage){
+    popupStage = stage;
+    const isLogin = popupMode === 'login';
+    const q = id => document.getElementById(id);
+    const seekIc = q('popupRoleSeeker').querySelector('.ric'), compIc = q('popupRoleCompany').querySelector('.ric');
+    if(!_roleIcons) _roleIcons = [seekIc.innerHTML, compIc.innerHTML];
+    const back = q('rolePopupBack');
+    if(stage === 'inst'){
+      q('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Register as';
+      q('rolePopupSub').textContent = 'Choose your institution type';
+      q('popupRoleSeeker').querySelector('.rt').textContent = 'Main Institution';
+      q('popupRoleCompany').querySelector('.rt').textContent = 'Sub-branch';
+      q('popupRoleSeekerDesc').textContent = isLogin ? 'Head-office / main account' : 'College, school or university';
+      q('popupRoleCompanyDesc').textContent = isLogin ? 'Branch linked to a main institution' : 'Branch of an existing institution';
+      seekIc.innerHTML = _ICON_MAIN; compIc.innerHTML = _ICON_SUB;
+      if(back) back.style.display = 'block';
+    } else {
+      q('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
+      q('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
+      q('popupRoleSeeker').querySelector('.rt').textContent = 'Job Seeker';
+      q('popupRoleCompany').querySelector('.rt').textContent = 'Institution';
+      q('popupRoleSeekerDesc').textContent = isLogin ? 'Faculty account' : 'Find faculty roles';
+      q('popupRoleCompanyDesc').textContent = isLogin ? 'Main institution or sub-branch' : 'College, university or school';
+      seekIc.innerHTML = _roleIcons[0]; compIc.innerHTML = _roleIcons[1];
+      if(back) back.style.display = 'none';
+    }
+  }
   function openRolePopup(mode, forcedChoice){
     popupMode = mode || 'register';
     popupForcedChoice = !!forcedChoice;
-    const isLogin = popupMode === 'login';
-    document.getElementById('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
-    document.getElementById('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
-    document.getElementById('popupRoleSeekerDesc').textContent = isLogin ? 'Faculty account' : 'Find faculty roles';
-    document.getElementById('popupRoleCompanyDesc').textContent = isLogin ? 'Institution account' : 'Company, college, university or school';
+    setPopupStage('role');
     document.getElementById('rolePopupOverlay').classList.add('open');
   }
   function closeRolePopup(){
-    if(popupForcedChoice) { goTo('home'); return; } // no role picked yet — nothing to show, bail to home
+    if(popupForcedChoice) { goTo('home'); return; } // nothing chosen yet — bail to home
     document.getElementById('rolePopupOverlay').classList.remove('open');
   }
+  function rolePopupGoBack(){
+    setPopupStage('role');
+    if(popupForcedChoice){ const u = new URL(window.location.href); u.searchParams.delete('role'); u.searchParams.delete('type'); history.replaceState(null,'',u); }
+  }
   function pickRoleFromPopup(role){
+    // Stage 2: first option = Main institution, second = Sub-branch
+    if(popupStage === 'inst'){ pickInstType(role === 'seeker' ? 'main' : 'sub'); return; }
+    if(role === 'company'){
+      // Institution picked -> ask Main vs Sub-branch next (never skipped)
+      if(popupForcedChoice){
+        const u = new URL(window.location.href); u.searchParams.set('role','company'); history.replaceState(null,'',u);
+        setPopupStage('inst');
+      } else {
+        goTo(popupMode === 'login' ? 'login' : 'register', { role: 'company' });
+      }
+      return;
+    }
     document.getElementById('rolePopupOverlay').classList.remove('open');
     if(popupForcedChoice){
-      // We're already on login.html/register.html — just reveal the form, no navigation needed.
       const url = new URL(window.location.href);
       url.searchParams.set('role', role);
+      url.searchParams.delete('type');
       history.replaceState(null, '', url);
-      if(popupMode==='register' && role==='company'){ goTo('network', {start:'type'}); return; }
       startAuthPage(popupMode, role);
     } else {
       goTo(popupMode === 'login' ? 'login' : 'register', { role });
+    }
+  }
+  function pickInstType(type){
+    if(type === 'sub'){ goTo('subauth', { mode: popupMode === 'login' ? 'login' : 'register' }); return; }
+    document.getElementById('rolePopupOverlay').classList.remove('open');
+    if(popupForcedChoice){
+      const url = new URL(window.location.href);
+      url.searchParams.set('role','company'); url.searchParams.set('type','main');
+      history.replaceState(null,'',url);
+      startAuthPage(popupMode, 'company');
+    } else {
+      goTo(popupMode === 'login' ? 'login' : 'register', { role:'company', type:'main' });
     }
   }
 
