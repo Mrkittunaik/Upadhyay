@@ -104,7 +104,7 @@ const ROLES=['HR Representative','Recruitment Consultant','Placement Agency','Ad
 const BTYPES=['Campus','Branch','Extension centre','Study centre','Other'];
 const PINS={'500072':['Telangana','Hyderabad','Hyderabad','Kukatpally'],'506002':['Telangana','Warangal','Warangal','Hanamkonda'],'500003':['Telangana','Hyderabad','Secunderabad','Secunderabad'],'560001':['Karnataka','Bengaluru Urban','Bengaluru','MG Road']};
 const ACAD=['University','College','School','Institute'];
-const LOC=window.UP_LOC||{countries:['India'],india:{}}, COUNTRIES=LOC.countries, INDIA=LOC.india;
+const LOC=window.UP_LOC||{countries:['India'],india:{}}, COUNTRIES=['India'], INDIA=LOC.india;
 const REGR=['HR / Recruitment','Administration','Placement','Authorized Representative','Director / Principal / Owner'];
 const ADES=['Dean','Principal','Director','Registrar','Head of Institution','Other Authorized Head'];
 const XTYPES=['Registration','Accreditation','Affiliation','Authorization Letter','Institution ID','Other'];
@@ -194,9 +194,11 @@ function valid(list,sc){
 /* ---------- cascading location: Country > State > District > City > Area, PIN follows the area ---------- */
 const LORD=['country','state','district','city','area'], LPAR={state:'country',district:'state',city:'district',area:'city'};
 const cmpA=(a,b)=>String(a).localeCompare(String(b));
+const isIndia=S=>!S.o_country&&(S.country||'India')==='India';
+const OTHER_K=['country','state','district'];
 function locOpts(S,k){
   if(k==='country') return COUNTRIES.slice().sort(cmpA);
-  if((S.country||'India')!=='India') return null;
+  if(!isIndia(S)) return null;
   if(k==='state') return Object.keys(INDIA).sort(cmpA);
   const st=INDIA[S.state]; if(k==='district') return st?Object.keys(st).sort(cmpA):null;
   const di=st&&st[S.district]; if(k==='city') return di?Object.keys(di).sort(cmpA):null;
@@ -208,19 +210,23 @@ function pinIdx(){ if(PINIDX) return PINIDX; PINIDX={};
   Object.keys(INDIA).forEach(st=>Object.keys(INDIA[st]).forEach(di=>Object.keys(INDIA[st][di]).forEach(ci=>Object.keys(INDIA[st][di][ci]).forEach(ar=>{ const p=INDIA[st][di][ci][ar]; if(!PINIDX[p]) PINIDX[p]=[st,di,ci,ar]; }))));
   return PINIDX; }
 function locField(o,sc){
-  const S=sc==='d'?I.d:BR; if(!S.country) S.country='India';
+  const S=sc==='d'?I.d:BR; if(!S.country&&!S.o_country) S.country='India';
   const k=o.k, lst=locOpts(S,k), par=LPAR[k], nm=o.l.replace(' / locality','').toLowerCase();
+  const withOther=OTHER_K.includes(k), cur=S[k]||'';
+  const isOther=withOther&&lst&&lst.length&&(!!S['o_'+k]||(cur&&!lst.includes(cur)));
   const ev=`onblur="IN.blur('${sc}','${k}')"`;
+  const parOk=!par||S[par]||S['o_'+par];
   let inp, extra='';
   if(lst&&lst.length){
-    const cur=S[k]||'', all=cur&&!lst.includes(cur)?lst.concat(cur):lst, dis=par&&!S[par];
-    inp=`<select ${dis?'disabled ':''}onchange="IN.loc('${sc}','${k}',this.value)" ${ev}><option value="">${dis?'Select '+par+' first':'Select '+nm}</option>${all.map(x=>`<option${cur===x?' selected':''}>${esc(x)}</option>`).join('')}</select>`;
-  } else if(par&&(S.country||'India')==='India'&&!S[par]){
+    const dis=par&&!parOk;
+    const opts=lst.map(x=>`<option${!isOther&&cur===x?' selected':''}>${esc(x)}</option>`).join('')+(withOther?`<option value="Other"${isOther?' selected':''}>Other</option>`:'');
+    inp=`<select ${dis?'disabled ':''}onchange="IN.loc('${sc}','${k}',this.value)" ${isOther?'':ev}><option value="">${dis?'Select '+par+' first':'Select '+nm}</option>${opts}</select>`;
+    if(isOther) inp+=`<input type="text" class="in-other" style="margin-top:8px" value="${esc(S['o_'+k]?cur:cur)}" placeholder="Enter your ${nm}" oninput="IN.set('${sc}','${k}',this.value)" ${ev}>`;
+  } else if(par&&isIndia(S)&&!parOk){
     inp=`<select disabled><option value="">Select ${par} first</option></select>`;
   } else {
-    inp=`<input type="text" value="${esc(S[k]||'')}" placeholder="Type the ${nm}" oninput="IN.set('${sc}','${k}',this.value)" ${ev}>`;
+    inp=`<input type="text" value="${esc(cur)}" placeholder="Type the ${nm}" oninput="IN.set('${sc}','${k}',this.value)" ${ev}>`;
   }
-  if(k==='country'&&S.country!=='India') extra='<div class="sub2" style="margin:4px 0 0;font-size:11.5px">Detailed lists are available for India right now. Type your state, district, city and area yourself.</div>';
   return `<div class="in-f" id="f-${sc}-${k}"><label>${o.l}<i>${o.req?'Required':'Optional'}</i></label>${inp}<div class="in-err" role="alert"></div>${extra}</div>`;
 }
 function locRefresh(sc,from){
@@ -251,7 +257,7 @@ function pinLook(sc,val){
   setTimeout(()=>{
     const r=pinIdx()[val]||PINS[val], S=sc==='d'?I.d:BR;
     if(!r){ box.innerHTML=note('We couldn\'t find this PIN code in our list. Pick the state, district, city and area from the lists, or type them in yourself.','in-warn'); return; }
-    S.country='India'; ['state','district','city','area'].forEach((k,i)=>{ S[k]=r[i]; const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err'); });
+    S.country='India'; ['country','state','district','city','area'].forEach(x=>{ S['o_'+x]=false; }); ['state','district','city','area'].forEach((k,i)=>{ S[k]=r[i]; const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err'); });
     locRefresh(sc,0); mapRefresh(sc);
     box.innerHTML=note(`<b>${ck(13)} Location found</b><br>State: ${r[0]}<br>District: ${r[1]}<br>City: ${r[2]}<br>Area: ${r[3]}<br>You can still change these.`,'in-ok'); save();
   },450);
@@ -576,10 +582,13 @@ function setHeader(){
 
 /* ---------- actions (called from inline handlers) ---------- */
 window.IN={
-  loc(sc,k,v){ const S=sc==='d'?I.d:BR, i=LORD.indexOf(k); S[k]=v; LORD.slice(i+1).forEach(x=>{ S[x]=''; });
+  loc(sc,k,v){ const S=sc==='d'?I.d:BR, i=LORD.indexOf(k), oth=v==='Other'&&OTHER_K.includes(k);
+    S[k]=oth?'':v; S['o_'+k]=oth;
+    LORD.slice(i+1).forEach(x=>{ S[x]=''; S['o_'+x]=false; });
     if(k==='area'){ const p=lookupPin(S); if(p) S.pin=p; } else S.pin='';
     const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err');
-    save(); locRefresh(sc,k==='country'?0:i+1); mapRefresh(sc); const b=$('pin-'+sc); if(b) b.innerHTML=''; },
+    save(); locRefresh(sc,i); mapRefresh(sc); const b=$('pin-'+sc); if(b) b.innerHTML='';
+    if(oth){ const el=document.querySelector('#f-'+sc+'-'+k+' .in-other'); if(el) el.focus(); } },
   set(sc,k,v,re){ (sc==='d'?I.d:BR)[k]=v; if(sc==='d'&&k==='aemail'&&I.aem!=='idle') I.aem='idle'; const f=$('f-'+sc+'-'+k); if(f) f.classList.remove('err'); if(k==='pin') pinLook(sc,v.trim()); if(re&&sc==='d'&&k==='type'){ save(); render(); } else if(sc==='d') save(); },
   blur(sc,k){ const o=ALLF.find(f=>f.k===k&&(sc==='b'?FB.includes(f):!FB.includes(f))); if(o) mark(sc,o,chk(o,(sc==='d'?I.d:BR)[k])); },
   jump(i){ if(i<=I.max||i<I.step){ I.step=i; welcome=false; save(); render(); top(); } },
