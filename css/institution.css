@@ -365,3 +365,20 @@
 /* Employer page: header block removed, tabs sit directly under the nav */
 #dashInnerWide>.dash-head{display:none}
 #dashInnerWide .dash-tabs{margin-top:4px}
+
+/* ===== v12: notes and status boxes, clean professional look (no coloured edge, icon + bold title, full width) ===== */
+.in-note,#dashInnerWide .in-note,#dashInnerWide #jobPostForm .in-note,#dashInnerWide #instRoot .in-main .in-note{
+  --nb:#EEF3FF;--nbd:#C9D8FF;--nt:#1E3A8A;--ni:#1D4ED8;--nc:"i";
+  position:relative;background:var(--nb);border:1px solid var(--nbd);border-left:1px solid var(--nbd);border-radius:6px;
+  padding:12px 16px 12px 50px;margin:14px 0 0;font-size:13px;line-height:1.5;color:var(--nt);box-shadow:none}
+.in-note::before,#dashInnerWide .in-note::before{content:var(--nc);position:absolute;left:16px;top:12px;width:22px;height:22px;border-radius:50%;
+  background:var(--ni);color:#fff;font:700 13px/22px inherit;font-family:inherit;text-align:center}
+.in-note b,#dashInnerWide .in-note b{display:block;font-size:13.5px;font-weight:700;color:var(--nt);margin-bottom:1px}
+.in-note b+br,#dashInnerWide .in-note b+br{display:none}
+.in-note b svg,#dashInnerWide .in-note b svg{display:none}
+.in-ok,#dashInnerWide .in-ok,#dashInnerWide #jobPostForm .in-ok,#dashInnerWide #instRoot .in-main .in-ok{--nb:#ECFDF3;--nbd:#A7E3C0;--nt:#14532D;--ni:#12A150;--nc:"\2713"}
+.in-warn,#dashInnerWide .in-warn,#dashInnerWide #jobPostForm .in-warn,#dashInnerWide #instRoot .in-main .in-warn{--nb:#FFF7E6;--nbd:#F5D08A;--nt:#7A4B00;--ni:#D98300;--nc:"!"}
+.in-bad,#dashInnerWide .in-bad,#dashInnerWide #jobPostForm .in-bad,#dashInnerWide #instRoot .in-main .in-bad{--nb:#FEF0EE;--nbd:#F5B5AE;--nt:#8A1C14;--ni:#D32F2F;--nc:"!"}
+/* welcome note sits outside the cards, so it keeps the side gutter */
+#dashInnerWide #instRoot .in-main>.in-note{margin:16px 22px 0}
+@media(max-width:860px){#dashInnerWide #instRoot .in-main>.in-note{margin:12px 14px 0}}
