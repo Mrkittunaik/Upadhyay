@@ -382,3 +382,8 @@
 /* welcome note sits outside the cards, so it keeps the side gutter */
 #dashInnerWide #instRoot .in-main>.in-note{margin:16px 22px 0}
 @media(max-width:860px){#dashInnerWide #instRoot .in-main>.in-note{margin:12px 14px 0}}
+
+/* v12b: note icon vertically centred in the box */
+.in-note,#dashInnerWide .in-note,#dashInnerWide #jobPostForm .in-note,#dashInnerWide #instRoot .in-main .in-note{padding-top:14px;padding-bottom:14px;min-height:48px;display:flex;flex-direction:column;justify-content:center}
+.in-note::before,#dashInnerWide .in-note::before{top:50%;transform:translateY(-50%)}
+.in-note b,#dashInnerWide .in-note b{margin-bottom:2px}
