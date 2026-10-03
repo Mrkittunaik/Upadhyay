@@ -1175,3 +1175,19 @@ body.page-auth{ overflow:hidden; }
 .dash-inner-wide{max-width:1240px;}
 .dash-inner-wide#dashInnerWide{margin-left:auto; margin-right:auto;}
 body.page-auth .auth-card, .role-popup-card{margin-left:auto; margin-right:auto;}
+
+/* ---------- Browse candidates: short, wide rectangular cards ---------- */
+#candidateList{grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:14px}
+#candidateList .profile-card-banner{display:grid;grid-template-columns:140px minmax(0,1fr);align-items:stretch;position:relative;min-height:0;box-shadow:0 4px 14px rgba(16,36,84,.10)}
+#candidateList .pc-banner{grid-column:1;grid-row:1;height:auto;min-height:100%}
+#candidateList .pc-banner > .badge{top:8px;left:8px}
+#candidateList .pc-college-badge{top:auto;bottom:8px;right:auto;left:8px;max-width:calc(100% - 16px);font-size:10px;padding:3px 7px}
+#candidateList .pc-avatar-wrap{position:absolute;left:0;top:0;width:140px;height:100%;display:flex;align-items:center;justify-content:center;pointer-events:none}
+#candidateList .pc-avatar{width:60px;height:60px;margin-top:0;border-width:3px}
+#candidateList .pc-body{grid-column:2;grid-row:1;padding:12px 16px;text-align:left}
+#candidateList .pc-body .jc-title{justify-content:flex-start;font-size:15px}
+#candidateList .pc-body .jc-tags{justify-content:flex-start;gap:5px;margin:6px 0 10px}
+#candidateList .pc-body .jc-org{font-size:12.5px}
+#candidateList .pc-body .jc-foot{padding-top:8px;margin-top:auto;flex-wrap:nowrap}
+#candidateList .pc-actions .btn{height:32px;padding:0 12px;font-size:12.5px;flex:none}
+@media(max-width:560px){#candidateList{grid-template-columns:1fr}#candidateList .profile-card-banner{grid-template-columns:96px minmax(0,1fr)}#candidateList .pc-avatar-wrap{width:96px}#candidateList .pc-body .jc-foot{flex-wrap:wrap}}
