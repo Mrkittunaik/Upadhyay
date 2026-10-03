@@ -337,3 +337,27 @@
 #dashInnerWide #instRoot .in-main .in-demo{padding:10px 28px 14px}
 @media(max-width:1180px){#dashInnerWide #instRoot .in-layout{grid-template-columns:240px minmax(0,1fr)}#dashInnerWide #instRoot .in-main{max-width:none}}
 @media(max-width:860px){#dashInnerWide #instRoot .in-layout{grid-template-columns:1fr}#dashInnerWide #instRoot .in-main .in-card{padding:16px}}
+
+/* ===== v11: zoom out Post a job + Company profile a little ===== */
+#dashInnerWide #jobPostForm .in-layout,#dashInnerWide #instRoot .in-layout{grid-template-columns:225px 700px;gap:16px}
+#dashInnerWide #jobPostForm .in-main,#dashInnerWide #instRoot .in-main{max-width:700px}
+#dashInnerWide #jobPostForm .in-head,#dashInnerWide #instRoot .in-wrap:has(.in-layout) .in-head{max-width:940px}
+#dashInnerWide #jobPostForm .in-head h3,#dashInnerWide #instRoot .in-wrap:has(.in-layout) .in-head h3{font-size:18px}
+#dashInnerWide #jobPostForm .in-side,#dashInnerWide #instRoot .in-side{padding:9px}
+#dashInnerWide #jobPostForm .in-step,#dashInnerWide #instRoot .in-layout .in-step{padding:10px 11px;font-size:12px;gap:10px}
+#dashInnerWide #jobPostForm .in-step-n,#dashInnerWide #instRoot .in-layout .in-step-n{width:22px;height:22px;font-size:11px}
+#dashInnerWide #jobPostForm .in-steps,#dashInnerWide #instRoot .in-layout .in-steps{gap:6px}
+#dashInnerWide #jobPostForm .in-card,#dashInnerWide #instRoot .in-main .in-card{padding:18px 22px}
+#dashInnerWide #jobPostForm .in-card h4,#dashInnerWide #instRoot .in-main .in-card h4{font-size:15px}
+#dashInnerWide #jobPostForm .in-card .sub2,#dashInnerWide #instRoot .in-main .in-card .sub2{font-size:11.5px;margin:0 0 14px}
+#dashInnerWide #jobPostForm .jb-step{min-height:340px}
+#dashInnerWide #jobPostForm .in-grid,#dashInnerWide #instRoot .in-main .in-grid{gap:12px 18px}
+#dashInnerWide #jobPostForm .in-f label,#dashInnerWide #instRoot .in-main .in-f label{font-size:11.5px;margin-bottom:5px}
+#dashInnerWide #jobPostForm .in-f input,#dashInnerWide #jobPostForm .in-f select,#dashInnerWide #instRoot .in-main .in-f input,#dashInnerWide #instRoot .in-main .in-f select{height:36px;padding:6px 12px;font-size:12.5px}
+#dashInnerWide #jobPostForm .in-f textarea,#dashInnerWide #instRoot .in-main .in-f textarea{min-height:110px;font-size:12.5px}
+#dashInnerWide #jobPostForm .in-actions,#dashInnerWide #instRoot .in-main .in-actions{padding:12px 22px}
+#dashInnerWide #jobPostForm .in-actions .btn,#dashInnerWide #instRoot .in-main .in-actions .btn{font-size:12.5px;padding:9px 20px}
+#dashInnerWide #instRoot .in-main .in-note{margin:10px 22px 0}
+#dashInnerWide #instRoot .in-main .in-demo{padding:8px 22px 12px}
+@media(max-width:1000px){#dashInnerWide #jobPostForm .in-layout,#dashInnerWide #instRoot .in-layout{grid-template-columns:215px minmax(0,1fr)}#dashInnerWide #jobPostForm .in-main,#dashInnerWide #instRoot .in-main{max-width:none}}
+@media(max-width:860px){#dashInnerWide #jobPostForm .in-layout,#dashInnerWide #instRoot .in-layout{grid-template-columns:1fr}#dashInnerWide #jobPostForm .in-card,#dashInnerWide #instRoot .in-main .in-card{padding:14px}}
