@@ -330,6 +330,7 @@
   function switchEmployerTab(which){
     const $ = id => document.getElementById(id);
     if(!$('dashCompanyTab')) return;               // not on the employer page
+    try{ sessionStorage.setItem('upadyay_emp_tab', which); }catch(e){}   // so a reload stays on this tab
     $('dashCompanyTab').style.display = which==='company' ? 'block' : 'none';
     $('dashPostTab').style.display = which==='post' ? 'block' : 'none';
     $('dashCandidatesTab').style.display = which==='candidates' ? 'block' : 'none';
