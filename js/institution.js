@@ -135,13 +135,13 @@ function wiz(){
     <aside class="in-side"><div class="in-steps" role="tablist" aria-orientation="vertical">${steps}</div>
       <div class="in-side-foot"><div class="in-bar"><div style="width:${pct()}%"></div></div><span>${pct()}% complete</span>
       <button class="btn btn-ghost btn-sm" onclick="IN.later()">Save and continue later</button></div></aside>
-    <section class="in-main">
+    <div class="in-main">
       ${welcome?note('<b>Welcome back.</b> Your saved progress is loaded. Carry on from where you stopped.','in-ok'):''}
       ${[s0,s1,s2,s3,s4,s5][s]()}
       <div class="in-actions"><span class="in-stepof">Step ${s+1} of ${STEPS.length}</span>
       <div class="r">${s>0?'<button class="btn btn-ghost btn-sm" onclick="IN.back()">Back</button>':''}<button class="btn btn-primary btn-sm" id="nextBtn" onclick="IN.next()">${last?(I.sub?'Save changes and resubmit':'Submit institution profile'):'Next'}</button></div></div>
       <div class="in-demo">Demo helper: <button onclick="IN.sample()">Fill with sample data</button><button onclick="IN.reset()">Start over</button></div>
-    </section>
+    </div>
   </div></div>`;
 }
 function s0(){
