@@ -62,6 +62,7 @@ function mountNav(active){
         <button class="nav-avatar-btn" id="navAvatarBtn" onclick="openMiniProfile()">
           <img id="navAvatarImg" src="">
         </button>
+        <button class="btn btn-ghost btn-sm nav-logout" id="navLogoutBtn" onclick="logoutUser()">Log out</button>
       </div>
     </div>
   </nav>
@@ -173,6 +174,14 @@ function mountChrome(opts){
       </a>
       <a href="javascript:void(0)" onclick="logoutUser()">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        Logout
+      </a>
+    </div>
+    <div class="mini-links" id="miniLinksBranch" style="display:none;">
+      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('network');">
+        Sub-branch dashboard
+      </a>
+      <a href="javascript:void(0)" onclick="logoutUser()">
         Logout
       </a>
     </div>
