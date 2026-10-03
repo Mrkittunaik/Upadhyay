@@ -1191,3 +1191,10 @@ body.page-auth .auth-card, .role-popup-card{margin-left:auto; margin-right:auto;
 #candidateList .pc-body .jc-foot{padding-top:8px;margin-top:auto;flex-wrap:nowrap}
 #candidateList .pc-actions .btn{height:32px;padding:0 12px;font-size:12.5px;flex:none}
 @media(max-width:560px){#candidateList{grid-template-columns:1fr}#candidateList .profile-card-banner{grid-template-columns:96px minmax(0,1fr)}#candidateList .pc-avatar-wrap{width:96px}#candidateList .pc-body .jc-foot{flex-wrap:wrap}}
+
+/* Profile card: institution details (company accounts) */
+.mini-co-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.mini-co-row:last-child{border-bottom:0}
+.mini-co-row span{color:var(--ink-faint);flex:none}
+.mini-co-row b{font-weight:600;color:var(--ink);text-align:right;overflow-wrap:anywhere}
+.mini-co-empty{font-size:12.5px;color:var(--ink-faint);margin:0}
