@@ -454,8 +454,7 @@ function s0(){
   + card('Institution details','',grid(F0,'d')+note('Use the official name of your institution as it appears on your official documents.'));
 }
 function s1(){
-  return card('Institution location','Where is your main campus?',grid(F1,'d')+note('Use the location of your institution\'s main campus.')+
-   `<div class="in-map" id="locMap">${I.d.city?`<span>${PIN_IC} ${esc(locStr(I.d))}</span>`:'<span>Map preview appears once you add a location</span>'}<button class="btn btn-ghost btn-sm" onclick="IN.focusPin()">Change location</button></div>`);
+  return card('Institution location','Where is your main campus?',grid(F1,'d'));
 }
 function s2(){
   return card('Person Registering / Institution Representative','Your details as the person registering this institution.',grid(F2.concat(EIDF),'d')+roleSel()+note('This is the person creating and managing the institution account.'))
