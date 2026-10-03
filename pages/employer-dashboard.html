@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Employer Dashboard — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="../css/institution.css?v=6">
+<link rel="stylesheet" href="../css/institution.css?v=7">
 </head>
 <body class="page">
   <div id="siteNav"></div>
@@ -102,7 +102,11 @@
             <div class="in-head"><h3>Post a job</h3><p>Fill in the role details so the right candidates can find and apply. Fields marked Required must be completed.</p></div>
             <div class="in-note in-ok" id="jbOk" style="display:none;" role="status"></div>
 
-            <div class="in-card">
+            <div class="in-layout">
+              <aside class="in-side"><div class="in-steps" role="tablist" aria-orientation="vertical"><button type="button" class="in-step on" role="tab" aria-selected="true" onclick="jbJump(0)"><span class="in-step-n">1</span><span class="in-step-t">Job details</span></button><button type="button" class="in-step" role="tab" aria-selected="false" onclick="jbJump(1)"><span class="in-step-n">2</span><span class="in-step-t">Requirements</span></button><button type="button" class="in-step" role="tab" aria-selected="false" onclick="jbJump(2)"><span class="in-step-n">3</span><span class="in-step-t">Salary</span></button><button type="button" class="in-step" role="tab" aria-selected="false" onclick="jbJump(3)"><span class="in-step-n">4</span><span class="in-step-t">Job location</span></button><button type="button" class="in-step" role="tab" aria-selected="false" onclick="jbJump(4)"><span class="in-step-n">5</span><span class="in-step-t">Description</span></button></div>
+                <div class="in-side-foot"><div class="in-bar"><div id="jbBar" style="width:0%"></div></div><span id="jbPct">0% complete</span></div></aside>
+              <div class="in-main">
+            <div class="in-card jb-step on" data-s="0">
               <h4>Job details</h4><p class="sub2">What is the role and where does it sit in your institution?</p>
               <div class="in-grid">
                 <div class="in-f in-full" id="jf-title"><label>Job title<i>Required</i></label><input type="text" id="jbTitle" placeholder="e.g. Assistant Professor, Computer Science" oninput="jbClear('title')"><div class="in-err" role="alert"></div></div>
@@ -114,7 +118,7 @@
               </div>
             </div>
 
-            <div class="in-card">
+            <div class="in-card jb-step" data-s="1">
               <h4>Requirements</h4><p class="sub2">Qualification, experience and how soon the candidate can join.</p>
               <div class="in-grid">
                 <div class="in-f" id="jf-qual"><label>Qualification needed<i>Required</i></label><select id="jbQualification" onchange="jbClear('qual')"><option value="">Select qualification</option><option>UG</option><option>PG</option><option>PhD</option><option>PG + NET / SET</option><option>PhD + NET / SET</option></select><div class="in-err" role="alert"></div></div>
@@ -124,7 +128,7 @@
               </div>
             </div>
 
-            <div class="in-card">
+            <div class="in-card jb-step" data-s="2">
               <h4>Salary</h4><p class="sub2">Clear pay details get more applications.</p>
               <div class="in-row3">
                 <div class="in-f" id="jf-salmin"><label>Minimum salary<i>Required</i></label><div class="in-pre"><span>₹</span><input type="number" id="jbSalMin" min="0" placeholder="e.g. 45000" oninput="jbClear('salmin')"></div><div class="in-err" role="alert"></div></div>
@@ -135,7 +139,7 @@
               <label class="in-chk"><input type="checkbox" id="jbSalNorms"> Pay as per UGC / AICTE norms</label>
             </div>
 
-            <div class="in-card">
+            <div class="in-card jb-step" data-s="3">
               <h4>Job location</h4><p class="sub2">Choose the campus this job belongs to.</p>
               <div class="in-grid">
                 <div class="in-f"><label>Institution</label><div id="jbInst" style="font-weight:700;color:var(--blue-900);padding:10px 0;">—</div></div>
@@ -145,7 +149,7 @@
               <div class="in-note" id="jbCampusNote" style="display:none;">This job is available across all listed campuses.</div>
             </div>
 
-            <div class="in-card">
+            <div class="in-card jb-step" data-s="4">
               <h4>Description</h4><p class="sub2">Tell candidates what the role involves.</p>
               <div class="in-grid">
                 <div class="in-f in-full"><label>Job description<i>Optional</i></label><textarea id="jbDesc" placeholder="Responsibilities, teaching load, research expectations and benefits"></textarea></div>
@@ -154,7 +158,10 @@
               </div>
             </div>
 
-            <button class="btn btn-primary btn-sm" onclick="addJob(event)">+ Post job — free</button>
+            <div class="in-actions"><span class="in-stepof" id="jbStepOf">Step 1 of 5</span>
+              <div class="r"><button type="button" class="btn btn-ghost btn-sm" id="jbBack" onclick="jbBack()" style="display:none">Back</button><button type="button" class="btn btn-primary btn-sm" id="jbNext" onclick="jbNext(event)">Next</button></div></div>
+              </div>
+            </div>
 
             <div id="jobList" style="margin-top:18px;"></div>
           </div>
@@ -208,6 +215,47 @@
 <script src="../js/store.js"></script>
 <script src="../js/employer.js"></script>
 <script src="../js/institution.js?v=4"></script>
+<script>
+/* Post a job: same left-steps + right-card layout as the company profile. UI only; posting still runs through addJob(). */
+(function(){
+  var N=5, cur=0, max=0, F=document.getElementById('jobPostForm'); if(!F) return;
+  var $=function(id){return document.getElementById(id);}, val=function(id){return ($(id).value||'').trim();};
+  var REQ=['jbTitle','jbRole','jbCategory','jbDept','jbType','jbQualification','jbNotice','jbExpMin','jbSalMin','jbSalMax','jbCampus'];
+  function need(list){ var first=null; list.forEach(function(x){ if(!val(x[1])){ jbErr(x[0],x[2]); if(!first) first=x[1]; } }); return first; }
+  var CHECK=[
+    function(){ return need([['title','jbTitle','Enter the job title'],['role','jbRole','Select the role'],['category','jbCategory','Select a category'],['dept','jbDept','Enter the department or subject'],['type','jbType','Select the employment type']]); },
+    function(){ var f=need([['qual','jbQualification','Select the qualification needed'],['notice','jbNotice','Select the notice period you accept'],['exp','jbExpMin','Enter minimum experience. Use 0 for freshers']]);
+      if(!f&&!(Number(val('jbExpMin'))>=0&&Number(val('jbExpMin'))<=50)){ jbErr('exp','Enter a number between 0 and 50'); f='jbExpMin'; }
+      if(!f&&val('jbExpMax')!==''&&Number(val('jbExpMax'))<Number(val('jbExpMin')||0)){ jbErr('expmax','Maximum cannot be lower than minimum'); f='jbExpMax'; } return f; },
+    function(){ if($('jbSalNorms').checked) return null; var f=null;
+      if(!(Number(val('jbSalMin'))>0)){ jbErr('salmin','Enter the minimum salary'); f='jbSalMin'; }
+      if(!(Number(val('jbSalMax'))>0)){ jbErr('salmax','Enter the maximum salary'); f=f||'jbSalMax'; }
+      else if(Number(val('jbSalMax'))<Number(val('jbSalMin')||0)){ jbErr('salmax','Maximum cannot be lower than minimum'); f=f||'jbSalMax'; } return f; },
+    function(){ return need([['campus','jbCampus','Select the campus for this job']]); },
+    function(){ return null; }];
+  function pct(){ var n=REQ.filter(function(id){ if($('jbSalNorms').checked&&(id==='jbSalMin'||id==='jbSalMax')) return true; return !!val(id); }).length; return Math.round(n/REQ.length*100); }
+  function paint(){
+    var p=pct(); $('jbBar').style.width=p+'%'; $('jbPct').textContent=p+'% complete';
+    [].forEach.call(F.querySelectorAll('.jb-step'),function(c){ c.classList.toggle('on',+c.getAttribute('data-s')===cur); });
+    [].forEach.call(F.querySelectorAll('.in-step'),function(b,i){ b.className='in-step'+(i===cur?' on':i<=max?' done':''); b.setAttribute('aria-selected',i===cur); });
+    $('jbStepOf').textContent='Step '+(cur+1)+' of '+N; $('jbBack').style.display=cur>0?'':'none';
+    $('jbNext').textContent=cur===N-1?'+ Post job — free':'Next';
+  }
+  function go(i){ cur=i; max=Math.max(max,i); paint(); var h=F.querySelector('.in-head'); if(h) h.scrollIntoView(); }
+  function focusId(id){ var el=$(id); if(el){ el.scrollIntoView({block:'center'}); el.focus(); } }
+  window.jbJump=function(i){ if(i<=max||i<cur) go(i); };
+  window.jbBack=function(){ if(cur>0) go(cur-1); };
+  window.jbNext=function(e){
+    if(cur<N-1){ var f=CHECK[cur](); if(f){ focusId(f); return; } go(cur+1); return; }
+    addJob(e);
+    var bad=F.querySelector('.in-f.err');
+    if(bad){ var st=bad.closest('.jb-step'); cur=+st.getAttribute('data-s'); max=Math.max(max,cur); paint(); var el=bad.querySelector('input,select'); if(el){ el.scrollIntoView({block:'center'}); el.focus(); } }
+    else { cur=0; max=0; paint(); }
+  };
+  F.addEventListener('input',function(){ paint(); }); F.addEventListener('change',function(){ paint(); });
+  paint();
+})();
+</script>
 <script src="../js/auth.js"></script>
 <script src="../js/faculty.js"></script>
 <script src="../js/layout.js"></script>
