@@ -573,7 +573,7 @@
     const chk = id => !!document.getElementById(id).checked;
     ['title','role','category','dept','type','qual','notice','exp','expmax','salmin','salmax','campus'].forEach(jbClear);
 
-    const title = v('jbTitle'), role = v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
+    const title = v('jbTitle'), role = (v('jbRole') === 'Other' && v('jbRoleOther')) ? v('jbRoleOther') : v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
     const qualification = v('jbQualification'), notice = v('jbNotice');
     const expMin = v('jbExpMin'), expMax = v('jbExpMax');
     const salMin = v('jbSalMin'), salMax = v('jbSalMax'), salPeriod = v('jbSalPeriod') || 'month';
@@ -601,7 +601,7 @@
 
     if(first){
       const el = document.querySelector('#jf-'+first+' input, #jf-'+first+' select');
-      if(el){ el.scrollIntoView({block:'center'}); el.focus(); }
+      if(el){ try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } }
       return;
     }
 
@@ -628,7 +628,8 @@
     pushNotif(`Job posted: ${title}.`);
 
     // reset the form and confirm
-    ['jbTitle','jbRole','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    ['jbTitle','jbRole','jbRoleOther','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    const roEl = document.getElementById('jbRoleOther'); if(roEl) roEl.style.display = 'none';
     document.getElementById('jbSalPeriod').value = 'month';
     document.getElementById('jbSalNeg').checked = false;
     document.getElementById('jbSalNorms').checked = false;
@@ -637,7 +638,7 @@
     if(ok){
       ok.innerHTML = '<b>Job posted.</b> ' + jbEsc(title) + (campus ? ' · ' + jbEsc(campus) : '') + ' is now live. Find it under Posted jobs.';
       ok.style.display = 'block';
-      ok.scrollIntoView({block:'center'});
+      
       setTimeout(()=>{ ok.style.display = 'none'; }, 7000);
     }
   }
