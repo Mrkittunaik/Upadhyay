@@ -41,6 +41,12 @@ label{display:grid;gap:5px;font-weight:600;font-size:14px}
 input,select{font:inherit;padding:10px 12px;border:1px solid #dfe3ee;border-radius:3px;background:#fff}
 .note{padding:10px 12px;background:#e3ebff;font-size:14px}
 @media (max-width:768px){
+  header{padding:10px 16px;gap:10px 12px}
+  .logo{font-size:20px;gap:8px}
+  .logo img,.logo .fb{width:32px;height:32px}
+  .hbtn{margin-left:auto}
+  .hb{padding:7px 12px;font-size:14px}
+  nav{order:3;flex:0 0 100%;gap:20px;font-size:14px;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap;padding-bottom:4px}
   main{padding:20px 14px 40px}
   h1{font-size:23px}
   .sub{font-size:15px}
@@ -56,7 +62,28 @@ input,select{font:inherit;padding:10px 12px;border:1px solid #dfe3ee;border-radi
 </style>
 </head>
 <body>
-<!-- Your existing site header/nav + logo goes here (shared component). Not duplicated on purpose. -->
+<header>
+  <a class="logo" href="/" onclick="show('type');return false">
+    <!-- CHANGE src to your real logo file path -->
+    <img src="/assets/logo.png" alt="" onerror="this.outerHTML='<span class=fb>U</span>'">Upaadhyay
+  </a>
+  <nav>
+    <a href="/">Home</a>
+    <a data-show="guest" href="/pages/faculty">For Faculty</a>
+    <a data-show="guest" href="/pages/employers">For Employers</a>
+    <a data-show="user" href="/pages/dashboard">Dashboard</a>
+    <a data-show="user" href="/pages/post-job">Post a job</a>
+    <a data-show="main" href="/pages/branches">Branches</a>
+    <a href="/pages/jobs">Browse jobs by type ▾</a>
+    <a data-show="guest" href="/pages/how-it-works">How it works</a>
+    <a data-show="user" href="/pages/profile">Profile</a>
+  </nav>
+  <div class="hbtn">
+    <button class="hb" data-show="guest" onclick="show('login')">Log in</button>
+    <button class="hb fill" data-show="guest" onclick="show('type')">Register free</button>
+    <button class="hb" data-show="user" onclick="logout()">Log out</button>
+  </div>
+</header>
 
 <main>
   <section id="type">
@@ -151,6 +178,17 @@ function login(){
     if(window.updateNav)window.updateNav();}
 }
 </script>
-<script src="nav-auth.js"></script>
+<script>
+function getSession(){try{return JSON.parse(localStorage.getItem('upaadhyay_session'))}catch(e){return null}}
+function updateNav(){
+  var s=getSession();
+  document.querySelectorAll('[data-show]').forEach(function(el){
+    var w=el.getAttribute('data-show').split(' ');
+    el.hidden=!(!s ? w.indexOf('guest')>-1 : (w.indexOf('user')>-1||w.indexOf(s.role)>-1));
+  });
+}
+function logout(){try{localStorage.removeItem('upaadhyay_session')}catch(e){}updateNav();show('type')}
+updateNav();
+</script>
 </body>
 </html>
