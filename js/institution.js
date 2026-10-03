@@ -83,7 +83,7 @@ function load(){
 }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(I)); }catch(e){ toast('Progress saved, but the image is too large to keep. Try a smaller file.'); } }
 function toast(m){ const t=document.createElement('div'); t.className='in-toast'; t.setAttribute('role','status'); t.textContent=m; document.body.appendChild(t); setTimeout(()=>t.remove(),2600); }
-function top(){ const r=$('instRoot'); if(r) r.scrollIntoView(); }
+function top(){ /* page stays where it is when a step or option is clicked */ }
 
 /* ---------- validation ---------- */
 function chk(o,v){
@@ -432,7 +432,7 @@ function instHeader(){
   try{ currentCompany.logo=d.logo||''; if(name) currentCompany.name=name; saveState(); refreshDashTopAccount(); }catch(e){}
 }
 window.instHeader=instHeader;
-function render(){ const r=$('instRoot'); if(!r) return; r.innerHTML=I.view==='wizard'?wiz():I.view==='status'?statusPage():dash(); instHeader(); }
+function render(){ const r=$('instRoot'); if(!r) return; const y=window.scrollY; r.style.minHeight=r.offsetHeight+'px'; r.innerHTML=I.view==='wizard'?wiz():I.view==='status'?statusPage():dash(); instHeader(); window.scrollTo(0,y); r.style.minHeight=''; }
 function setHeader(){
   try{
     const d=I.d; Object.assign(currentCompany,{name:d.name,type:d.type,city:d.city||locStr(d),website:d.website,desc:d.about2||d.about1||'',contactName:d.rname,designation:d.rdes,email:d.remail||d.email,phone:d.rphone||d.phone,logo:d.logo||'',saved:true}); saveState();
