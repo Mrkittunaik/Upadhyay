@@ -241,15 +241,15 @@
     $('jbStepOf').textContent='Step '+(cur+1)+' of '+N; $('jbBack').style.display=cur>0?'':'none';
     $('jbNext').textContent=cur===N-1?'+ Post job — free':'Next';
   }
-  function go(i){ cur=i; max=Math.max(max,i); paint(); var h=F.querySelector('.in-head'); if(h) h.scrollIntoView(); }
-  function focusId(id){ var el=$(id); if(el){ el.scrollIntoView({block:'center'}); el.focus(); } }
+  function go(i){ cur=i; max=Math.max(max,i); paint(); }
+  function focusId(id){ var el=$(id); if(el){ try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } } }
   window.jbJump=function(i){ if(i>=0&&i<N) go(i); };
   window.jbBack=function(){ if(cur>0) go(cur-1); };
   window.jbNext=function(e){
     if(cur<N-1){ var f=CHECK[cur](); if(f){ focusId(f); return; } go(cur+1); return; }
     addJob(e);
     var bad=F.querySelector('.in-f.err');
-    if(bad){ var st=bad.closest('.jb-step'); cur=+st.getAttribute('data-s'); max=Math.max(max,cur); paint(); var el=bad.querySelector('input,select'); if(el){ el.scrollIntoView({block:'center'}); el.focus(); } }
+    if(bad){ var st=bad.closest('.jb-step'); cur=+st.getAttribute('data-s'); max=Math.max(max,cur); paint(); var el=bad.querySelector('input,select'); if(el){ try{ el.focus({preventScroll:true}); }catch(e){ el.focus(); } } }
     else { cur=0; max=0; paint(); }
   };
   F.addEventListener('input',function(){ paint(); }); F.addEventListener('change',function(){ paint(); });
