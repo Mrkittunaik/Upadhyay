@@ -550,6 +550,8 @@
 
   // ---------- Post a job: helpers ----------
   function jbEsc(x){ return String(x==null?'':x).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // A dropdown value, or the text typed in its "Other" box (falls back to "Other" if left empty)
+  function jbPick(id){ const el = document.getElementById(id); const val = ((el && el.value) || '').trim(); if(val !== 'Other') return val; const o = document.getElementById(id + 'Other'); return ((o && o.value) || '').trim() || 'Other'; }
   function jbClear(k){ const f = document.getElementById('jf-'+k); if(f) f.classList.remove('err'); }
   function jbErr(k, m){ const f = document.getElementById('jf-'+k); if(!f) return; f.classList.add('err'); const e = f.querySelector('.in-err'); if(e) e.textContent = m; }
   function jbMoney(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
@@ -577,8 +579,8 @@
     const chk = id => !!document.getElementById(id).checked;
     ['title','role','category','dept','type','qual','notice','exp','expmax','salmin','salmax','campus'].forEach(jbClear);
 
-    const title = v('jbTitle'), role = (v('jbRole') === 'Other' && v('jbRoleOther')) ? v('jbRoleOther') : v('jbRole'), category = v('jbCategory'), dept = v('jbDept'), type = v('jbType');
-    const qualification = v('jbQualification'), notice = v('jbNotice');
+    const title = v('jbTitle'), role = (v('jbRole') === 'Other' && v('jbRoleOther')) ? v('jbRoleOther') : v('jbRole'), category = jbPick('jbCategory'), dept = v('jbDept'), type = jbPick('jbType');
+    const qualification = jbPick('jbQualification'), notice = jbPick('jbNotice');
     const expMin = v('jbExpMin'), expMax = v('jbExpMax');
     const salMin = v('jbSalMin'), salMax = v('jbSalMax'), salPeriod = v('jbSalPeriod') || 'month';
     const salNeg = chk('jbSalNeg'), salNorms = chk('jbSalNorms');
@@ -632,8 +634,8 @@
     pushNotif(`Job posted: ${title}.`);
 
     // reset the form and confirm
-    ['jbTitle','jbRole','jbRoleOther','jbCategory','jbDept','jbType','jbVac','jbQualification','jbNotice','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
-    const roEl = document.getElementById('jbRoleOther'); if(roEl) roEl.style.display = 'none';
+    ['jbTitle','jbRole','jbRoleOther','jbCategory','jbCategoryOther','jbDept','jbType','jbTypeOther','jbVac','jbQualification','jbQualificationOther','jbNotice','jbNoticeOther','jbExpMin','jbExpMax','jbSalMin','jbSalMax','jbLocation','jbDesc','jbSkills','jbDeadline','jbCampus'].forEach(i=>{ const el = document.getElementById(i); if(el) el.value = ''; });
+    ['jbRoleOther','jbCategoryOther','jbTypeOther','jbQualificationOther','jbNoticeOther'].forEach(i=>{ const el = document.getElementById(i); if(el) el.style.display = 'none'; });
     document.getElementById('jbSalPeriod').value = 'month';
     document.getElementById('jbSalNeg').checked = false;
     document.getElementById('jbSalNorms').checked = false;
