@@ -87,6 +87,9 @@
   .nav-drop-col{display:flex; flex-direction:column; gap:2px; flex:1;}
   .nav-drop-label{font-size:11.5px; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:6px;}
   .nav-drop-col a{font-size:13.5px; padding:7px 8px; border-radius:2px; color:var(--ink); font-weight:500;}
+  .nav-drop-menu{flex-wrap:wrap;}
+  .nav-drop-foot{flex-basis:100%; border-top:1px solid var(--line); padding-top:8px; margin-top:4px;}
+  .nav-drop-foot a{font-size:13.5px; font-weight:600; color:var(--blue-700);}
   .nav-drop-col a:hover{background:var(--blue-50); color:var(--blue-700);}
   .nav-cta{display:flex; align-items:center; gap:10px;}
   .nav-user{display:flex; align-items:center; gap:14px;}
