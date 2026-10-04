@@ -519,6 +519,27 @@
     closeNotifPanel();
   });
 
+  /* Sub-branch details for the profile card, read from what the branch saved on its dashboard */
+  function nwBranchInfo(){
+    let sv=null, pr=null, lgs=null;
+    try{ sv = JSON.parse(localStorage.getItem('nwSub')); }catch(e){}
+    try{ pr = JSON.parse(localStorage.getItem('nwProfile')); }catch(e){}
+    try{ lgs = JSON.parse(localStorage.getItem('nwLogos')); }catch(e){}
+    const sub = (sv && sv.sub) || {}, d = (pr && pr.d) || {};
+    const name = d.name || sub.n || '';
+    const city = d.city ? [d.city, d.state].filter(Boolean).join(', ') : (sub.c || '');
+    const type = d.type || sub.t || '';
+    return { name:name, type:type, city:city, logo:(lgs && name && lgs[name]) || '',
+      mainName:(sv && sv.mainName) || '', mainCode:(sv && sv.mainCode) || '',
+      contact:[d.rname || sub.by, d.rdes].filter(Boolean).join(', '), email:d.rem || sub.em || '', phone:d.rph || sub.ph || '',
+      line:[type, city].filter(Boolean).join(' \u00b7 ') };
+  }
+  /* Profile-card links for a sub-branch: switch tab in place on the dashboard, or open it with that tab */
+  function branchGo(tab){
+    closeMiniProfile();
+    if(typeof nwOpenTab === 'function' && nwOpenTab(tab)) return;
+    goTo('network', {start:'dash', tab:tab});
+  }
   function openMiniProfile(){
     closeNotifPanel();
     refreshMiniProfile();
@@ -530,13 +551,13 @@
     document.getElementById('miniPanel').classList.remove('open');
   }
   function refreshMiniProfile(){
-    document.getElementById('miniAvatar').src = currentRole==='company' ? (currentCompany.logo || currentUser.avatar) : currentUser.avatar;
+    document.getElementById('miniAvatar').src = currentRole==='company' ? (currentCompany.logo || currentUser.avatar) : currentRole==='branch' ? (nwBranchInfo().logo || currentUser.avatar) : currentUser.avatar;
     const isBranch = currentRole==='branch';
     const isCompany = currentRole==='company';
-    document.getElementById('miniName').textContent = isBranch ? (currentUser.name || 'Your sub-branch') : isCompany
+    document.getElementById('miniName').textContent = isBranch ? (nwBranchInfo().name || currentUser.name || 'Your sub-branch') : isCompany
       ? (currentCompany.name || 'Your institution')
       : (currentUser.name || 'Your name');
-    document.getElementById('miniDegree').textContent = isBranch ? 'Sub-branch account' : isCompany
+    document.getElementById('miniDegree').textContent = isBranch ? (nwBranchInfo().line || 'Sub-branch account') : isCompany
       ? ([currentCompany.type, currentCompany.city].filter(Boolean).join(' · ') || 'Company account')
       : (currentUser.qualification ? `${currentUser.qualification}${currentUser.college ? ' · '+currentUser.college : ''}` : 'Add your qualification');
 
@@ -556,6 +577,25 @@
                       ['Email', currentCompany.email], ['Phone', currentCompany.phone]].filter(function(r){ return r[1]; });
         const box = document.getElementById('miniCompanyInfo'); box.innerHTML = '';
         if(!rows.length){ const p = document.createElement('p'); p.className = 'mini-co-empty'; p.textContent = 'Add your institution details on your company profile.'; box.appendChild(p); }
+        rows.forEach(function(r){
+          const row = document.createElement('div'); row.className = 'mini-co-row';
+          const k = document.createElement('span'); k.textContent = r[0];
+          const v = document.createElement('b'); v.textContent = r[1];
+          row.appendChild(k); row.appendChild(v); box.appendChild(row);
+        });
+      }
+    }
+
+    const brSec = document.getElementById('miniBranchSection');
+    if(brSec){
+      brSec.style.display = isBranch ? '' : 'none';
+      if(isBranch){
+        const b = nwBranchInfo();
+        const rows = [['Location', b.city], ['Type', b.type],
+                      ['Main institution', [b.mainName, b.mainCode ? 'Code ' + b.mainCode : ''].filter(Boolean).join(' \u00b7 ')],
+                      ['Contact', b.contact], ['Email', b.email], ['Phone', b.phone]].filter(function(r){ return r[1]; });
+        const box = document.getElementById('miniBranchInfo'); box.innerHTML = '';
+        if(!rows.length){ const p = document.createElement('p'); p.className = 'mini-co-empty'; p.textContent = 'Add your branch details on your institution profile.'; box.appendChild(p); }
         rows.forEach(function(r){
           const row = document.createElement('div'); row.className = 'mini-co-row';
           const k = document.createElement('span'); k.textContent = r[0];
@@ -622,7 +662,7 @@
   }
 
   // The full profile lives on the dashboard's own profile tab now (faculty or employer, per role).
-  function openFullProfile(){ goTo(dashboardPageForRole()); }
+  function openFullProfile(){ if(currentRole === 'branch'){ branchGo('profile'); return; } goTo(dashboardPageForRole()); }
   function closeFullProfile(){ goTo(dashboardPageForRole()); }
 
   // Called once by profile.html on load: fills the page from saved state.
