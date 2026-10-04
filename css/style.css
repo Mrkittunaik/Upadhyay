@@ -759,7 +759,7 @@
   .section-head h2{font-size:26px; font-weight:700; margin:0 0 8px; color:var(--ink);}
   .section-head p{font-size:15.5px; color:var(--ink-soft); line-height:1.6; margin:0;}
   .band{background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
-  .band-blue{background:#0A0A0A; color:#fff;}
+  .band-blue{background:linear-gradient(120deg,#5B21B6 0%,#8B2FC9 38%,#C026D3 68%,#EC4899 100%); color:#fff;}
 
   .cat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
   .cat-card{
@@ -815,7 +815,7 @@
   .trust-num .num{font-size:34px; font-weight:700;}
   .trust-num .label{font-size:13px; color:var(--ink-faint); margin-top:4px;}
   .band-blue .trust-num .num{color:#fff;}
-  .band-blue .trust-num .label{color:#B9CCF0;}
+  .band-blue .trust-num .label{color:rgba(255,255,255,.88);}
 
   footer{background:#0A0A0A; color:#D4D4D8; padding:56px 24px 26px;}
   .footer-inner{max-width:1180px; margin:0 auto;}
