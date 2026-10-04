@@ -53,7 +53,7 @@
   letter-spacing:.02em;
   text-shadow:0 1px 4px rgba(0,0,0,.4);
 }
-.ac-brand img{ filter:brightness(0) invert(1); opacity:.95; }
+.ac-brand img{ background:#fff; border-radius:2px; padding:2px 4px; height:30px; width:auto; }
 
 .ap-page-tag{
   position:absolute;
