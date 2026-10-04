@@ -147,6 +147,10 @@ function mountChrome(opts){
       <div class="mini-section-head"><h4>Institution details</h4></div>
       <div id="miniCompanyInfo"></div>
     </div>
+    <div class="mini-section" id="miniBranchSection" style="display:none">
+      <div class="mini-section-head"><h4>Institution details</h4></div>
+      <div id="miniBranchInfo"></div>
+    </div>
     <div class="mini-section" id="miniStatsSection">
       <div class="mini-section-head">
         <h4 id="miniStatsHeading">Your profile performance</h4>
@@ -182,10 +186,28 @@ function mountChrome(opts){
       </a>
     </div>
     <div class="mini-links" id="miniLinksBranch" style="display:none;">
-      <a href="javascript:void(0)" onclick="closeMiniProfile(); goTo('network');">
-        Sub-branch dashboard
+      <a href="javascript:void(0)" onclick="branchGo('profile');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 21V4.5L12 2L20 4.5V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 21V16H15V21" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        Institution profile
+      </a>
+      <a href="javascript:void(0)" onclick="branchGo('post');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Post a job
+      </a>
+      <a href="javascript:void(0)" onclick="branchGo('jobs');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 7H20M4 12H20M4 17H14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Posted jobs
+      </a>
+      <a href="javascript:void(0)" onclick="branchGo('cands');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.7"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Browse candidates
+      </a>
+      <a href="javascript:void(0)" onclick="branchGo('reqs');">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 5h16v11H8l-4 4z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Requests
       </a>
       <a href="javascript:void(0)" onclick="logoutUser()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9M16 17L21 12L16 7M21 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Logout
       </a>
     </div>
