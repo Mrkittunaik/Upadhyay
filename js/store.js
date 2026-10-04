@@ -175,7 +175,11 @@ const PAGES = {
   employer:  SITE_ROOT + 'pages/employer-dashboard.html',
   profile:   SITE_ROOT + 'pages/profile.html',
   network:   SITE_ROOT + 'pages/institution-network.html',
-  subauth:   SITE_ROOT + 'pages/subbranch-auth.html'
+  subauth:   SITE_ROOT + 'pages/subbranch-auth.html',
+  facultyHub:SITE_ROOT + 'pages/for-faculty.html',
+  employersHub:SITE_ROOT + 'pages/for-employers.html',
+  howItWorks:SITE_ROOT + 'pages/how-it-works.html',
+  jobView:   SITE_ROOT + 'pages/job-view.html'
 };
 function goTo(page, params){
   const qs = params ? '?' + new URLSearchParams(params).toString() : '';
