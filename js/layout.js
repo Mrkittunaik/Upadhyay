@@ -102,7 +102,7 @@ function mountChrome(opts){
     <div class="footer-inner">
       <div class="footer-grid">
         <div>
-          <div class="footer-brand" style="display:flex; align-items:center; gap:8px;"><span style="background:#fff; border-radius:2px; padding:3px 6px; display:flex; align-items:center;"><img src="/assets/logo/logo-mark.png" alt="Upaadhyay" style="height:26px; width:auto; display:block;"></span>Upaadhyay</div>
+          <div class="footer-brand" style="display:flex; align-items:center; gap:8px;"><img src="/assets/logo/logo-mark-light.png" alt="Upaadhyay" style="height:40px; width:auto; display:block;">Upaadhyay</div>
           <p>India's faculty recruitment platform — connecting schools, junior colleges and universities with verified teaching talent.</p>
         </div>
         <div class="footer-col">
