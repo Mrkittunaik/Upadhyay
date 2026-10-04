@@ -20,30 +20,16 @@ function mountNav(active){
       <a class="brand" href="${PAGES.home}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;"><img src="/assets/logo/logo-mark.png" alt="Upaadhyay" style="height:34px; width:auto; display:block;">Upaadhyay</a>
       <div class="nav-links">
         <a href="${PAGES.home}"${cls('home')}>Home</a>
-        <a href="${PAGES.home}#faculty" id="navForFacultyLink">For Faculty</a>
-        <a href="${PAGES.home}#employers" id="navForEmployersLink">For Employers</a>
+        <a href="${PAGES.facultyHub}"${cls('faculty')} id="navForFacultyLink">For Faculty</a>
+        <a href="${PAGES.employersHub}"${cls('employers')} id="navForEmployersLink">For Employers</a>
         <div class="nav-drop" id="navJobsDropWrap" onmouseenter="openNavDrop()" onmouseleave="closeNavDrop()">
-          <a href="${PAGES.jobs}"${cls('jobs')}>Browse jobs by type ▾</a>
+          <a href="${PAGES.jobs}"${cls('jobs')}>Browse Jobs ▾</a>
           <div class="nav-drop-menu" id="navDropMenu">
-            <div class="nav-drop-col">
-              <span class="nav-drop-label">Schools</span>
-              <a href="${PAGES.jobs}?cat=Schools">PGT / TGT / PRT teacher jobs</a>
-              <a href="${PAGES.jobs}?cat=Schools">CBSE &amp; ICSE school jobs</a>
-              <a href="${PAGES.jobs}?cat=Schools">Principal &amp; coordinator jobs</a>
-            </div>
-            <div class="nav-drop-col">
-              <span class="nav-drop-label">Junior Colleges</span>
-              <a href="${PAGES.jobs}?cat=Intermediate">Junior lecturer jobs</a>
-              <a href="${PAGES.jobs}?cat=Intermediate">MPC / BiPC / CEC faculty</a>
-            </div>
-            <div class="nav-drop-col">
-              <span class="nav-drop-label">Universities &amp; Colleges</span>
-              <a href="${PAGES.jobs}?cat=Higher%20Education">Assistant Professor jobs</a>
-              <a href="${PAGES.jobs}?cat=Higher%20Education">Associate / full professor jobs</a>
-            </div>
+            <div class="nav-drop-col"><span class="nav-drop-label">Faculty Positions</span><a href="${PAGES.jobView}?c=professor">Professor</a><a href="${PAGES.jobView}?c=associate-professor">Associate Professor</a><a href="${PAGES.jobView}?c=assistant-professor">Assistant Professor</a><a href="${PAGES.jobView}?c=lecturer">Lecturer</a></div><div class="nav-drop-col"><span class="nav-drop-label">Research</span><a href="${PAGES.jobView}?c=research">Research Professor</a><a href="${PAGES.jobView}?c=research-associate">Research Associate</a><a href="${PAGES.jobView}?c=postdoctoral">Postdoctoral</a></div><div class="nav-drop-col"><span class="nav-drop-label">Non-Teaching</span><a href="${PAGES.jobView}?c=academic-coordinator">Academic Coordinator</a><a href="${PAGES.jobView}?c=lab-staff">Lab Staff</a><a href="${PAGES.jobView}?c=administration">Administration</a></div>
+            <div class="nav-drop-foot"><a href="${PAGES.jobs}">View all jobs →</a></div>
           </div>
         </div>
-        <a href="${PAGES.home}#how">How it works</a>
+        <a href="${PAGES.howItWorks}"${cls('how')}>How It Works</a>
         <a href="${PAGES.jobs}" id="navBrowseJobsLink">Browse jobs</a>
         <a href="#" id="navPostJobLink" onclick="goTo('employer',{tab:'post'}); return false;" style="display:none;">Post a job</a>
         <a href="#" id="navBrowseCandidatesLink" onclick="goTo('employer',{tab:'candidates'}); return false;" style="display:none;">Browse candidates</a>
