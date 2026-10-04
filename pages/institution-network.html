@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Institution Network — Upadyay</title>
 <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/institution.css?v=14">
 <style>
 .nw{max-width:1100px;margin:0 auto;padding:16px 24px 60px;box-sizing:border-box}
 .nw>*{margin-left:auto;margin-right:auto}
@@ -65,6 +66,7 @@
 .nw-small .nw-ic svg{width:26px;height:26px;display:block}
 .nw-small .grow{min-width:200px}
 .nw-lg{margin:10px 0 0}
+.nw.nw-wide{max-width:none;padding:0}
 </style>
 </head>
 <body class="page">
@@ -118,7 +120,7 @@ ${[['reg','Registration flow'],['sub','Sub-branch dashboard'],['main','Main bran
 ${S.role=='sub'?'<span class="mut">Status:</span>'+Object.keys(ST).map(k=>`<button class="btn btn-light btn-sm ${S.st==k?'on':''}" onclick="set('st','${k}')">${k}</button>`).join(''):''}${S.role=='main'?`<button class="btn btn-light btn-sm ${S.empty?'on':''}" onclick="set('empty',!S.empty)">Empty state</button>`:''}</div>`}
 function render(){
   const V={type:vType,sublogin:vSubLogin,code:vFind,confirm:vConfirm,form:vForm,review:vReview,done:vDone}[S.v];
-  document.getElementById('app').innerHTML=(S.role=='reg'?V():S.role=='sub'?vSub():vMain());
+  document.getElementById('app').className='nw'+(S.role=='sub'?' nw-wide':'');document.getElementById('app').innerHTML=(S.role=='reg'?V():S.role=='sub'?vSub():vMain());
 }
 /* 1. choose type */
 function vType(){const o2=(k,ic,t,bd,d,ex,btn)=>`<div class="c pick nw-small ${S.type==k?'sel':''}" onclick="location.href='subbranch-auth.html?mode=register'"><div class="nw-ic">${ic}</div><div class="grow"><h3 style="display:inline;margin:0 8px 0 0">${t}</h3>${bd}<p class="mut" style="margin:4px 0 0">${d}</p></div><span class="btn btn-ghost btn-sm">${btn}</span></div>`;
@@ -171,7 +173,7 @@ function readLogo(inp){const f=inp.files&&inp.files[0];if(!f)return;if(f.size>50
 function applyForm(){const n=(FV['Sub-branch / College name']||'').trim(),c=(FV['City']||'').trim(),st=(FV['State']||'').trim();if(n)SUB.n=n;if(c||st)SUB.c=[c,st].filter(Boolean).join(', ');if(FV['Official email'])SUB.em=FV['Official email'];if(FV['Phone'])SUB.ph=FV['Phone'];if(FV['Contact person'])SUB.by=FV['Contact person'];if(FV['About the branch'])SUB.d=FV['About the branch'];if(FV['Institution type'])SUB.t=FV['Institution type']}
 function submitReg(){applyForm();if(S.logo){LOGOS[SUB.n]=S.logo;try{localStorage.setItem('nwLogos',JSON.stringify(LOGOS))}catch(e){}}
  reqs[0]={...reqs[0],...SUB,id:1,s:'Approved',mainInstitutionId:S.main.code,mainInstitutionCode:S.main.code,subBranchName:SUB.n,requestStatus:'Approved',requestDate:new Date().toISOString()};
- S.st='approved';try{setBranchSession((ls0('nwSubAccount')||{}).id,SUB.n);if(typeof updateNavForLogin==='function')updateNavForLogin()}catch(e){}try{localStorage.setItem('nwSub',JSON.stringify({sub:SUB,mainCode:S.main.code,st:'approved'}))}catch(e){}go('done')}
+ S.st='approved';try{setBranchSession((ls0('nwSubAccount')||{}).id,SUB.n);if(typeof updateNavForLogin==='function')updateNavForLogin()}catch(e){}try{localStorage.setItem('nwSub',JSON.stringify({sub:SUB,mainCode:S.main.code,mainName:S.main.n,st:'approved'}))}catch(e){}go('done')}
 function fldH(f){const[l,o]=f.split('|'),v=FV[l]||'',ev=String(v).replace(/"/g,'&quot;');return `<label class="fld">${l}${o=='area'?`<textarea rows="3" data-k="${l}" oninput="FV[this.dataset.k]=this.value">${v}</textarea>`:o=='file'?(l.startsWith('Logo')?`<span class="row"><span id="logoPv" class="lg big" style="background:#fff;border:1px dashed var(--line);overflow:hidden;padding:0">${S.logo?`<img src="${S.logo}" style="width:100%;height:100%;object-fit:cover">`:crest(SUB.n)}</span><input type="file" accept="image/*" onchange="readLogo(this)"></span><span class="mut" style="font-weight:400">Upload your own logo (under 500 KB). A free default crest is used if you skip this.</span>`:'<input type="file" accept="image/*">'):o?`<select data-k="${l}" onchange="FV[this.dataset.k]=this.value"><option value="">Select</option>${o.split(',').map(x=>`<option ${v==x?'selected':''}>${x}</option>`).join('')}</select>`:`<input data-k="${l}" value="${ev}" oninput="FV[this.dataset.k]=this.value">`}</label>`}
 function vForm(){const ks=Object.keys(F),i=S.fs||0,k=ks[i],last=i==ks.length-1;
 return `<div class="nw-stack nw-form"><h1>Create Your Sub-Branch / College Profile</h1><p class="sub">You are joining <b>${S.main.n}</b> as a sub-branch. Your profile will be sent to the Main Institution for verification.</p>
@@ -216,33 +218,49 @@ const SD=[['profile','Institution Profile'],['post','Post a Job'],['jobs','Poste
 const lockedTab=()=>alert('Locked until the Main Institution approves your connection.');
 const myJobs=()=>JOBS.filter(j=>j.mainCode==S.main.code&&j.branchName==SUB.n);
 const myReqs=()=>CREQ.filter(r=>r.mainCode==S.main.code&&r.branchName==SUB.n);
-const subNav=k=>{const ok=k=='approved';return `<div class="row" style="margin-bottom:12px">${lg(SUB.n,'big')}<div><h1 style="margin:0">${esc(SUB.n)}</h1><div class="mut" style="font-size:14px">Your poster panel — post jobs, review and invite candidates</div></div></div><div class="dtabs">${SD.map(([t,l])=>t=='profile'||ok?`<button class="${S.sd==t?'on':''}" onclick="set('sd','${t}')">${l}${t=='jobs'&&myJobs().length?' ('+myJobs().length+')':''}${t=='reqs'&&myReqs().length?' ('+myReqs().length+')':''}</button>`:`<button style="opacity:.55" onclick="lockedTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg> ${l}</button>`).join('')}</div>`};
+const subNav=k=>{const ok=k=='approved';return `<div class="dash-tabs">${SD.map(([t,l])=>t=='profile'||ok?`<button class="dash-subtab ${S.sd==t?'active':''}" onclick="set('sd','${t}')">${l}${t=='jobs'&&myJobs().length?' ('+myJobs().length+')':''}${t=='reqs'&&myReqs().length?' ('+myReqs().length+')':''}</button>`:`<button class="dash-subtab" style="opacity:.55" onclick="lockedTab()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>${l}</button>`).join('')}</div>`};
 const opt=a=>a.map(x=>`<option>${x}</option>`).join('');
 const jobCard=j=>`<div class="c"><div class="row wrap sp"><b>${esc(j.title)}</b><span class="st g">Active</span></div><div class="mut">${esc(j.role)} · ${esc(j.dept)} · ${esc(j.type)} · ${esc(j.vac)} vacancy</div><div class="mut">₹${esc(j.salMin)} – ₹${esc(j.salMax)} per ${esc(j.period)} · Exp ${esc(j.expMin)}+ yrs · ${esc(j.qual)}</div><div style="margin-top:6px"><b>${esc(j.branchName)}</b> ${B(0)}<div class="mut">Part of ${esc(j.mainName)} (Code ${esc(j.mainCode)}) · <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> ${j.campus?esc(j.campus)+' · ':''}${esc(j.loc)} · Posted ${esc(j.date)}</div></div></div>`;
-function vPost(){return `<h2>Post a Job</h2><div class="c row wrap" style="margin-bottom:12px"><div class="grow"><div class="mut">Main Institution</div><b>${S.main.n}</b> <span class="mut">· Code ${S.main.code}</span></div><div class="grow"><div class="mut">Sub-Branch</div><b>${SUB.n}</b></div><div class="grow"><div class="mut">Location</div><b>${SUB.c}</b></div></div><p class="mut" style="margin:-4px 0 12px">These details are added to the job automatically.</p>
-<div class="c"><div id="njErr" class="st r" style="display:none;margin-bottom:10px"></div><div class="g g3">
-<label class="fld" style="grid-column:1/-1">Job title *<input id="njTitle" placeholder="e.g. Assistant Professor, Computer Science"></label>
-<label class="fld">Role / designation *<select id="njRole"><option value="">Select role</option>${opt(['Professor','Associate Professor','Assistant Professor','Lecturer','Head of Department'])}</select></label>
-<label class="fld">Category *<select id="njCat"><option value="">Select category</option>${opt(['Schools','Intermediate','Higher Education'])}</select></label>
-<label class="fld">Department / subject *<input id="njDept" placeholder="e.g. Mathematics"></label>
-<label class="fld">Employment type *<select id="njType"><option value="">Select type</option>${opt(['Full-time','Part-time','Contract','Visiting faculty'])}</select></label>
-<label class="fld">Number of vacancies<input id="njVac" type="number" min="1" placeholder="1"></label>
-<label class="fld">Qualification *<select id="njQual"><option value="">Select qualification</option>${opt(['UG','PG','PhD','PG + NET / SET','PhD + NET / SET'])}</select></label>
-<label class="fld">Notice period accepted *<select id="njNotice"><option value="">Select notice period</option>${opt(['Immediate joiner','Up to 15 days','Up to 30 days','Up to 60 days'])}</select></label>
-<label class="fld">Minimum experience (yrs) *<input id="njExp" type="number" min="0" placeholder="0 for freshers"></label>
-<label class="fld">Minimum salary (₹) *<input id="njSalMin" type="number" min="0" placeholder="45000"></label>
-<label class="fld">Maximum salary (₹) *<input id="njSalMax" type="number" min="0" placeholder="70000"></label>
-<label class="fld">Paid<select id="njPer"><option value="month">Per month</option><option value="year">Per year</option></select></label>
-<label class="fld">Key skills<input id="njSkills" placeholder="e.g. Python, Research"></label>
-<label class="fld">Apply before<input id="njDead" type="date"></label>
-<label class="fld" style="grid-column:1/-1">Job description<textarea id="njDesc" rows="3" placeholder="Responsibilities, teaching load, benefits"></textarea></label>
-</div><p style="margin:12px 0 0"><button class="btn btn-primary btn-sm" onclick="postJob()">+ Post job — free</button></p></div>`}
-function postJob(){const v=id=>document.getElementById(id).value.trim();
- const need=[['njTitle','Job title'],['njRole','Role'],['njCat','Category'],['njDept','Department'],['njType','Employment type'],['njQual','Qualification'],['njNotice','Notice period'],['njExp','Experience'],['njSalMin','Minimum salary'],['njSalMax','Maximum salary']].filter(([i])=>!v(i));
- const e=document.getElementById('njErr');
- if(need.length){e.style.display='inline-block';e.textContent='Please fill: '+need.map(x=>x[1]).join(', ');return}
- JOBS.push({id:Date.now(),title:v('njTitle'),role:v('njRole'),cat:v('njCat'),dept:v('njDept'),type:v('njType'),vac:v('njVac')||'1',qual:v('njQual'),notice:v('njNotice'),expMin:v('njExp'),salMin:v('njSalMin'),salMax:v('njSalMax'),period:v('njPer'),skills:v('njSkills'),deadline:v('njDead'),desc:v('njDesc'),mainName:S.main.n,mainCode:S.main.code,branchName:SUB.n,branchLoc:SUB.c,loc:SUB.c,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
- LSS('nwJobs',JOBS);S.sd='jobs';render();scrollTo(0,0)}
+/* ---------- Post a Job: stepped form, same layout as the main employer dashboard ---------- */
+const JSTEPS=['Job details','Requirements','Salary','Job location','Description'];
+const JSUB=['What is the role and where does it sit in your institution?','Qualification, experience and how soon the candidate can join.','Clear pay details get more applications.','This job is posted for your campus. Main institution and branch are added automatically.','Tell candidates what the role involves.'];
+const JF=[
+ [['title','Job title',1,'text','e.g. Assistant Professor, Computer Science','full'],['role','Role / designation',1,['Professor','Associate Professor','Assistant Professor','Lecturer','Head of Department'],'Select role'],['cat','Category',1,['Schools','Intermediate','Higher Education'],'Select category'],['dept','Department / subject',1,'text','e.g. Mathematics'],['type','Employment type',1,['Full-time','Part-time','Contract','Visiting faculty'],'Select type'],['vac','Number of vacancies',0,'number','1']],
+ [['qual','Qualification needed',1,['UG','PG','PhD','PG + NET / SET','PhD + NET / SET'],'Select qualification'],['notice','Notice period accepted',1,['Immediate joiner','Up to 15 days','Up to 30 days','Up to 60 days'],'Select notice period'],['expMin','Minimum experience (years)',1,'number','0 for freshers'],['expMax','Maximum experience (years)',0,'number','Leave empty for no limit']],
+ [['salMin','Minimum salary',1,'number','e.g. 45000','pre'],['salMax','Maximum salary',1,'number','e.g. 70000','pre'],['period','Paid',1,[['month','Per month'],['year','Per year']],'']],
+ [['city','City / location',0,'text','Filled from your campus if left empty','full']],
+ [['desc','Job description',0,'area','Responsibilities, teaching load, research expectations and benefits','full'],['skills','Key skills',0,'text','e.g. Python, Machine Learning, Research'],['deadline','Apply before',0,'date','']]];
+let JB={step:0,max:0,d:{period:'month'},err:{}};
+const jbV=k=>JB.d[k]!==undefined?JB.d[k]:'';
+function jbField(f){const[k,l,req,t,ph,x]=f,v=jbV(k),er=JB.err[k];let inp;
+ if(Array.isArray(t)){const pr=t.map(o=>Array.isArray(o)?o:[o,o]);inp=`<select id="jb_${k}" onchange="JB.err.${k}=''">${ph?`<option value="">${ph}</option>`:''}${pr.map(([a,b])=>`<option value="${esc(a)}" ${v==a?'selected':''}>${esc(b)}</option>`).join('')}</select>`}
+ else if(t=='area')inp=`<textarea id="jb_${k}" rows="3" placeholder="${esc(ph)}">${esc(v)}</textarea>`;
+ else{inp=`<input id="jb_${k}" type="${t}" ${t=='number'?'min="0"':''} placeholder="${esc(ph)}" value="${esc(v)}" oninput="JB.err.${k}=''">`;if(x=='pre')inp=`<div class="in-pre"><span>₹</span>${inp}</div>`}
+ return `<div class="in-f${x=='full'||t=='area'?' in-full':''}${er?' err':''}"><label>${l}<i>${req?'Required':'Optional'}</i></label>${inp}<div class="in-err" role="alert">${esc(er||'')}</div></div>`}
+function jbBody(){const s=JB.step;
+ if(s==2)return `<div class="in-row3">${JF[2].map(jbField).join('')}</div><label class="in-chk"><input type="checkbox" id="jb_salNeg" ${JB.d.salNeg?'checked':''}> Salary is negotiable based on experience</label><label class="in-chk"><input type="checkbox" id="jb_salNorms" ${JB.d.salNorms?'checked':''}> Pay as per UGC / AICTE norms</label>`;
+ if(s==3)return `<div class="in-grid"><div class="in-f"><label>Institution</label><div style="font-weight:700;color:var(--blue-900);padding:10px 0">${esc(S.main.n)} <span class="mut">· Code ${esc(S.main.code)}</span></div></div><div class="in-f"><label>Campus / branch</label><div style="font-weight:700;color:var(--blue-900);padding:10px 0">${esc(SUB.n)} ${B(0)}</div></div>${jbField(['city','City / location',0,'text',SUB.c||'Filled from your campus if left empty','full'])}</div>`;
+ return `<div class="in-grid">${JF[s].map(jbField).join('')}</div>`}
+function jbGrab(){(JF[JB.step]||[]).forEach(f=>{const e=document.getElementById('jb_'+f[0]);if(e)JB.d[f[0]]=e.value.trim()});if(JB.step==2)['salNeg','salNorms'].forEach(k=>{const e=document.getElementById('jb_'+k);if(e)JB.d[k]=e.checked})}
+function jbCheck(s){const bad=[];(JF[s]||[]).forEach(f=>{if(f[2]&&!String(jbV(f[0])).trim()){JB.err[f[0]]='Required';bad.push(f[0])}});
+ if(s==2&&!JB.err.salMin&&!JB.err.salMax&&Number(jbV('salMin'))>Number(jbV('salMax'))){JB.err.salMax='Maximum must be at least the minimum';bad.push('salMax')}
+ if(s==1&&jbV('expMax')!==''&&Number(jbV('expMax'))<Number(jbV('expMin'))){JB.err.expMax='Maximum must be at least the minimum';bad.push('expMax')}
+ return bad}
+const jbPct=()=>{let t=0,f=0;JF.forEach(a=>a.forEach(x=>{if(x[2]){t++;if(String(jbV(x[0])).trim())f++}}));return Math.round(f/t*100)};
+function jbGo(i){jbGrab();if(i>JB.max)return;JB.step=i;render();scrollTo(0,0)}
+function jbBack(){jbGrab();JB.step=Math.max(0,JB.step-1);render();scrollTo(0,0)}
+function jbNext(){jbGrab();const bad=jbCheck(JB.step);if(bad.length){render();return}
+ if(JB.step==JSTEPS.length-1){return postJob()}
+ JB.step++;JB.max=Math.max(JB.max,JB.step);render();scrollTo(0,0)}
+function vPost(){const s=JB.step,last=s==JSTEPS.length-1;
+ return `<div class="in-wrap"><div class="in-head"><h3>Post a job</h3><p>Fill in the role details so the right candidates can find and apply. Fields marked Required must be completed.</p></div>
+ <div class="in-layout">${inSide(JSTEPS,s,JB.max,jbPct(),'jbGo')}
+ <div class="in-main"><div class="in-card"><h4>${JSTEPS[s]}</h4><p class="sub2">${JSUB[s]}</p>${jbBody()}</div>
+ <div class="in-actions"><span class="in-stepof">Step ${s+1} of ${JSTEPS.length}</span><div class="r">${s>0?'<button class="btn btn-ghost btn-sm" onclick="jbBack()">Back</button>':''}<button class="btn btn-primary btn-sm" onclick="jbNext()">${last?'Post job — free':'Next'}</button></div></div></div></div></div>`}
+function postJob(){const v=jbV;
+ for(let s=0;s<JSTEPS.length;s++){if(jbCheck(s).length){JB.step=s;JB.max=Math.max(JB.max,s);render();scrollTo(0,0);return}}
+ JOBS.push({id:Date.now(),title:v('title'),role:v('role'),cat:v('cat'),dept:v('dept'),type:v('type'),vac:v('vac')||'1',qual:v('qual'),notice:v('notice'),expMin:v('expMin'),expMax:v('expMax'),salMin:v('salMin'),salMax:v('salMax'),period:v('period')||'month',salNeg:!!v('salNeg'),salNorms:!!v('salNorms'),skills:v('skills'),deadline:v('deadline'),desc:v('desc'),mainName:S.main.n,mainCode:S.main.code,branchName:SUB.n,branchLoc:SUB.c,loc:v('city')||SUB.c,date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})});
+ LSS('nwJobs',JOBS);JB={step:0,max:0,d:{period:'month'},err:{}};S.sd='jobs';render();scrollTo(0,0)}
 function vPosted(){const a=myJobs();return `<h2>Posted Jobs</h2>${a.length?`<div class="g g2">${a.map(jobCard).join('')}</div>`:empty('No jobs posted yet','Use Post a Job to create your first job.')}`}
 function vCands(){const a=myJobs();return `<h2>Browse Candidates</h2>${a.length?'':'<p class="mut">Post a job first to send candidate requests.</p>'}<div class="g g2">${CANDS.map(c=>{const sent=myReqs().filter(r=>r.candId==c.id).length;return `<div class="c"><div class="row top">${lg(c.n)}<div class="grow"><b>${c.n}</b><div class="mut">${c.r} · ${c.s} · ${c.e}</div><div class="mut"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> ${c.c}</div></div>${sent?`<span class="st g">${sent} sent</span>`:''}</div><div class="row wrap" style="margin-top:10px"><select id="cj${c.id}" class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px;flex:1;min-width:150px">${a.length?a.map(j=>`<option value="${j.id}">${esc(j.title)}</option>`).join(''):'<option value="">No jobs posted</option>'}</select><button class="btn btn-primary btn-sm" onclick="sendReq(${c.id})">Send Request</button></div></div>`}).join('')}</div>`}
 function sendReq(cid){const s=document.getElementById('cj'+cid),j=JOBS.find(x=>x.id==s.value),c=CANDS.find(x=>x.id==cid);
@@ -258,21 +276,21 @@ const PFLD=[
  [['addr','Address'],['city','City',1],['state','State',1],['pin','PIN code']],
  [['rname','Representative name',1],['rdes','Designation'],['rem','Official email',1],['rph','Phone',1]]];
 let P=LSG('nwProfile',null)||{step:0,max:0,done:false,d:{},ver:{em:false,doc:''},campus:'main',camps:[]};
-S.otp=false;S.perr='';
+S.otp=false;S.perr='';S.welcome=!!(P.max>0&&!P.done);
 const saveP=()=>LSS('nwProfile',P);if(P.step>5)P.step=5;if(P.max>5)P.max=5;
 const pdef=()=>{const c=(SUB.c||'').split(',').map(x=>x.trim());return {name:SUB.n,type:SUB.t,about:SUB.d,city:c[0]||'',state:c[1]||'',rname:SUB.by,rem:SUB.em,rph:SUB.ph}};
 const pv=k=>(P.d[k]!==undefined?P.d[k]:(pdef()[k]||''));
 const campusSel=()=>({n:SUB.n,l:SUB.c});
 function grabStep(){PFLD[P.step]&&PFLD[P.step].forEach(f=>{const e=document.getElementById('pf_'+f[0]);if(e)P.d[f[0]]=e.value.trim()})}
-function pfGo(i){grabStep();if(i>P.max){return}P.step=i;S.perr='';saveP();render()}
-function pfBack(){grabStep();P.step=Math.max(0,P.step-1);S.perr='';saveP();render()}
-function pfNext(){grabStep();const s=P.step;let miss=[];
+function pfGo(i){S.welcome=S.saved=false;grabStep();if(i>P.max){return}P.step=i;S.perr='';saveP();render()}
+function pfBack(){S.welcome=S.saved=false;grabStep();P.step=Math.max(0,P.step-1);S.perr='';saveP();render()}
+function pfNext(){S.welcome=S.saved=false;grabStep();const s=P.step;let miss=[];
  if(PFLD[s])PFLD[s].forEach(f=>{if(f[2]&&!pv(f[0]))miss.push(f[1])});
  if(s==3&&!P.ver.em)miss.push('Verify your official email (OTP)');
  if(miss.length){S.perr='Please complete: '+miss.join(', ');saveP();render();return}
  S.perr='';P.step=Math.min(5,s+1);P.max=Math.max(P.max,P.step);saveP();render();scrollTo(0,0)}
 function pfSendOtp(){grabStep();S.otp=true;render()}
-function pfVerifyOtp(){const v=(document.getElementById('pf_otp')||{}).value;if(v=='123456'){P.ver.em=true;S.otp=false;S.perr='';saveP();render()}else{S.perr='Wrong OTP. Demo OTP is 123456.';render()}}
+function pfVerifyOtp(){const v=(document.getElementById('pf_otp')||{}).value;if(v=='123456'){P.ver.em=true;S.otp=false;S.perr='';S.welcome=!!(P.max>0&&!P.done);saveP();render()}else{S.perr='Wrong OTP. Demo OTP is 123456.';render()}}
 function pfDoc(inp){const f=inp.files&&inp.files[0];if(f){P.ver.doc=f.name;saveP();render()}}
 let SG=[];
 function pfMatches(v){const t=v.toLowerCase().split(/[\s,]+/).filter(Boolean);if(!t.length)return [];return MAINS.filter(m=>{const h=(m.n+' '+m.c+' '+m.t+' '+m.code).toLowerCase();return t.every(x=>h.includes(x))})}
@@ -286,32 +304,39 @@ function pfRenderSug(){const box=document.getElementById('pf_sug');if(!box)retur
  +(!SGALL&&all.length>4?`<div class="sg" style="justify-content:center"><button class="btn btn-light btn-sm" onclick="SGALL=true;pfRenderSug()">See more (${all.length-4} more)</button></div>`:'')
  +`<div class="sg mut" style="display:block;border-top:1px solid var(--line);font-size:12.5px">Can't find yours? <a href="#" onclick="goTo('register',{role:'company',type:'main'});return false">Create a Main / Normal college account</a></div>`}
 function pfSuggest(v){SGQ=v;SGALL=false;pfRenderSug()}
-function pfPick(i){const m=SG[i];if(!m)return;S.main=m;LSS('nwSub',{sub:SUB,mainCode:m.code,st:'approved'});S.perr='';render()}
+function pfPick(i){const m=SG[i];if(!m)return;S.main=m;LSS('nwSub',{sub:SUB,mainCode:m.code,mainName:m.n,st:'approved'});S.perr='';render()}
 function pfKey(e){if(e.key=='Enter'){e.preventDefault();pfPick(0)}}
 function pfSubmit(){grabStep();const d=P.d;if(d.name)SUB.n=d.name;SUB.c=[d.city,d.state].filter(Boolean).join(', ')||SUB.c;if(d.type)SUB.t=d.type;if(d.about)SUB.d=d.about;if(d.rname)SUB.by=d.rname;if(d.rem)SUB.em=d.rem;if(d.rph)SUB.ph=d.rph;
  if(S.logo){LOGOS[SUB.n]=S.logo;LSS('nwLogos',LOGOS)}
- reqs[0]={...reqs[0],...SUB,id:1,s:'Approved'};LSS('nwSub',{sub:SUB,mainCode:S.main.code,st:'approved'});P.done=true;P.max=5;saveP();render();scrollTo(0,0)}
+ reqs[0]={...reqs[0],...SUB,id:1,s:'Approved'};LSS('nwSub',{sub:SUB,mainCode:S.main.code,mainName:S.main.n,st:'approved'});P.done=true;P.max=5;saveP();render();scrollTo(0,0)}
 function pfEdit(){P.done=false;P.step=0;P.max=5;saveP();render()}
 function pfField(f){const[k,l,req,o]=f,v=pv(k),ev=String(v).replace(/"/g,'&quot;');
- return `<label class="fld" ${o=='area'?'style="grid-column:1/-1"':''}>${l}${req?' *':''}${o=='area'?`<textarea id="pf_${k}" rows="3">${esc(v)}</textarea>`:Array.isArray(o)?`<select id="pf_${k}"><option value="">Select</option>${o.map(x=>`<option ${v==x?'selected':''}>${x}</option>`).join('')}</select>`:`<input id="pf_${k}" value="${ev}">`}</label>`}
+ return `<div class="in-f${o=='area'?' in-full':''}"><label>${l}<i>${req?'Required':'Optional'}</i></label>${o=='area'?`<textarea id="pf_${k}" rows="3">${esc(v)}</textarea>`:Array.isArray(o)?`<select id="pf_${k}"><option value="">Select</option>${o.map(x=>`<option ${v==x?'selected':''}>${x}</option>`).join('')}</select>`:`<input id="pf_${k}" value="${ev}">`}</div>`}
 function pfBody(){const s=P.step,d=P.d;
- if(s<3)return `<div class="g g2">${PFLD[s].map(pfField).join('')}</div>${s==0?`<div class="row" style="margin-top:12px">${lg(pv('name')||SUB.n,'big')}<div><b>Logo</b><div class="mut">Upload your own (under 500 KB) or keep the free default crest.</div><input type="file" accept="image/*" onchange="readLogo(this)"></div></div>`:''}`;
- if(s==3){const okE=P.ver.em;return `<h3>Verify your institution</h3><div class="g g2"><div class="c"><b>1. Official email</b><div class="mut">${esc(pv('rem'))||'Add the official email in step 3'}</div>${okE?'<p><span class="st g"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Email verified</span></p>':(S.otp?`<p class="row"><input id="pf_otp" class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px" maxlength="6" placeholder="Enter 6-digit OTP"><button class="btn btn-primary btn-sm" onclick="pfVerifyOtp()">Verify</button></p><p class="mut">Demo OTP: 123456</p>`:`<p><button class="btn btn-primary btn-sm" onclick="pfSendOtp()">Send OTP</button></p>`)}</div>
+ if(s<3)return `<div class="in-grid">${PFLD[s].map(pfField).join('')}</div>${s==0?`<div class="row" style="margin-top:12px">${lg(pv('name')||SUB.n,'big')}<div><b>Logo</b><div class="mut">Upload your own (under 500 KB) or keep the free default crest.</div><input type="file" accept="image/*" onchange="readLogo(this)"></div></div>`:''}`;
+ if(s==3){const okE=P.ver.em;return `<div class="g g2"><div class="c"><b>1. Official email</b><div class="mut">${esc(pv('rem'))||'Add the official email in step 3'}</div>${okE?'<p><span class="st g"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Email verified</span></p>':(S.otp?`<p class="row"><input id="pf_otp" class="fld" style="padding:8px;border:1px solid var(--line);border-radius:4px" maxlength="6" placeholder="Enter 6-digit OTP"><button class="btn btn-primary btn-sm" onclick="pfVerifyOtp()">Verify</button></p><p class="mut">Demo OTP: 123456</p>`:`<p><button class="btn btn-primary btn-sm" onclick="pfSendOtp()">Send OTP</button></p>`)}</div>
  <div class="c"><b>2. Affiliation / registration document</b><div class="mut">AICTE / UGC / university affiliation letter (optional for demo).</div><p><input type="file" onchange="pfDoc(this)"></p>${P.ver.doc?`<span class="st g"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> ${esc(P.ver.doc)}</span>`:'<span class="st n">No document uploaded</span>'}</div></div>`}
- if(s==4){const m=S.main;return `<h3>Connect to your Main Institution</h3><p class="mut">Type the 5-digit institution code, the name, or the location. Matching institutions appear as you type — top 4 first, use See more for the rest.</p>
+ if(s==4){const m=S.main;return `<p class="mut">Type the 5-digit institution code, the name, or the location. Matching institutions appear as you type — top 4 first, use See more for the rest.</p>
  <div class="c row wrap" style="margin-bottom:12px;border-color:#17753A">${lg(m.n,'big')}<div class="grow"><div class="mut">Connected to</div><b>${esc(m.n)}</b> ${B(1)}<div class="mut"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> ${esc(m.c)} · Code <b>${esc(m.code)}</b></div></div><span class="st g"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Connected</span></div>
  <div style="position:relative;max-width:640px"><label class="fld">Change main institution<input id="pf_mq" autocomplete="off" placeholder="Type code, name or location — e.g. St. Joseph Hyderabad" oninput="pfSuggest(this.value)" onkeydown="pfKey(event)"></label><div id="pf_sug" class="sug" style="display:none"></div></div>`}
- const cs=campusSel();return `<h3>Review your profile</h3><div class="g g2"><div class="c"><b>${esc(pv('name'))}</b> ${B(0)}<div class="mut">${esc(pv('type'))} · Est. ${esc(pv('year')||'—')}</div><div class="mut"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> ${esc([pv('addr'),pv('city'),pv('state'),pv('pin')].filter(Boolean).join(', '))}</div><p>${esc(pv('about'))}</p></div>
- <div class="c"><div><b>Representative:</b> ${esc(pv('rname'))} ${pv('rdes')?'('+esc(pv('rdes'))+')':''}</div><div class="mut">${esc(pv('rem'))} · ${esc(pv('rph'))}</div><div style="margin-top:8px"><b>Verification:</b> ${P.ver.em?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Email verified':'Email not verified'} · ${P.ver.doc?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Document uploaded':'No document'}</div><div><b>Main Institution:</b> ${esc(S.main.n)} (Code ${esc(S.main.code)})</div></div></div>`}
+ return pfReview()}
+function pfReview(){const m=S.main,loc=[pv('addr'),pv('city'),pv('state'),pv('pin')].filter(Boolean).join(', ');
+ const rows=[['Institution details',0,`<b>${esc(pv('name'))}</b> ${B(0)}<br>Type: ${esc(pv('type'))}<br>Established: ${esc(pv('year')||'—')}<br>${esc(pv('about'))}`],['Location',1,esc(loc)||'—'],['Representative details',2,`<b>${esc(pv('rname'))}</b>${pv('rdes')?', '+esc(pv('rdes')):''}<br>${esc(pv('rem'))}<br>${esc(pv('rph'))}`],['Verification',3,`${P.ver.em?'✓ Official email verified':'Official email not verified'}<br>${P.ver.doc?'✓ '+esc(P.ver.doc):'No document uploaded'}`],['Connect to main institution',4,`<b>${esc(m.n)}</b> ${B(1)}<br>${esc(m.c)} · Code ${esc(m.code)}`]];
+ return `<div class="in-card"><h4>Review your institution profile</h4><p class="sub2">Check everything before you submit.</p>${rows.map((x,i)=>`<div class="in-acc${i==0?' open':''}"><button type="button" onclick="this.parentNode.classList.toggle('open')"><span>${x[0]}</span><span><a href="#" onclick="event.stopPropagation();pfGo(${x[1]});return false" style="color:var(--blue-700);font-size:13px">Edit</a></span></button><div class="body">${x[2]}</div></div>`).join('')}</div>`}
+const PSUB=['Your branch name, type and logo.','Where is your campus located?','Who should candidates and your main institution contact?','Verify your official email and upload your affiliation document.','Link your sub-branch to its main institution.','Check everything before you submit.'];
+const ppct=()=>{let t=2,f=0;PFLD.forEach(a=>a.forEach(x=>{if(x[2]){t++;if(pv(x[0]))f++}}));if(P.ver.em)f++;if(S.main)f++;return Math.round(f/t*100)};
+const inSide=(names,cur,max,pc,go,extra)=>`<aside class="in-side"><div class="in-steps" role="tablist" aria-orientation="vertical">${names.map((t,i)=>`<button type="button" class="in-step${i==cur?' on':i<=max?' done':''}" role="tab" aria-selected="${i==cur}" ${i>max?'disabled style="opacity:.55;cursor:not-allowed"':''} onclick="${go}(${i})"><span class="in-step-n">${i!=cur&&i<=max?'✓':i+1}</span><span class="in-step-t">${t}</span></button>`).join('')}</div><div class="in-side-foot"><div class="in-bar"><div style="width:${pc}%"></div></div><span>${pc}% complete</span>${extra||''}</div></aside>`;
+function pfLater(){grabStep();saveP();S.welcome=false;S.saved=true;render()}
 function vProfile(){
- if(P.done)return `<div class="c row wrap sp" style="margin-bottom:12px;border-color:#17753A"><div><span class="st g"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg> Profile verified & submitted</span></div><button class="btn btn-light btn-sm" onclick="pfEdit()">Edit profile</button></div>`+vSub0();
- const s=P.step;return `<div class="c"><div class="row wrap sp"><div><h2 style="margin:0">Institution Profile</h2><div class="mut">Complete each step and click Next. Step ${s+1} of 6.</div></div></div>
- <div class="pst">${PSTEPS.map((t,i)=>`<button class="${i==s?'on':i<=P.max&&i<s?'done':''}" ${i>P.max?'disabled':''} onclick="pfGo(${i})">${i<s&&i<=P.max?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':i+1}. ${t}</button>`).join('')}</div>
- ${S.perr?`<div class="st r" style="display:inline-block;margin-bottom:10px">${esc(S.perr)}</div>`:''}
- ${pfBody()}
- <div class="row wrap sp" style="margin-top:14px"><button class="btn btn-light" ${s==0?'disabled style="opacity:.5"':''} onclick="pfBack()">← Back</button>${s<5?`<button class="btn btn-primary" onclick="pfNext()">Next →</button>`:`<button class="btn btn-primary" onclick="pfSubmit()">Submit for verification</button>`}</div></div>`}
+ if(P.done)return `<div class="in-note in-ok" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:0"><span><b>✓ Profile verified &amp; submitted</b></span><button class="btn btn-light btn-sm" onclick="pfEdit()">Edit profile</button></div>`+vSub0();
+ const s=P.step,last=s==5;
+ return `<div class="in-wrap"><div class="in-head"><h3>Create your institution profile</h3><p>Add your official branch details so candidates and your main institution can identify and trust you.</p></div>
+ <div class="in-layout">${inSide(PSTEPS,s,P.max,ppct(),'pfGo','<button class="btn btn-ghost btn-sm" onclick="pfLater()">Save and continue later</button>')}
+ <div class="in-main">${S.welcome?'<div class="in-note in-ok"><b>Welcome back.</b> Your saved progress is loaded. Carry on from where you stopped.</div>':''}${S.saved?'<div class="in-note in-ok"><b>Progress saved.</b> Carry on any time.</div>':''}${S.perr?`<div class="in-note in-warn">${esc(S.perr)}</div>`:''}
+ ${s==5?pfBody():`<div class="in-card"><h4>${PSTEPS[s]}</h4><p class="sub2">${PSUB[s]}</p>${pfBody()}</div>`}
+ <div class="in-actions"><span class="in-stepof">Step ${s+1} of 6</span><div class="r">${s>0?'<button class="btn btn-ghost btn-sm" onclick="pfBack()">Back</button>':''}<button class="btn btn-primary btn-sm" onclick="${last?'pfSubmit()':'pfNext()'}">${last?'Submit for verification':'Next'}</button></div></div></div></div></div>`}
 const subPanel=()=>({post:vPost,jobs:vPosted,cands:vCands,reqs:vReqs}[S.sd]||vPosted)();
-function vSub(){const k=S.st,ok=k=='approved';if(!ok)S.sd='profile';return subNav(k)+(ok&&S.sd!='profile'?subPanel():ok?vProfile():vSub0())}
+function vSub(){const k=S.st,ok=k=='approved';if(!ok)S.sd='profile';return `<div class="dash-inner-wide" id="dashInnerWide"><div class="dash-panel">`+subNav(k)+(ok&&S.sd!='profile'?subPanel():ok?vProfile():vSub0())+`</div></div>`}
 const mainJobsHtml=(bn)=>JOBS.filter(j=>j.mainCode==S.main.code&&(!bn||j.branchName==bn)).map(jobCard).join('');
 /* main dashboard */
 const TABS=[['overview','Overview'],['branches','Connected Branches'],['requests','Pending Requests'],['jobs','Jobs'],['faculty','Faculty'],['activity','Activity']];
@@ -355,6 +380,8 @@ function dlg(k,id){const r=reqs.find(x=>x.id==id);
 function fin(id,s){reqs.find(x=>x.id==id).s=s;closeMod();if(id==1)S.st=s=='Approved'?'approved':'rejected';render();mod(`<div style="text-align:center"><div class="chk" style="${s=='Rejected'?'background:#B3261E':''}">${s=='Approved'?'<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;vertical-align:0" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>':'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex-shrink:0;vertical-align:0" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>'}</div><h2>${s=='Approved'?'<svg width="10" height="10" viewBox="0 0 10 10" style="vertical-align:0;margin-right:2px" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="#17753A"/></svg> Sub-Branch Approved':'Request Rejected'}</h2><button class="btn btn-primary" onclick="closeMod();set('tab','${s=='Approved'?'branches':'requests'}')">${s=='Approved'?'View Connected Institutions':'Back to Requests'}</button></div>`)}
 (()=>{const _st=new URLSearchParams(location.search).get('start');if(FROM_LOGIN||_st==='type'||_st==='code')return;try{const d=JSON.parse(localStorage.getItem('nwSub'));if(d&&d.st=='approved'){Object.assign(SUB,d.sub);S.main=MAINS.find(m=>m.code==d.mainCode)||S.main;S.st='approved';reqs[0]={...reqs[0],...SUB,id:1,s:'Approved'};S.role='sub';S.sd='profile'}}catch(e){}})();
 (()=>{const q=new URLSearchParams(location.search).get('start');if((q==='code'||(!q&&typeof isLoggedIn!=='undefined'&&isLoggedIn&&currentRole==='branch'))&&S.role==='reg'){S.type='sub';S.v='code'}})();
+(()=>{const t=new URLSearchParams(location.search).get('tab');if(S.role==='sub'&&['profile','post','jobs','cands','reqs'].includes(t)&&(t==='profile'||S.st==='approved'))S.sd=t})();
+const nwOpenTab=t=>{if(S.role!=='sub')return false;if(S.st!=='approved'&&t!=='profile'){lockedTab();return true}S.sd=t;render();scrollTo(0,0);return true};
 render();
 </script>
 </body>
