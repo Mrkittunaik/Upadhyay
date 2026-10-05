@@ -6,9 +6,9 @@
     --blue-500:#3B82F6;
     --blue-100:#E7EFFE;
     --blue-50:#F3F7FF;
-    --orange:#15803D; /* button accent (green) */
-    --orange-dark:#166534;
-    --orange-50:#ECFDF3;
+    --orange:#F97316;
+    --orange-dark:#EA580C;
+    --orange-50:#FFF3E8;
     --ink:#111827;
     --ink-soft:#4B5566;
     --ink-faint:#8A93A3;
@@ -1274,7 +1274,7 @@ body.page-auth .auth-card, .role-popup-card{margin-left:auto; margin-right:auto;
   .hero-search{max-width:600px;}
   .hero-actions{gap:14px; margin-bottom:0;}
   .btn-hero{min-height:56px; padding:14px 30px; font-size:17px; border-radius:12px;}
-  .hero .btn-primary{box-shadow:0 10px 24px rgba(21,128,61,.35);}
+  .hero .btn-primary{box-shadow:0 10px 24px rgba(249,115,22,.35);}
   .hero-visual{max-width:none; width:100%; margin:0; padding-bottom:0;}
   .hero-photo-wrap{border-radius:22px; border:none; box-shadow:0 24px 60px rgba(11,29,58,.18);}
   .hero-photo-wrap img{aspect-ratio:4/4.4;}
