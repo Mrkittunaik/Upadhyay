@@ -1313,3 +1313,13 @@ body.page-auth .auth-card, .role-popup-card{margin-left:auto; margin-right:auto;
     .hero-inner{height:auto;}
     .hero-visual{height:300px; max-height:none;}
   }
+
+  /* ---------- Category cards: image top, text bottom ---------- */
+  .cat-card{padding:0; overflow:hidden; display:flex; flex-direction:column;}
+  .cat-img{height:200px; overflow:hidden; background:var(--blue-50); flex-shrink:0;}
+  .cat-img img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
+  .cat-card:hover .cat-img img{transform:scale(1.05);}
+  .cat-body{padding:22px 24px 26px; display:flex; flex-direction:column; flex:1;}
+  .cat-body .btn{align-self:flex-start; margin-top:auto;}
+  @media (max-width:920px){ .cat-img{height:180px;} }
+  @media (max-width:520px){ .role-card, .cat-card{padding:0;} .cat-body{padding:18px;} }
