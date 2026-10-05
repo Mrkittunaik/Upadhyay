@@ -13,58 +13,69 @@
 <body>
   <div id="siteNav"></div>
 
-  <header class="hero hero-center">
-    <div class="hc-inner">
-      <h1>Search Your Dream Teaching Job</h1>
-      <p class="hc-sub">Discover openings across schools, junior colleges and universities</p>
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow-plain">Faculty recruitment, built for Indian education</div>
+        <h1>Where verified faculty meet institutions that are hiring</h1>
+        <p class="lead">Upadyay connects schools, junior colleges and universities directly with qualified teaching talent — one profile, every opportunity, no middlemen.</p>
 
-      <form class="hc-search" id="heroSearchForm" onsubmit="return heroSearch(event)">
-        <div class="hc-field hc-grow">
-          <input type="text" id="heroKeyword" placeholder="Enter Subject / Role" autocomplete="off">
+        <div class="hero-search">
+          <div class="hs-field" style="flex:0 0 180px;">
+            <span class="hs-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <select id="heroCategory">
+              <option value="">All categories</option>
+              <option value="schools">Schools</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="higher">Higher Education</option>
+            </select>
+          </div>
+          <div class="hs-field">
+            <span class="hs-ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            <input type="text" placeholder="Subject, role or keyword — e.g. Physics, PGT, Assistant Professor">
+          </div>
+          <button class="btn btn-primary" style="margin:2px;" onclick="goTo('login')">Search</button>
         </div>
-        <div class="hc-field hc-sel">
-          <select id="heroCategory" aria-label="Institution type">
-            <option value="">All institutions</option>
-            <option value="Schools">Schools</option>
-            <option value="Intermediate">Junior Colleges</option>
-            <option value="Higher Education">Colleges &amp; Universities</option>
-          </select>
-        </div>
-        <div class="hc-field hc-grow">
-          <input type="text" id="heroLocation" placeholder="Enter Location" autocomplete="off">
-        </div>
-        <button type="submit" class="hc-btn">Search</button>
-      </form>
 
-      <div class="hc-chips">
-        <button type="button" class="hc-chip" onclick="goTo('jobs',{cat:'Schools'})">Schools</button>
-        <button type="button" class="hc-chip" onclick="goTo('jobs',{cat:'Intermediate'})">Junior Colleges</button>
-        <button type="button" class="hc-chip" onclick="goTo('jobs',{cat:'Higher Education'})">Colleges &amp; Universities</button>
-        <button type="button" class="hc-chip hc-chip-live" onclick="goTo('jobs')">Hiring now <span>Live</span></button>
-      </div>
-
-      <div class="hc-trust">
-        <div class="hc-trust-label">Institutions hiring on Upadyay</div>
-        <div class="hc-trust-row">
-          <span>KL University</span>
-          <span>Delhi Public School</span>
-          <span>Narayana Junior College</span>
+        <div class="hero-actions" style="margin-bottom:30px;">
+          <button class="btn btn-primary" onclick="goTo('register')">Register as Faculty</button>
+          <button class="btn btn-light" onclick="goTo('register',{role:'company'})">Hire on Upadyay</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="num tabular" data-count="18400" data-suffix="+">0</span><span class="label">Registered faculty</span></div>
+          <div class="hero-stat"><span class="num tabular" data-count="1200" data-suffix="+">0</span><span class="label">Institutions hiring</span></div>
+          <div class="hero-stat"><span class="num tabular">2 yrs</span><span class="label">Free for employers</span></div>
         </div>
       </div>
-
-      <div class="hc-cta">
-        <button class="btn btn-primary" onclick="goTo('register')">Register as Faculty</button>
-        <button class="btn btn-ghost" onclick="goTo('register',{role:'company'})">Hire on Upadyay</button>
+      <div class="hero-visual">
+        <div class="hp-card">
+          <span class="hp-status"><span class="hp-dot"></span>Open to opportunities</span>
+          <div class="hp-top">
+            <div class="hp-avatar" style="background-image:url('https://i.pravatar.cc/80?img=47'); background-size:cover;"></div>
+            <div>
+              <p class="hp-name">Dr. Priya Menon</p>
+              <p class="hp-role">Physics · Quantum Optics</p>
+            </div>
+            <span class="hp-badge"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L1 8.5L12 14L23 8.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 11.5V16.5C5 16.5 5 20 12 20C19 20 19 16.5 19 16.5V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M23 8.5V15" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg> PhD</span>
+          </div>
+          <div class="hp-tags">
+            <span class="hp-tag">Higher Education</span>
+            <span class="hp-tag hp-tag-exp">8 yrs · KL University</span>
+            <span class="hp-tag">Hyderabad</span>
+          </div>
+          <div class="hp-stats">
+            <div class="hp-stat"><span class="num tabular">14</span><span class="label">Publications</span></div>
+            <div class="hp-stat"><span class="num tabular">210</span><span class="label">Citations</span></div>
+            <div class="hp-stat"><span class="num tabular">1</span><span class="label">Patent</span></div>
+          </div>
+        </div>
+        <div class="hero-card c1">
+          <div class="ic"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="t1">Profile shortlisted</div><div class="t2">KL University — 2 min ago</div></div>
+        </div>
       </div>
     </div>
   </header>
-  <div class="hero-statbar hero-statbar-out">
-      <div class="hero-stat"><span class="num tabular" data-count="18400" data-suffix="+">0</span><span class="label">Registered faculty</span></div>
-      <div class="hero-stat"><span class="num tabular" data-count="1200" data-suffix="+">0</span><span class="label">Institutions hiring</span></div>
-      <div class="hero-stat"><span class="num tabular">3</span><span class="label">Categories: Schools, Intermediate, Higher Ed</span></div>
-      <div class="hero-stat"><span class="num tabular">2 yrs</span><span class="label">Free for employers</span></div>
-    </div>
-
 
   <section class="upadhyay-profile-section" id="about">
     <div class="section-inner">
@@ -89,8 +100,6 @@
       </div>
       <div class="cat-grid reveal-stagger reveal">
         <div class="cat-card">
-          <div class="cat-img"><img src="assets/logo/school.jpg" alt="School building" loading="lazy"></div>
-          <div class="cat-body">
           <span class="cat-tag">K–12</span>
           <h3>Schools</h3>
           <p>Primary and secondary teaching positions across CBSE, ICSE, State Board and international curricula.</p>
@@ -100,11 +109,8 @@
             <li>Qualification, board experience shown upfront</li>
           </ul>
           <a class="btn btn-ghost btn-sm" href="javascript:void(0)" onclick="goTo('jobs',{cat:'Schools'})">Browse school roles</a>
-          </div>
         </div>
         <div class="cat-card">
-          <div class="cat-img"><img src="assets/logo/junior-college.jpg" alt="Junior college campus" loading="lazy"></div>
-          <div class="cat-body">
           <span class="cat-tag">Junior College</span>
           <h3>Intermediate</h3>
           <p>Junior college and pre-university lecturers for MPC, BiPC, CEC and commerce streams.</p>
@@ -114,11 +120,8 @@
             <li>Full and part-time openings</li>
           </ul>
           <a class="btn btn-ghost btn-sm" href="javascript:void(0)" onclick="goTo('jobs',{cat:'Intermediate'})">Browse intermediate roles</a>
-          </div>
         </div>
         <div class="cat-card">
-          <div class="cat-img"><img src="assets/logo/university.jpg" alt="University campus with students" loading="lazy"></div>
-          <div class="cat-body">
           <span class="cat-tag">University</span>
           <h3>Higher Education</h3>
           <p>University and college faculty — Assistant, Associate and Professor positions across departments.</p>
@@ -128,7 +131,6 @@
             <li>National and international experience noted</li>
           </ul>
           <a class="btn btn-ghost btn-sm" href="javascript:void(0)" onclick="goTo('jobs',{cat:'Higher Education'})">Browse university roles</a>
-          </div>
         </div>
       </div>
     </div>
@@ -283,6 +285,71 @@
     </div>
   </section>
 
+  <section class="band" id="how">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <h2>How Upadyay helps each side</h2>
+        <p>A faster, more accurate way to reach the right hire — for the person looking, and the institution looking for them.</p>
+      </div>
+      <div class="flow-grid reveal-stagger reveal">
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <h4>Build a real profile</h4>
+          <p>Faculty enter qualification, specialisation, publications, patents and experience — once, verified, reusable everywhere.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <h4>Get matched by category</h4>
+          <p>Employers search within School, Intermediate or Higher Ed, filtered by subject, qualification and experience.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <h4>Institutions post roles</h4>
+          <p>Employers list openings and reach faculty directly from a database of 18,000+ profiles — no listing fee for the first two years.</p>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <h4>Connect and hire</h4>
+          <p>Shortlist, message and close the role from one dashboard, with every credential already verified.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <h2>Made for both sides of the hire</h2>
+      </div>
+      <div class="role-grid reveal-stagger reveal">
+        <div class="role-card faculty" id="faculty">
+          <div class="role-eyebrow">FOR FACULTY</div>
+          <h3>One profile. Every opportunity.</h3>
+          <p>Register once with your qualifications and get discovered by verified institutions across India — no repeated applications.</p>
+          <ul class="role-perks">
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Free registration, always</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Highest qualification badge shown on your profile</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Publications, patents and citations tracked</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Direct contact from hiring institutions</li>
+          </ul>
+          <button class="btn btn-primary" onclick="goTo('register')">Register as Faculty</button>
+        </div>
+        <div class="role-card employer" id="employers">
+          <div class="role-eyebrow">FOR EMPLOYERS</div>
+          <h3>Hire from a verified faculty database.</h3>
+          <p>Search 18,000+ verified faculty profiles by category, subject and qualification, and post roles institutions actually see.</p>
+          <ul class="role-perks">
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Free for your first 2 years</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Post unlimited job openings</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Filter by School, Intermediate or Higher Ed</li>
+            <li><span class="check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13L9.5 17.5L19 6.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Dedicated HR dashboard and shortlist tools</li>
+          </ul>
+          <button class="btn btn-primary" onclick="goTo('register',{role:'company'})">Hire on Upadyay</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="band-blue" style="padding:44px 24px;">
     <div class="section-inner trust-strip reveal">
       <div class="trust-num"><span class="num tabular" data-count="18400" data-suffix="+">0</span><span class="label">Faculty registered</span></div>
@@ -333,16 +400,6 @@
 <script src="js/layout.js"></script>
 <script src="js/effects.js"></script>
 <script>
-  function heroSearch(e){
-    e.preventDefault();
-    const p = {};
-    const q = document.getElementById('heroKeyword').value.trim();
-    const c = document.getElementById('heroCategory').value;
-    const l = document.getElementById('heroLocation').value.trim();
-    if(q) p.q = q; if(c) p.cat = c; if(l) p.loc = l;
-    goTo('jobs', p);
-    return false;
-  }
   mountNav('home');
   mountChrome();
 </script>
