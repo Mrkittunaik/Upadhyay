@@ -761,7 +761,7 @@
   /* ---------- Section shells ---------- */
   section{padding:44px 24px;}
   .section-inner{max-width:1180px; margin:0 auto;}
-  .section-head{max-width:640px; margin-bottom:22px;}
+  .section-head{max-width:640px; margin:0 auto 22px; text-align:center;}
   .section-head h2{font-size:26px; font-weight:700; margin:0 0 8px; color:var(--ink);}
   .section-head p{font-size:15.5px; color:var(--ink-soft); line-height:1.6; margin:0;}
   .band{background:var(--paper); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
