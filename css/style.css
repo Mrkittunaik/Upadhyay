@@ -839,7 +839,13 @@
   .footer-socials{display:flex; gap:10px;}
   .footer-soc{width:36px; height:36px; border:1px solid rgba(255,255,255,.18); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#D4D4D8; transition:all .15s;}
   .footer-soc svg{width:17px; height:17px;}
-  .footer-soc:hover{color:#fff; border-color:transparent; background:linear-gradient(135deg,#7C3AED,#EC4899);}
+  /* brand-coloured social icons */
+  .footer-soc{border-color:transparent; color:#fff;}
+  .footer-soc[aria-label="facebook"]{background:#1877F2;}
+  .footer-soc[aria-label="instagram"]{background:radial-gradient(circle at 30% 107%,#FDF497 0%,#FDF497 5%,#FD5949 45%,#D6249F 60%,#285AEB 90%);}
+  .footer-soc[aria-label="x"]{background:#fff; color:#000;}
+  .footer-soc[aria-label="linkedin"]{background:#0A66C2;}
+  .footer-soc:hover{transform:translateY(-3px) scale(1.08); box-shadow:0 6px 14px rgba(0,0,0,.45); filter:brightness(1.08);}
   .footer-app{border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:22px;}
   .footer-app h5{font-size:16px; color:#fff; margin:0 0 6px; font-weight:700;}
   .footer-app p{font-size:13px; color:#A1A1AA; margin:0 0 16px; max-width:none;}
