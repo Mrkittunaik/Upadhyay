@@ -98,8 +98,13 @@ function _loadState(){
 const _saved = _loadState();
 
 /* ---- shared state (same variable names the old scripts already use) ---- */
-let isLoggedIn      = !!_saved.isLoggedIn;
-let currentRole     = _saved.currentRole || null;                 // 'seeker' | 'company' | null
+/* Auth state is NOT read from localStorage any more. The Laravel token (js/api.js) is the only
+   credential; the role below is a first-paint hint that authReady (further down) replaces with the
+   real user/role from GET /auth/me. Sub-branch accounts still use their own local marker (no backend role yet). */
+const _hasBranch = (function(){ try{ const b = JSON.parse(localStorage.getItem('upaadhyay_session')); return !!(b && b.role === 'branch'); }catch(e){ return false; } })();
+let isLoggedIn      = api.hasToken() || _hasBranch;
+let currentRole     = api.hasToken() ? (api.toUiRole(api.roleHint()) || null) : (_hasBranch ? 'branch' : null);   // 'seeker' | 'company' | 'admin' | 'branch' | null
+let authUserId      = _saved.authUserId || null;                  // which backend user the saved profile data belongs to
 let currentUser     = Object.assign({}, DEFAULT_USER,    _saved.currentUser    || {});
 let currentCompany  = Object.assign({}, DEFAULT_COMPANY,  _saved.currentCompany || {});
 let dashNotifs      = Array.isArray(_saved.dashNotifs) ? _saved.dashNotifs : [];
@@ -112,7 +117,7 @@ let postedJobCount  = _saved.postedJobCount || 0;
 function saveState(){
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify({
-      isLoggedIn, currentRole, currentUser, currentCompany,
+      authUserId, currentUser, currentCompany,
       dashNotifs, hasUnreadNotif, postedJobs, candidateStatus, postedJobCount
     }));
   }catch(e){
@@ -122,7 +127,7 @@ function saveState(){
       if(lite.currentUser.avatar && lite.currentUser.avatar.startsWith('data:')) lite.currentUser.avatar = DEFAULT_USER.avatar;
       if(lite.currentCompany.logo && lite.currentCompany.logo.startsWith('data:')) lite.currentCompany.logo = '';
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        isLoggedIn, currentRole, currentUser: lite.currentUser, currentCompany: lite.currentCompany,
+        authUserId, currentUser: lite.currentUser, currentCompany: lite.currentCompany,
         dashNotifs, hasUnreadNotif, postedJobs, candidateStatus, postedJobCount
       }));
     }catch(e2){ console.warn('Could not persist state', e2); }
@@ -132,6 +137,7 @@ function saveState(){
 function clearSession(){
   isLoggedIn = false;
   currentRole = null;
+  api.clearAuth();                       // drop the Laravel token
   saveState();
   // sub-branch login keeps its own marker too — clear it so logout is complete
   try{ localStorage.removeItem('upaadhyay_session'); }catch(e){}
@@ -146,6 +152,40 @@ function setBranchSession(id, name){
   saveState();
   try{ localStorage.setItem('upaadhyay_session', JSON.stringify({role:'branch', id:id})); }catch(e){}
 }
+/* ---- backend is the authority for who is logged in and what role they have ---- */
+function applyBackendUser(u){
+  isLoggedIn = true;
+  currentRole = api.toUiRole(u.role);                       // candidate->seeker, company->company, admin->admin
+  if(authUserId !== u.id){                                  // different account than the saved profile data: don't leak it
+    currentUser    = Object.assign({}, JSON.parse(JSON.stringify(DEFAULT_USER)));
+    currentCompany = Object.assign({}, DEFAULT_COMPANY);
+    postedJobs = {}; candidateStatus = {}; postedJobCount = 0; dashNotifs = []; hasUnreadNotif = false;
+    authUserId = u.id;
+  }
+  currentUser.name = u.name || currentUser.name;
+  currentUser.email = u.email || currentUser.email;
+  if(u.phone) currentUser.phone = u.phone;
+  if(u.role === 'company'){
+    if(u.company && u.company.company_name) currentCompany.name = u.company.company_name;
+    currentCompany.email = u.email || currentCompany.email;
+    if(u.phone) currentCompany.phone = u.phone;
+    if(!currentCompany.contactName) currentCompany.contactName = u.name || '';
+  }
+  saveState();
+}
+let authError = false;   // true when the backend could not be reached
+/* Resolves once the backend has confirmed (or denied) the session. Protected pages await this. */
+const authReady = (async function(){
+  if(!api.hasToken()) return null;
+  let u = null;
+  try{ u = await api.me(); }
+  catch(e){ authError = true; return null; }
+  if(u){ applyBackendUser(u); }
+  else { isLoggedIn = _hasBranch; currentRole = _hasBranch ? 'branch' : null; saveState(); }
+  if(typeof updateNavForLogin === 'function'){ try{ updateNavForLogin(); }catch(e){} }
+  return u;
+})();
+
 function ensureCandidateId(){
   if(!currentUser.candidateId){
     currentUser.candidateId = 'UPA-' + Math.floor(100000 + Math.random()*900000);
@@ -179,7 +219,8 @@ const PAGES = {
   facultyHub:SITE_ROOT + 'pages/for-faculty.html',
   employersHub:SITE_ROOT + 'pages/for-employers.html',
   howItWorks:SITE_ROOT + 'pages/how-it-works.html',
-  jobView:   SITE_ROOT + 'pages/job-view.html'
+  jobView:   SITE_ROOT + 'pages/job-view.html',
+  admin:     SITE_ROOT + 'admin/index.html'
 };
 function goTo(page, params){
   const qs = params ? '?' + new URLSearchParams(params).toString() : '';
@@ -190,12 +231,25 @@ function getParam(name){
 }
 /* Where a logged-in user should land */
 function dashboardPageForRole(){
+  if(currentRole === 'admin') return 'admin';
   if(currentRole === 'branch') return 'network';
   return currentRole === 'company' ? 'employer' : 'faculty';
 }
-/* Redirect helper used by protected pages */
-function requireLogin(role){
-  if(!isLoggedIn){ goTo('login', { role: role === 'company' ? 'company' : 'seeker' }); return false; }
-  if(role && currentRole !== role){ goTo(dashboardPageForRole()); return false; }
+/* Protected-page gate. ASYNC: waits for the backend to confirm the session and role.
+   Usage: requireLogin('seeker').then(ok => { if(ok){ ... } });
+   Not logged in -> login page. Wrong role -> message + redirect to that role's own dashboard. */
+async function requireLogin(role){
+  const u = await authReady;
+  if(!u){
+    if(authError){ api.toast('Cannot reach the server. Please try again.'); return false; }
+    if(currentRole === 'branch' && role){ goTo(dashboardPageForRole()); return false; }
+    goTo('login', { role: role === 'company' ? 'company' : 'seeker' });
+    return false;
+  }
+  if(role && currentRole !== role){
+    api.toast('You do not have access to that page.');
+    setTimeout(function(){ goTo(dashboardPageForRole()); }, 900);
+    return false;
+  }
   return true;
 }
