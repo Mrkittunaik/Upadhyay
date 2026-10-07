@@ -103,6 +103,7 @@
 
   <div id="siteChrome"></div>
 
+<script src="../js/api.js"></script>
 <script src="../js/store.js"></script>
 <script src="../js/employer.js"></script>
 <script src="../js/auth.js"></script>
@@ -110,8 +111,7 @@
 <script src="../js/layout.js"></script>
 <script>
   mountNav(); mountChrome();
-  requireLogin('company');
-  renderCandidateProfilePage(getParam('id'));
+  requireLogin('company').then(function(ok){ if(ok) renderCandidateProfilePage(getParam('id')); });
 </script>
 </body>
 </html>
