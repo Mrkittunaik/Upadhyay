@@ -11,86 +11,43 @@
   .al-card{ width:100%; max-width:440px; background:#fff; border-radius:10px; padding:32px 26px; box-shadow:0 20px 50px rgba(0,0,0,.35); text-align:center; }
   .al-card h1{ font-size:20px; margin:0 0 4px; color:#0B1F45; }
   .al-card p{ font-size:13px; color:#5B6B8C; margin:0 0 22px; }
-  .pin-row{ display:grid; grid-template-columns:repeat(12,1fr); gap:5px; margin-bottom:14px; }
-  .pin-row input{ width:100%; box-sizing:border-box; height:42px; padding:0; text-align:center; font-size:18px; font-weight:700; border:1px solid #CBD3E3; border-radius:6px; color:#0B1F45; }
-  .pin-row input:focus{ outline:none; border-color:#2F5BD0; box-shadow:0 0 0 3px rgba(47,91,208,.15); }
-  .pin-row.shake{ animation:shake .35s; }
-  @keyframes shake{ 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .al-field{ display:block; width:100%; box-sizing:border-box; height:42px; padding:0 12px; margin-bottom:12px; font-size:14.5px; border:1px solid #CBD3E3; border-radius:6px; color:#0B1F45; }
+  .al-field:focus{ outline:none; border-color:#2F5BD0; box-shadow:0 0 0 3px rgba(47,91,208,.15); }
   .al-err{ display:none; background:#FDECEC; color:#B42318; font-size:13px; padding:9px 12px; border-radius:6px; margin-bottom:14px; }
   .al-btn{ width:100%; padding:11px; border:0; border-radius:6px; background:#1E3F8F; color:#fff; font-size:14.5px; font-weight:600; cursor:pointer; }
   .al-btn:hover:not(:disabled){ background:#183477; }
   .al-btn:disabled{ opacity:.5; cursor:not-allowed; }
   .al-show{ font-size:12px; color:#5B6B8C; cursor:pointer; margin-bottom:14px; display:inline-block; user-select:none; }
-  .al-hint{ margin-top:16px; font-size:11.5px; color:#8A97B3; }
-  @media(max-width:420px){ .pin-row{ gap:3px; } .pin-row input{ height:38px; font-size:16px; } }
 </style>
 </head>
 <body>
   <form class="al-card" id="adminLoginForm" autocomplete="off">
     <h1>Upadyay Admin</h1>
-    <p>Enter your 12-digit admin PIN</p>
+    <p>Sign in with your admin account</p>
     <div class="al-err" id="alErr"></div>
-    <div class="pin-row" id="pinRow"></div>
-    <label class="al-show"><input type="checkbox" id="alShow"> Show digits</label>
-    <button class="al-btn" id="alBtn" type="submit" disabled>Unlock</button>
-    <div class="al-hint">Demo PIN: 246813579024</div>
+    <input class="al-field" id="alEmail" type="email" placeholder="Admin email" autocomplete="username" required>
+    <input class="al-field" id="alPass" type="password" placeholder="Password" autocomplete="current-password" required>
+    <label class="al-show"><input type="checkbox" id="alShow"> Show password</label>
+    <button class="al-btn" id="alBtn" type="submit">Log in</button>
   </form>
+<script src="../js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-  if(adminIsLoggedIn()) window.location.replace("index.html");
-
-  const N = ADMIN_PIN_LENGTH, row = document.getElementById("pinRow");
   const err = document.getElementById("alErr"), btn = document.getElementById("alBtn");
-  for(let i=0;i<N;i++){
-    const el = document.createElement("input");
-    el.type="password"; el.inputMode="numeric"; el.maxLength=1; el.autocomplete="off";
-    el.setAttribute("aria-label","PIN digit "+(i+1));
-    row.appendChild(el);
-  }
-  const boxes = [...row.children];
-  const pinValue = () => boxes.map(b=>b.value).join("");
-  const refresh  = () => { btn.disabled = pinValue().length !== N; };
-  function showErr(msg){ err.textContent = msg; err.style.display = "block"; row.classList.remove("shake"); void row.offsetWidth; row.classList.add("shake"); }
-  function clearBoxes(){ boxes.forEach(b=>b.value=""); boxes[0].focus(); refresh(); }
-
-  boxes.forEach((b,i)=>{
-    b.addEventListener("input", ()=>{
-      b.value = b.value.replace(/\D/g,"").slice(0,1);
-      if(b.value && i<N-1) boxes[i+1].focus();
-      refresh();
-    });
-    b.addEventListener("keydown", e=>{
-      if(e.key==="Backspace" && !b.value && i>0){ boxes[i-1].focus(); boxes[i-1].value=""; refresh(); }
-      if(e.key==="ArrowLeft" && i>0) boxes[i-1].focus();
-      if(e.key==="ArrowRight" && i<N-1) boxes[i+1].focus();
-    });
-    // paste a full 12-digit PIN into any box
-    b.addEventListener("paste", e=>{
-      e.preventDefault();
-      const d = (e.clipboardData.getData("text")||"").replace(/\D/g,"").slice(0,N);
-      d.split("").forEach((ch,k)=>{ boxes[k].value = ch; });
-      boxes[Math.min(d.length,N-1)].focus(); refresh();
-    });
+  function showErr(msg){ err.textContent = msg; err.style.display = "block"; }
+  // already signed in as admin? go straight to the dashboard
+  api.me().then(function(u){ if(u && u.role === 'admin') window.location.replace("index.html"); }).catch(function(){});
+  document.getElementById("alShow").addEventListener("change", function(e){
+    document.getElementById("alPass").type = e.target.checked ? "text" : "password";
   });
-  document.getElementById("alShow").addEventListener("change", e=>{
-    boxes.forEach(b=> b.type = e.target.checked ? "text" : "password");
-  });
-  boxes[0].focus();
-
-  function mins(ms){ return Math.ceil(ms/60000); }
-  document.getElementById("adminLoginForm").addEventListener("submit", async e=>{
+  document.getElementById("adminLoginForm").addEventListener("submit", async function(e){
     e.preventDefault();
-    btn.disabled = true;
-    const r = await adminLoginPin(pinValue());
+    err.style.display = "none"; btn.disabled = true; btn.textContent = "Please wait…";
+    const r = await adminLogin(document.getElementById("alEmail").value.trim(), document.getElementById("alPass").value);
     if(r.ok){ window.location.replace("index.html"); return; }
-    if(r.reason==="locked")      showErr("Too many wrong tries. Try again in " + mins(r.lockMs) + " min.");
-    else if(r.reason==="format") showErr("PIN must be exactly 12 digits.");
-    else                         showErr("Wrong PIN. " + r.triesLeft + " tr" + (r.triesLeft===1?"y":"ies") + " left.");
-    clearBoxes();
+    showErr(r.message); btn.disabled = false; btn.textContent = "Log in";
+    document.getElementById("alPass").value = "";
   });
-  // show lock state on load
-  const left = adminLockRemaining();
-  if(left) showErr("Locked. Try again in " + mins(left) + " min.");
 </script>
 </body>
 </html>
