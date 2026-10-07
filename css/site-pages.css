@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
 .sp{--navy:#10233F;--pri:#1F5BD5;--lt:#EEF5FF;--bg:#F7F9FC;--tx:#172033;--gr:#64748B;--bd:#E2E8F0;--ok:#16A34A;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif}
 .sp h1,.sp h2{font-family:'DM Serif Display',Georgia,serif;font-weight:400;color:var(--navy);margin:0}
-.sp .wrap{max-width:var(--page-max);margin:0 auto;padding:0 24px}
+.sp .wrap{max-width:min(100%,1680px);margin:0 auto;padding:0 clamp(16px,3.2vw,56px)}
 .sp-hero{background:var(--navy);color:#fff;padding:72px 0}
 .sp-hero h1{color:#fff;font-size:44px;line-height:1.15;max-width:18ch}
 .sp-hero p{color:#C9D6EE;font-size:17px;max-width:56ch;margin:16px 0 28px}
