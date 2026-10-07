@@ -31,7 +31,14 @@
   //   mode = 'login' | 'register'   (fixed by which page it is)
   //   role comes from ?role=seeker|company — if absent, ask via popup first.
   function initAuthPage(mode){
-    if(isLoggedIn){ goTo(dashboardPageForRole()); return; }   // already signed in
+    // Already signed in? Ask the backend (token is the only credential) before redirecting.
+    if(!window._authChecked && (api.hasToken() || isLoggedIn)){
+      window._authChecked = true;
+      authReady.then(function(u){
+        if(u || currentRole === 'branch') goTo(dashboardPageForRole()); else initAuthPage(mode);
+      });
+      return;
+    }
     popupMode = mode;
     const roleParam = getParam('role');
     const typeParam = getParam('type');
@@ -201,11 +208,8 @@
       errEl.style.display = 'block';
       return;
     }
-    errEl.style.display = 'none';
-    authOtpSent = true;
-    document.getElementById('authOtpField').style.display = 'block';
-    document.getElementById('authSendOtpBtn').textContent = 'Resend OTP';
-    showGenericToast('OTP sent to +91 ' + phone + ' (demo)');
+    errEl.textContent = 'Mobile OTP sign-in is not available yet. Please use your email and password.';
+    errEl.style.display = 'block';
   }
 
   function setAuthTab(mode){
@@ -322,95 +326,67 @@
     }
   }
 
-  function submitAuth(e){
+  function _authBusy(on){
+    const btn = document.getElementById('authSubmitBtn'); if(!btn) return;
+    if(on){ btn.dataset.label = btn.textContent; btn.textContent = 'Please wait…'; btn.disabled = true; }
+    else { btn.textContent = btn.dataset.label || btn.textContent; btn.disabled = false; }
+  }
+  async function submitAuth(e){
     e.preventDefault();
     const errEl = document.getElementById('authError');
+    const showErr = function(m){ errEl.textContent = m; errEl.style.display = 'block'; return false; };
     errEl.style.display = 'none';
     const wasRegister = authMode === 'register';
     const isCompanyRole = selectedRole === 'company';
-    const nameInput = document.getElementById('authNameInput');
-    const companyNameInput = document.getElementById('authCompanyNameInput');
-    const contactPersonInput = document.getElementById('authContactPersonInput');
-    let name = '';
-    let companyName = '';
-    let emailVal = '';
-    let phoneVal = '';
 
-    if(wasRegister && isCompanyRole){
-      companyName = companyNameInput.value.trim();
-      const contactName = contactPersonInput.value.trim();
-      if(!companyName || !contactName){
-        errEl.textContent = 'Enter your institution name and contact person.';
-        errEl.style.display = 'block';
-        return false;
+    if(authMethod !== 'email') return showErr('Mobile OTP sign-in is not available yet. Please use your email and password.');
+
+    const emailVal = document.getElementById('authEmailInput').value.trim();
+    const pass = document.getElementById('authPasswordInput').value;
+    if(!emailVal || !pass) return showErr('Enter your email and password.');
+
+    let name = '', companyName = '';
+    if(wasRegister){
+      const confirmPwInput = document.getElementById('authConfirmPasswordInput');
+      const confirmPw = confirmPwInput ? confirmPwInput.value : '';
+      if(pass !== confirmPw) return showErr('Passwords do not match.');
+      if(isCompanyRole){
+        companyName = document.getElementById('authCompanyNameInput').value.trim();
+        name = document.getElementById('authContactPersonInput').value.trim();
+        if(!companyName || !name) return showErr('Enter your institution name and contact person.');
+      } else {
+        name = document.getElementById('authNameInput').value.trim();
+        if(!name) return showErr('Enter your full name.');
       }
-      name = contactName;
     }
 
-    if(authMethod === 'email'){
-      emailVal = document.getElementById('authEmailInput').value.trim();
-      const pass = document.getElementById('authPasswordInput').value;
-      if(!emailVal || !pass){
-        errEl.textContent = 'Enter your email and password.';
-        errEl.style.display = 'block';
-        return false;
-      }
+    _authBusy(true);
+    try{
+      let user;
       if(wasRegister){
-        const confirmPwInput = document.getElementById('authConfirmPasswordInput');
-        const confirmPw = confirmPwInput ? confirmPwInput.value : '';
-        if(pass !== confirmPw){
-          errEl.textContent = 'Passwords do not match.';
-          errEl.style.display = 'block';
-          return false;
-        }
+        // frontend "seeker" is backend "candidate"; admin can never be registered from here
+        const payload = { name: name, email: emailVal, password: pass, password_confirmation: pass,
+                          role: isCompanyRole ? 'company' : 'candidate' };
+        if(isCompanyRole) payload.company_name = companyName;
+        user = await api.register(payload);
+      } else {
+        user = await api.login(emailVal, pass);
       }
-      if(!name) name = (wasRegister && nameInput.value.trim()) ? nameInput.value.trim() : (emailVal.split('@')[0] || 'User');
-    } else {
-      phoneVal = document.getElementById('authPhoneInput').value.trim();
-      const otp = document.getElementById('authOtpInput').value.trim();
-      if(phoneVal.length < 10){
-        errEl.textContent = 'Enter a valid 10-digit mobile number.';
-        errEl.style.display = 'block';
-        return false;
-      }
-      if(!authOtpSent){
-        errEl.textContent = 'Send and enter the OTP first.';
-        errEl.style.display = 'block';
-        return false;
-      }
-      if(otp.length < 6){
-        errEl.textContent = 'Enter the 6-digit OTP.';
-        errEl.style.display = 'block';
-        return false;
-      }
-      if(!name) name = (wasRegister && nameInput.value.trim()) ? nameInput.value.trim() : ('User ' + phoneVal.slice(-4));
+      applyBackendUser(user);                       // role + identity come from the backend response
+      currentUser.loginMethod = 'email';
+
+      // A brand-new account lands on the profile section once, permanently.
+      const seenKey = 'upadyay_profile_seen_' + String(emailVal).toLowerCase();
+      const isFirstEverLogin = wasRegister && !localStorage.getItem(seenKey);
+      if(isFirstEverLogin) localStorage.setItem(seenKey, '1');
+      saveState();
+
+      // Backend role decides the dashboard (candidate -> faculty, company -> employer, admin -> admin).
+      goTo(dashboardPageForRole(), isFirstEverLogin ? { welcome: '1' } : null);
+    }catch(err){
+      _authBusy(false);
+      showErr(err.message || 'Something went wrong. Please try again.');
     }
-
-    isLoggedIn = true;
-    currentRole = intendedPanel==='post' ? 'company' : 'seeker';
-    currentUser.name = name;
-    if(companyName) currentUser.companyName = companyName;
-    currentUser.loginMethod = authMethod;
-    if(emailVal) currentUser.email = emailVal;
-    if(phoneVal) currentUser.phone = phoneVal;
-    const idKey = (emailVal || phoneVal || '').toLowerCase();
-
-    // A brand-new account lands on the profile section once, permanently.
-    const seenKey = 'upadyay_profile_seen_' + idKey;
-    const isFirstEverLogin = wasRegister && !localStorage.getItem(seenKey);
-    if(isFirstEverLogin) localStorage.setItem(seenKey, '1');
-
-    // Employers: carry the registration details into the company profile form.
-    if(currentRole === 'company' && wasRegister){
-      if(companyName) currentCompany.name = companyName;
-      if(name) currentCompany.contactName = name;
-      if(emailVal) currentCompany.email = emailVal;
-      if(phoneVal) currentCompany.phone = phoneVal;
-    }
-    saveState();
-
-    // Real navigation to the dashboard page (state is already saved above).
-    goTo(dashboardPageForRole(), isFirstEverLogin ? { welcome: '1' } : null);
     return false;
   }
 
@@ -464,7 +440,8 @@
     if(miniLink) miniLink.style.display = isSeeker ? 'flex' : 'none';
   }
 
-  function logoutUser(){
+  async function logoutUser(){
+    await api.logout();      // revokes the Sanctum token on the server (always clears locally too)
     clearSession();
     goTo('home');
   }
