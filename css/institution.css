@@ -1,6 +1,6 @@
 /* institution.css — institution profile, verification and campus UI (uses tokens from style.css) */
 .in-wrap{width:100%;max-width:none;margin:0}
-#dashInnerWide{max-width:1240px}
+#dashInnerWide{max-width:min(100%,1680px)}
 #dashInnerWide .dash-panel{width:100%}
 .in-head h3{margin:0 0 4px;font-size:22px;color:var(--blue-900)}
 .in-head p{margin:0 0 18px;color:var(--ink-soft);font-size:14px}
@@ -89,7 +89,7 @@
 @media(max-width:640px){.in-row3{grid-template-columns:1fr}}
 
 /* ===== Compact employer/institution dashboard (UI-only density pass) ===== */
-.dash-inner-wide#dashInnerWide{max-width:1560px;width:100%;padding:18px 28px 28px;box-sizing:border-box}
+.dash-inner-wide#dashInnerWide{max-width:min(100%,1680px);width:100%;padding:18px var(--gutter,28px) 28px;box-sizing:border-box}
 #dashInnerWide .dash-head{gap:12px;margin-bottom:14px}
 #dashInnerWide .dash-avatar{width:44px;height:44px;font-size:16px}
 #dashInnerWide .dash-head h2{font-size:18px;margin:0 0 2px}
