@@ -1,4 +1,4 @@
-  // ---------- Admin dashboard (demo) ----------
+// ---------- Admin dashboard (demo) ----------
   function institutionTypeLabel(t){
     return t==='school' ? 'School' : t==='college' ? 'Junior College' : 'University';
   }
@@ -18,8 +18,8 @@
     function closeAdmin(){ adminLogout(); }
 
   // Called once by admin.html on load. Optional ?tab=faculty|institutions|jobs
-  function initAdminPage(){
-    if(!requireAdmin()) return;
+  async function initAdminPage(){
+    if(!(await requireAdmin())) return;
     document.getElementById('adminFooterYear').textContent = new Date().getFullYear();
     const tab = new URLSearchParams(location.search).get('tab');
     switchAdminTab(['overview','faculty','institutions','jobs'].includes(tab) ? tab : 'overview');
