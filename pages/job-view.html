@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/site-pages.css"></head>
 <body class="sp"><div id="siteNav"></div>
 <main id="main"></main><div id="siteChrome"></div>
+<script src="../js/api.js"></script>
 <script src="../js/store.js"></script><script src="../js/employer.js"></script><script src="../js/auth.js"></script><script src="../js/faculty.js"></script><script src="../js/layout.js"></script><script src="../js/site-pages.js"></script>
 <script>spBoot('jobs');
 var q=new URLSearchParams(location.search),m=document.getElementById('main'),cat=q.get('c')||(location.pathname.split('/jobs/')[1]||'').replace(/\/$/,''),id=q.get('id');
