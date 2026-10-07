@@ -662,6 +662,7 @@
 
   <div id="siteChrome"></div>
 
+<script src="../js/api.js"></script>
 <script src="../js/store.js"></script>
 <script src="../js/employer.js"></script>
 <script src="../js/auth.js"></script>
@@ -669,6 +670,6 @@
 <script src="../js/layout.js"></script>
 <script src="../js/faculty-profile.js?v=4"></script>
 <script>document.addEventListener("input", function(e){ if(e.target && e.target.id && document.querySelector('.pf-upload[data-pf-target="'+e.target.id+'"]')) pfRefreshUploadPreviews(); });</script>
-<script>mountNav(); mountChrome(); if(requireLogin('seeker')) openDash(currentUser.name || 'User', 'search');</script>
+<script>mountNav(); mountChrome(); requireLogin('seeker').then(function(ok){ if(ok) openDash(currentUser.name || 'User', 'search'); });</script>
 </body>
 </html>
