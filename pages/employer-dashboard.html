@@ -213,6 +213,7 @@
 
   <div id="siteChrome"></div>
 
+<script src="../js/api.js"></script>
 <script src="../js/store.js"></script>
 <script src="../js/employer.js"></script>
 <script src="../js/logo-crop.js"></script>
@@ -266,13 +267,13 @@
 <script>
 if('scrollRestoration' in history) history.scrollRestoration = 'manual';   /* reload no longer jumps the page */
 mountNav(); mountChrome();
-if(requireLogin('company')){
+requireLogin('company').then(function(ok){ if(!ok) return;
   let _kept = null; try{ _kept = sessionStorage.getItem('upadyay_emp_tab'); }catch(e){}
   openDash(currentCompany.name || 'Institution', 'post');
   const _t = getParam('tab') || _kept;
   if(_t==='candidates' || _t==='company' || _t==='myjobs' || _t==='post') switchEmployerTab(_t);
   window.scrollTo(0,0);
-}
+});
 </script>
 <script>
 /* Reveal the panel only after every script has built it, so the setup note / empty layout never flashes on reload. */
