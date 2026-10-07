@@ -145,5 +145,92 @@
     /* backend role -> frontend role name used throughout the existing UI */
     toUiRole: function(role){ return role === 'company' ? 'company' : (role === 'candidate' ? 'seeker' : role); }
   };
+  /* ==========================================================================
+     LOCAL MODE (temporary) — login/register/session stored in localStorage.
+     No backend needed. To go back to Laravel later, set
+       window.UPADYAY_LOCAL = false;   (before api.js loads)
+     and this block is skipped entirely.
+     Users live in localStorage key 'upadyay_local_users'.
+     Seeded admin: admin@upadyay.com / admin123  (change/remove before launch)
+     ========================================================================== */
+  if(window.UPADYAY_LOCAL !== false){
+    const USERS_KEY = 'upadyay_local_users';
+
+    function loadUsers(){
+      let u = [];
+      try{ u = JSON.parse(localStorage.getItem(USERS_KEY)) || []; }catch(e){}
+      if(!Array.isArray(u)) u = [];
+      return u;
+    }
+    function saveUsers(u){ try{ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }catch(e){} }
+
+    async function hash(pw){
+      try{
+        if(window.crypto && crypto.subtle){
+          const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('upadyay:' + pw));
+          return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+        }
+      }catch(e){}
+      let h = 5381; const t = 'upadyay:' + pw;                       // fallback (non-secure context / file://)
+      for(let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0;
+      return 'x' + (h >>> 0).toString(16);
+    }
+    function publicUser(u){
+      return { id: u.id, name: u.name, email: u.email, phone: u.phone || '', role: u.role,
+               company: u.role === 'company' ? { company_name: u.company_name || '' } : null };
+    }
+    function tokenFor(u){ return 'local.' + u.id; }
+    function fail(msg, status){ return new ApiError(msg, status || 422); }
+
+    async function ensureAdmin(){
+      const users = loadUsers();
+      if(users.some(function(u){ return u.role === 'admin'; })) return;
+      users.push({ id: 'u_admin', name: 'Admin', email: 'admin@upadyay.com',
+                   password: await hash('admin123'), role: 'admin', created: Date.now() });
+      saveUsers(users);
+    }
+
+    api.login = async function(email, password){
+      await ensureAdmin();
+      const em = String(email || '').trim().toLowerCase();
+      const u = loadUsers().find(function(x){ return x.email === em; });
+      if(!u || u.password !== await hash(password)) throw fail('Invalid email or password.', 401);
+      return api._accept({ token: tokenFor(u), user: publicUser(u) });
+    };
+
+    api.register = async function(fields){
+      await ensureAdmin();
+      const f = Object.assign({}, fields);
+      const role = (f.role === 'company') ? 'company' : 'candidate';   // admin can never be registered here
+      const email = String(f.email || '').trim().toLowerCase();
+      const name = String(f.name || '').trim();
+      if(!name) throw fail('Name is required.');
+      if(!/^\S+@\S+\.\S+$/.test(email)) throw fail('Enter a valid email address.');
+      if(!f.password || String(f.password).length < 6) throw fail('Password must be at least 6 characters.');
+      if(role === 'company' && !String(f.company_name || '').trim()) throw fail('Institution name is required.');
+      const users = loadUsers();
+      if(users.some(function(x){ return x.email === email; })) throw fail('An account with this email already exists.');
+      const u = { id: 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+                  name: name, email: email, phone: f.phone || '', role: role,
+                  company_name: role === 'company' ? String(f.company_name).trim() : undefined,
+                  password: await hash(f.password), created: Date.now() };
+      users.push(u); saveUsers(users);
+      return api._accept({ token: tokenFor(u), user: publicUser(u) });
+    };
+
+    api.logout = async function(){ clearAuth(); };
+
+    api.me = async function(){
+      const t = getToken();
+      if(!t || t.indexOf('local.') !== 0){ if(t) clearAuth(); api.user = null; return null; }
+      const id = t.slice(6);
+      const u = loadUsers().find(function(x){ return x.id === id; });
+      if(!u){ clearAuth(); return null; }
+      api.user = publicUser(u);
+      try{ localStorage.setItem(ROLE_HINT_KEY, u.role); }catch(e){}
+      return api.user;
+    };
+  }
+
   window.api = api;
 })();
