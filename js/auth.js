@@ -265,8 +265,8 @@
       seekIc.innerHTML = _ICON_MAIN; compIc.innerHTML = _ICON_SUB;
       if(back) back.style.display = 'block';
     } else {
-      q('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upadyay as';
-      q('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upadyay';
+      q('rolePopupTitle').textContent = isLogin ? 'Log in as' : 'Join Upaadhyay as';
+      q('rolePopupSub').textContent = isLogin ? 'Choose your account type to continue' : 'Choose how you want to use Upaadhyay';
       q('popupRoleSeeker').querySelector('.rt').textContent = 'Job Seeker';
       q('popupRoleCompany').querySelector('.rt').textContent = 'Institution';
       q('popupRoleSeekerDesc').textContent = isLogin ? 'Faculty account' : 'Find faculty roles';
