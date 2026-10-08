@@ -10,14 +10,43 @@ const BRAND_SVG = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" x
 const BELL_SVG  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>`;
 
 /* ---- Top nav bar --------------------------------------------------------- */
+
+const NAV_CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+.nav{background:#fff !important;border-bottom:0 !important;border-radius:0 0 22px 22px;box-shadow:0 4px 20px rgba(75,31,158,.10);backdrop-filter:none !important;font-family:'Poppins','Inter',sans-serif}
+.nav-inner{max-width:1360px !important;padding:12px 32px !important;gap:32px !important;justify-content:flex-start !important}
+.fn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.fn-mark{height:44px;width:auto;display:block}
+.fn-word{font-family:'Poppins',sans-serif;font-weight:800;font-size:29px;letter-spacing:-1.5px;color:#3a1580;line-height:1}
+.fn-word span{color:#e0359a}
+.fn-badge{background:#ebe3ff;color:#4b1f9e;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;align-self:center;margin-top:4px}
+.nav-links{justify-content:flex-start !important;gap:30px !important;flex:1}
+.nav-links a{font-size:15.5px !important;font-weight:500 !important;color:#1f1637 !important;position:relative;padding:6px 0}
+.nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:#4b1f9e;transition:width .25s}
+.nav-links a:hover,.nav-links a.active{color:#4b1f9e !important}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-cta{display:flex;align-items:center;gap:14px;margin-left:auto}
+.fn-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;transition:.2s}
+.fn-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fn-login{border:1.5px solid #4b1f9e;color:#4b1f9e;background:#fff}
+.fn-login:hover{background:#4b1f9e;color:#fff}
+.fn-register{background:#ff7a1a;color:#fff;box-shadow:0 4px 12px rgba(255,122,26,.3)}
+.fn-register:hover{background:#e86a0c;transform:translateY(-1px)}
+.fn-div{width:1px;height:28px;background:#d9d2ea}
+.fn-emp{font-size:15px;font-weight:500;color:#1f1637;text-decoration:none;transition:color .2s}
+.fn-emp:hover{color:#4b1f9e}
+@media (max-width:1100px){.fn-emp,.fn-div{display:none}.nav-inner{gap:20px !important}.nav-links{gap:18px !important}}
+@media (max-width:760px){.nav-inner{padding:10px 16px !important}.fn-word{font-size:22px}.fn-mark{height:34px}.fn-badge{display:none}.fn-btn{padding:8px 14px;font-size:13px}.fn-btn svg{display:none}}
+`;
 function mountNav(active){
+  if(!document.getElementById("navStyleV2")){ const st=document.createElement("style"); st.id="navStyleV2"; st.textContent=NAV_CSS; document.head.appendChild(st); }
   const el = document.getElementById('siteNav');
   if(!el) return;
   const cls = (n)=> active===n ? ' class="active"' : '';
   el.innerHTML = `
   <nav class="nav">
     <div class="nav-inner">
-      <a class="brand" href="${PAGES.home}" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:8px;"><img src="/assets/logo/logo-mark.png" alt="Upaadhyay" style="height:34px; width:auto; display:block;">Upaadhyay</a>
+      <a class="brand fn-brand" href="${PAGES.home}"><img src="/assets/logo/logo-mark.png" alt="Upaadhyay logo" class="fn-mark"><span class="fn-word">Upaadh<span>yay</span></span><span class="fn-badge">Faculty</span></a>
       <div class="nav-links">
         <a href="${PAGES.home}"${cls('home')}>Home</a>
         <a href="${PAGES.facultyHub}"${cls('faculty')} id="navForFacultyLink">For Faculty</a>
@@ -36,8 +65,10 @@ function mountNav(active){
         <a href="#" id="navDashLink">Dashboard</a>
       </div>
       <div class="nav-cta" id="navCta">
-        <a class="btn btn-ghost btn-sm" href="${PAGES.login}" style="padding:7px 12px; font-size:12.5px; color:var(--ink-faint); border-color:var(--line); text-decoration:none;">Log in</a>
-        <a class="btn btn-primary btn-sm" href="${PAGES.register}" style="text-decoration:none;">Register free</a>
+        <a class="fn-btn fn-login" href="${PAGES.login}"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>Login</a>
+        <a class="fn-btn fn-register" href="${PAGES.register}"><svg viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M2 21c0-4 3.5-7 8-7M18 14v6M15 17h6"/></svg>Register</a>
+        <span class="fn-div"></span>
+        <a class="fn-emp" href="${PAGES.login}?role=company">Employers Login</a>
       </div>
       <div class="nav-user" id="navUser" style="display:none;">
         <span id="navRoleBadge" style="display:none; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--blue-700); background:var(--blue-50); padding:3px 8px; border-radius:var(--radius); margin-right:8px;"></span>
