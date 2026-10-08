@@ -14,28 +14,28 @@ const BELL_SVG  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" x
 const NAV_CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 .nav{background:#fff !important;border-bottom:0 !important;border-radius:0 0 22px 22px;box-shadow:0 4px 20px rgba(75,31,158,.10);backdrop-filter:none !important;font-family:'Poppins','Inter',sans-serif}
-.nav-inner{max-width:1360px !important;padding:12px 32px !important;gap:32px !important;justify-content:flex-start !important}
+.nav-inner{max-width:1360px !important;padding:10px 28px !important;gap:22px !important;justify-content:flex-start !important}
 .fn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
-.fn-mark{height:44px;width:auto;display:block}
-.fn-word{font-family:'Poppins',sans-serif;font-weight:800;font-size:29px;letter-spacing:-1.5px;color:#3a1580;line-height:1}
+.fn-mark{height:38px;width:auto;display:block}
+.fn-word{font-family:'Poppins',sans-serif;font-weight:800;font-size:24px;letter-spacing:-1.2px;color:#3a1580;line-height:1}
 .fn-word span{color:#e0359a}
-.fn-badge{background:#ebe3ff;color:#4b1f9e;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;align-self:center;margin-top:4px}
-.nav-links{justify-content:flex-start !important;gap:30px !important;flex:1}
-.nav-links a{font-size:15.5px !important;font-weight:500 !important;color:#1f1637 !important;position:relative;padding:6px 0}
+.fn-badge{background:#ebe3ff;color:#4b1f9e;font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;align-self:center;margin-top:4px}
+.nav-links{justify-content:flex-start !important;gap:22px !important;flex:1}
+.nav-links a{white-space:nowrap;font-size:13.5px !important;font-weight:500 !important;color:#1f1637 !important;position:relative;padding:6px 0}
 .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:#4b1f9e;transition:width .25s}
 .nav-links a:hover,.nav-links a.active{color:#4b1f9e !important}
 .nav-links a:hover::after,.nav-links a.active::after{width:100%}
-.nav-cta{display:flex;align-items:center;gap:14px;margin-left:auto}
-.fn-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:99px;font-weight:600;font-size:15px;text-decoration:none;transition:.2s}
-.fn-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-cta{display:flex;align-items:center;gap:10px;white-space:nowrap;margin-left:auto}
+.fn-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:99px;font-weight:600;font-size:13.5px;text-decoration:none;transition:.2s}
+.fn-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .fn-login{border:1.5px solid #4b1f9e;color:#4b1f9e;background:#fff}
 .fn-login:hover{background:#4b1f9e;color:#fff}
 .fn-register{background:#ff7a1a;color:#fff;box-shadow:0 4px 12px rgba(255,122,26,.3)}
 .fn-register:hover{background:#e86a0c;transform:translateY(-1px)}
-.fn-div{width:1px;height:28px;background:#d9d2ea}
-.fn-emp{font-size:15px;font-weight:500;color:#1f1637;text-decoration:none;transition:color .2s}
+.fn-div{width:1px;height:24px;background:#d9d2ea}
+.fn-emp{font-size:13.5px;font-weight:500;color:#1f1637;text-decoration:none;transition:color .2s}
 .fn-emp:hover{color:#4b1f9e}
-@media (max-width:1100px){.fn-emp,.fn-div{display:none}.nav-inner{gap:20px !important}.nav-links{gap:18px !important}}
+@media (max-width:1180px){.fn-emp,.fn-div{display:none}.nav-inner{gap:20px !important}.nav-links{gap:18px !important}}
 @media (max-width:760px){.nav-inner{padding:10px 16px !important}.fn-word{font-size:22px}.fn-mark{height:34px}.fn-badge{display:none}.fn-btn{padding:8px 14px;font-size:13px}.fn-btn svg{display:none}}
 `;
 function mountNav(active){
