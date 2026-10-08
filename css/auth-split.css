@@ -1,0 +1,59 @@
+/* Split login/register (foundit-style). Only restyles — all IDs/JS hooks untouched. */
+body.page-auth{font-family:'Poppins','Inter',sans-serif;background:#fff;color:#1f1637}
+.as-head{position:fixed;top:0;left:0;right:0;height:72px;z-index:90;background:#fff;border-bottom:1px solid #e6e0f3;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,6vw,120px)}
+.as-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.as-brand img{height:40px;width:auto}
+.as-word{font-weight:800;font-size:25px;letter-spacing:-1.2px;color:#3a1580;line-height:1}
+.as-word span{color:#e0359a}
+.as-switch{font-size:15px;font-weight:500;color:#1f1637}
+.as-switch a{color:#4b1f9e;font-weight:700;text-decoration:none}
+.as-switch a:hover{text-decoration:underline}
+
+.auth-page{top:72px !important;padding:0 !important;display:grid !important;grid-template-columns:1fr 1fr;align-items:stretch !important;background:#fff !important;background-image:none !important;z-index:50 !important}
+.as-left{position:relative;background:#f3f1f7;overflow:hidden;min-height:560px}
+.as-card{position:absolute;background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(75,31,158,.10);padding:16px 18px;font-size:14px;font-weight:500}
+.as-card h4{margin:0 0 10px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.as-card h4 svg{width:22px;height:22px;fill:none;stroke:#1f1637;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.as-row{display:flex;gap:10px;align-items:center;border:1px solid #ece8f5;border-radius:12px;padding:10px 12px}
+.as-sq{width:28px;height:28px;border-radius:7px;background:#fbe3f1;flex:none}
+.as-lines{display:flex;flex-direction:column;gap:6px;flex:1}
+.as-lines i{display:block;height:8px;border-radius:4px;background:#eceaf2}
+.as-lines i:nth-child(2){width:70%}.as-lines i:nth-child(3){width:45%}
+.as-ava{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7b4fd6,#e0359a);border:3px solid #fff;box-shadow:0 0 0 2px #1d8a5e;flex:none}
+.as-logos{display:flex;gap:10px}
+.as-logos b{width:42px;height:42px;border-radius:8px;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.as-note{position:absolute;font-family:'Caveat',cursive;font-size:25px;line-height:1.1;color:#1f1637;font-weight:600}
+.as-arrow{position:absolute;width:90px;height:60px;fill:none;stroke:#ff7a1a;stroke-width:1.6;stroke-dasharray:3 4;stroke-linecap:round}
+.as-ok{color:#1d8a5e;font-weight:600;font-size:13px}
+
+.auth-card{max-width:470px !important;width:100%;margin:auto !important;padding:40px 32px !important;border-radius:0 !important;box-shadow:none !important;background:#fff !important;overflow:visible !important;text-align:left !important;align-self:center}
+.auth-card::before,.auth-card form::before{display:none !important}
+.auth-card .ac-brand,.auth-card .ap-close{display:none !important}
+.auth-card form{padding:0 !important;margin-top:18px !important}
+.auth-card .ap-page-tag{position:static !important;display:inline-block;width:auto !important;margin:0 0 12px !important;background:#ebe3ff !important;color:#4b1f9e !important;border-radius:99px !important;padding:4px 12px;font-size:12px;font-weight:600}
+.auth-card h2,#backToLoginLink[style*="display:none"] + h2,#backToLoginLink[style*="display: none"] + h2{margin:0 0 6px !important;font-size:34px !important;font-weight:800;color:#1f1637 !important;text-shadow:none !important;letter-spacing:-.8px}
+.auth-card .sub{font-size:17px !important;color:#6b6385 !important;margin:0 0 6px !important}
+.auth-card .ap-step-back{top:6px !important;left:8px !important;background:#f4efff !important;color:#4b1f9e !important}
+.ap-step-divider{display:none}
+.ap-step-label{font-size:15px !important;color:#1f1637 !important;margin:18px 0 12px !important;font-weight:600 !important}
+.as-social{display:flex;gap:14px;margin:18px 0 6px}
+.as-social button{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;border:1.5px solid #e6e0f3;border-radius:99px;background:#fff;font:600 16px 'Poppins',sans-serif;color:#1f1637;cursor:pointer;transition:.2s}
+.as-social button:hover{border-color:#4b1f9e;background:#f4efff}
+.as-social svg{width:22px;height:22px}
+.as-or{display:flex;align-items:center;gap:14px;color:#8c85a3;font-size:14px;margin:14px 0 0}
+.as-or:before,.as-or:after{content:"";flex:1;height:1px;background:#e6e0f3}
+.auth-card .modal-tabs{display:flex;gap:12px;margin-bottom:18px !important;border:0 !important;background:none !important;padding:0 !important}
+.auth-card .modal-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border:1.5px solid #e6e0f3 !important;border-radius:99px !important;background:#fff !important;font:600 15px 'Poppins',sans-serif;color:#1f1637 !important;box-shadow:none !important}
+.auth-card .modal-tab.active{border-color:#4b1f9e !important;color:#4b1f9e !important;background:#f4efff !important}
+.auth-card .modal-field label{font-size:16px !important;text-transform:none !important;letter-spacing:0 !important;color:#1f1637 !important;font-weight:500;margin-bottom:8px;display:block}
+.auth-card .modal-field input,.auth-card .modal-field select{border:1.5px solid #d9d2ea !important;border-radius:10px !important;background:#fff !important;padding:15px 16px !important;font:400 16px 'Poppins',sans-serif !important;width:100%}
+.auth-card .modal-field input:focus{border-color:#4b1f9e !important;outline:0;box-shadow:0 0 0 3px rgba(75,31,158,.12)}
+.auth-step .btn.btn-primary,.auth-card button[type="submit"]{width:100%;background:#4b1f9e !important;color:#fff !important;border:0 !important;border-radius:99px !important;padding:16px !important;font:600 17px 'Poppins',sans-serif !important;letter-spacing:0 !important;text-transform:none !important;margin-top:10px;box-shadow:0 8px 20px rgba(75,31,158,.25);transition:.2s;cursor:pointer}
+.auth-step .btn.btn-primary:hover,.auth-card button[type="submit"]:hover{background:#3a1580 !important;transform:translateY(-1px)}
+.auth-card .btn-light{border:1.5px solid #4b1f9e;color:#4b1f9e;border-radius:99px;background:#fff}
+#authSwitchModeLink{text-align:center !important;font-size:16px}
+#authSwitchModeLink a,.ac-switch-role a{color:#4b1f9e !important;font-weight:600}
+.ac-switch-role{text-align:center;padding:0 !important;font-size:14px;color:#6b6385}
+@media (max-width:900px){.auth-page{grid-template-columns:1fr}.as-left{display:none}.auth-card{padding:28px 20px !important}.as-switch{font-size:13px}.as-word{font-size:21px}}
+.auth-card h2{font-family:'Poppins','Inter',sans-serif !important}
+.as-note{font-family:'Caveat','Segoe Script','Comic Sans MS',cursive}
