@@ -3,7 +3,7 @@ body.home{background:#f4efff; font-family:'Poppins','Inter',system-ui,sans-serif
 .fh{--purple:#4b1f9e;--purple-d:#3a1580;--purple-l:#7b4fd6;--pink:#e0359a;--orange:#ff7a1a;--orange-d:#e86a0c;--lav:#f4efff;--lav2:#ebe3ff;--peach:#ffe9db;--ink:#1f1637;--muted:#6b6385;--line:#e6e0f3;--shadow:0 6px 24px rgba(75,31,158,.10);--shadow-lg:0 14px 40px rgba(75,31,158,.18);font-family:'Poppins','Inter',system-ui,sans-serif;color:var(--ink);line-height:1.5;}
 .fh *{box-sizing:border-box;}
 .fh svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.fh button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.fh :where(button){font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .fh h1,.fh h2{font-family:inherit}
 .fh-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:99px;font-weight:600;font-size:14px;transition:.2s}
 .fh-btn-primary{background:var(--purple);color:#fff}.fh-btn-primary:hover{background:var(--purple-d);transform:translateY(-1px)}
