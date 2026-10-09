@@ -60,21 +60,21 @@ body.page-auth{font-family:'Poppins','Inter',sans-serif;background:#fff;color:#1
 
 /* ---- Role popup ("Join Upaadhyay as") ---- */
 .role-popup-overlay{background:rgba(31,22,55,.55) !important;backdrop-filter:blur(4px) !important;font-family:'Poppins','Inter',sans-serif}
-.role-popup-card{max-width:520px !important;border-radius:24px !important;padding:40px 36px 36px !important;box-shadow:0 30px 80px rgba(75,31,158,.28) !important;text-align:center}
+.role-popup-card{max-width:520px !important;border-radius:5px !important;padding:28px 28px 26px !important;box-shadow:0 30px 80px rgba(75,31,158,.28) !important;text-align:center}
 .role-popup-card .as-brand{justify-content:center;margin:0 0 18px}
-.role-popup-card .as-brand img{height:40px}
-.role-popup-card h2{font-family:'Poppins',sans-serif !important;font-size:28px !important;font-weight:800;letter-spacing:-.6px;color:#1f1637 !important;margin:0 0 6px !important}
-.role-popup-card .sub{font-size:15px !important;color:#6b6385 !important;margin:0 0 26px !important}
-.role-popup-card .ap-close{color:#6b6385 !important;background:#f4efff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;opacity:1}
+.role-popup-card .as-brand img{height:34px}
+.role-popup-card h2{font-family:'Poppins',sans-serif !important;font-size:24px !important;font-weight:800;letter-spacing:-.6px;color:#1f1637 !important;margin:0 0 6px !important}
+.role-popup-card .sub{font-size:15px !important;color:#6b6385 !important;margin:0 0 18px !important}
+.role-popup-card .ap-close{color:#6b6385 !important;background:#f4efff;border-radius:4px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;opacity:1}
 .role-popup-card .ap-close:hover{background:#ebe3ff;color:#4b1f9e !important}
 #rolePopupBack{color:#4b1f9e !important;font-weight:600 !important;font-size:14px !important}
-.role-popup-card .role-select{gap:16px !important}
-.role-popup-card .role-opt{border:1.5px solid #e6e0f3 !important;border-radius:18px !important;padding:26px 14px !important;background:#fff !important;transition:.22s;display:flex;flex-direction:column;align-items:center}
-.role-popup-card .role-opt:hover{border-color:#7b4fd6 !important;transform:translateY(-4px);box-shadow:0 14px 34px rgba(75,31,158,.16)}
+.role-popup-card .role-select{gap:12px !important}
+.role-popup-card .role-opt{border:1.5px solid #e6e0f3 !important;border-radius:4px !important;padding:14px 12px !important;background:#fff !important;transition:.22s;display:flex;flex-direction:column;align-items:center}
+.role-popup-card .role-opt:hover{border-color:#7b4fd6 !important;transform:translateY(-2px);box-shadow:0 8px 20px rgba(75,31,158,.16)}
 .role-popup-card .role-opt.selected{border-color:#4b1f9e !important;background:#f4efff !important}
-.role-popup-card .role-opt .ric{width:56px;height:56px;border-radius:16px;background:#ffe9db;color:#ff7a1a;display:flex !important;align-items:center;justify-content:center;margin:0 0 14px !important;transition:.22s}
-.role-popup-card .role-opt .ric svg{width:26px;height:26px}
+.role-popup-card .role-opt .ric{width:40px;height:40px;border-radius:4px;background:#ffe9db;color:#ff7a1a;display:flex !important;align-items:center;justify-content:center;margin:0 0 8px !important;transition:.22s}
+.role-popup-card .role-opt .ric svg{width:22px;height:22px}
 .role-popup-card .role-opt:hover .ric{background:#ff7a1a;color:#fff}
 .role-popup-card .role-opt .rt{font-size:16px !important;font-weight:700;color:#1f1637 !important}
-.role-popup-card .role-opt .rd{font-size:13px !important;color:#6b6385 !important;margin-top:4px !important;line-height:1.4}
+.role-popup-card .role-opt .rd{font-size:12.5px !important;color:#6b6385 !important;margin-top:4px !important;line-height:1.4}
 @media (max-width:520px){.role-popup-card{padding:32px 20px 24px !important}.role-popup-card .role-select{grid-template-columns:1fr !important}}
